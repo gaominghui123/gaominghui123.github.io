@@ -1,0 +1,589 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>SpringCloud-系统保护-sentinel | Jason</title><meta name="keywords" content="SpringCloud,Sentinel"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇博客目标： 1234567* 理解服务雪崩现象* 能够部署Sentinel服务* 能够配置Sentinel流量控制* 能够配置Sentinel熔断降级* 理解Sentinel定义资源规则* 使用Sentinel整合网关实现限流* 使用Sentinel整合Feign实现限流  1 系统保护1.1 为什么需要系统保护随着微服务的流行，服务和服务之间的稳定性变得越来越重要，通常一个业务调用需要经过多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringCloud-系统保护-sentinel">
+<meta property="og:url" content="http://example.com/2022/05/23/SpringCloud-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4-sentinel/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="本篇博客目标： 1234567* 理解服务雪崩现象* 能够部署Sentinel服务* 能够配置Sentinel流量控制* 能够配置Sentinel熔断降级* 理解Sentinel定义资源规则* 使用Sentinel整合网关实现限流* 使用Sentinel整合Feign实现限流  1 系统保护1.1 为什么需要系统保护随着微服务的流行，服务和服务之间的稳定性变得越来越重要，通常一个业务调用需要经过多">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A22.png">
+<meta property="article:published_time" content="2022-05-23T07:43:15.000Z">
+<meta property="article:modified_time" content="2022-05-23T07:45:59.786Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="SpringCloud">
+<meta property="article:tag" content="Sentinel">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A22.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/05/23/SpringCloud-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4-sentinel/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SpringCloud-系统保护-sentinel',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-23 15:45:59'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">135</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">179</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A22.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SpringCloud-系统保护-sentinel</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-23T07:43:15.000Z" title="发表于 2022-05-23 15:43:15">2022-05-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-05-23T07:45:59.786Z" title="更新于 2022-05-23 15:45:59">2022-05-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/SpringCloud/">SpringCloud</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SpringCloud-系统保护-sentinel"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><strong>本篇博客目标：</strong></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">*</span> <span class="string">理解服务雪崩现象</span></span><br><span class="line"><span class="meta">*</span> <span class="string">能够部署Sentinel服务</span></span><br><span class="line"><span class="meta">*</span> <span class="string">能够配置Sentinel流量控制</span></span><br><span class="line"><span class="meta">*</span> <span class="string">能够配置Sentinel熔断降级</span></span><br><span class="line"><span class="meta">*</span> <span class="string">理解Sentinel定义资源规则</span></span><br><span class="line"><span class="meta">*</span> <span class="string">使用Sentinel整合网关实现限流</span></span><br><span class="line"><span class="meta">*</span> <span class="string">使用Sentinel整合Feign实现限流</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="1-系统保护"><a href="#1-系统保护" class="headerlink" title="1 系统保护"></a>1 系统保护</h1><h2 id="1-1-为什么需要系统保护"><a href="#1-1-为什么需要系统保护" class="headerlink" title="1.1 为什么需要系统保护"></a>1.1 为什么需要系统保护</h2><p>随着微服务的流行，服务和服务之间的稳定性变得越来越重要，通常一个业务调用需要经过多个后端微服务，假设在整个调用链路上，某个服务不可用的话，则有可能造成整个调用链路上的多个微服务不可用，这种效应称为<strong>服务雪崩（级联故障/失效）</strong>。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210214204635680.png" alt="image-20210214204635680"></p>
+<p>出现服务雪崩的常见场景：</p>
+<ul>
+<li><strong>程序异常：</strong>执行过程出现执行异常、程序逻辑造成内存泄漏、频繁FullGC等等。</li>
+<li><strong>流量暴增</strong>：在一些特殊场景，如秒杀、促销。造成前端的大量请求并发的发送到后端。</li>
+<li><strong>硬件故障</strong>：服务器故障、断电等。</li>
+<li><strong>同步等待</strong>：上游服务长时间等待下游服务的响应，造成资源耗尽。</li>
+</ul>
+<p>因此在微服务架构下，需要<strong>让服务具备自我保护的能力，避免被关联服务拖垮的风险</strong>。所以系统保护技术应运而生且尤为重要。</p>
+<p>解决方案：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">*</span> <span class="string">超时机制</span></span><br><span class="line"><span class="meta">*</span> <span class="string">限流</span></span><br><span class="line"><span class="meta">*</span> <span class="string">舱壁模式</span></span><br><span class="line"><span class="meta">*</span> <span class="string">断路器模式（Hystrix）</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-技术选型对比"><a href="#1-2-技术选型对比" class="headerlink" title="1.2 技术选型对比"></a>1.2 技术选型对比</h2><p>当前对于系统保护，常见的有三种技术实现，分别为：<strong>Spring Cloud Hystrix</strong>、<strong>Resilience4j</strong>、<strong>Spring Cloud Alibaba Sentinel</strong>。在最新版的Spring Cloud2020.0.0版本中hystrix已经被移除，转而支持使用Resilience4j。但是不管是hystrix还是Resilience4j，在功能<strong>全面性上和使用灵活性上都不如Spring Cloud Alibaba Sentinel</strong>。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210214222904581.png" alt="image-20210214222904581"></p>
+<h2 id="1-3-Sentinel使用"><a href="#1-3-Sentinel使用" class="headerlink" title="1.3 Sentinel使用"></a>1.3 Sentinel使用</h2><h3 id="1-3-1-概述"><a href="#1-3-1-概述" class="headerlink" title="1.3.1 概述"></a>1.3.1 概述</h3><p>​    <img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210214223022989.png" alt="image-20210214223022989"></p>
+<p><a target="_blank" rel="noopener" href="https://sentinelguard.io/zh-cn/">Sentinel</a> <strong>以流量为切入点，从流量控制、熔断降级、系统负载保护等多个维度保护服务的稳定性</strong>。</p>
+<p>Sentinel 具有以下特征：</p>
+<ul>
+<li><strong>丰富的应用场景</strong>：Sentinel 承接了阿里巴巴近 10 年的双十一大促流量的核心场景，例如秒杀（即突发流量控制在系统容量可以承受的范围）、消息削峰填谷、集群流量控制、实时熔断下游不可用应用等。</li>
+<li><strong>完备的实时监控</strong>：Sentinel 同时提供实时的监控功能。您可以在控制台中看到接入应用的单台机器秒级数据，甚至 500 台以下规模的集群的汇总运行情况。</li>
+<li><strong>广泛的开源生态</strong>：Sentinel 提供开箱即用的与其它开源框架/库的整合模块，例如与 Spring Cloud、Dubbo、gRPC 的整合。您只需要引入相应的依赖并进行简单的配置即可快速地接入 Sentinel。</li>
+<li><strong>完善的 SPI 扩展点</strong>：Sentinel 提供简单易用、完善的 SPI 扩展接口。您可以通过实现扩展接口来快速地定制逻辑。例如定制规则管理、适配动态数据源等。</li>
+</ul>
+<p>Sentinel 的主要特性：</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210214223146720.png" alt="image-20210214223146720"></p>
+<p>使用 Sentinel 来进行熔断保护，主要分为几个步骤:</p>
+<ol>
+<li>定义<strong>资源</strong></li>
+<li>定义<strong>规则</strong></li>
+<li>检验规则是否生效</li>
+</ol>
+<h3 id="1-3-2-Sentinel快速入门"><a href="#1-3-2-Sentinel快速入门" class="headerlink" title="1.3.2 Sentinel快速入门"></a>1.3.2 Sentinel快速入门</h3><h4 id="1-3-2-1-Sentinel控制台安装"><a href="#1-3-2-1-Sentinel控制台安装" class="headerlink" title="1.3.2.1 Sentinel控制台安装"></a>1.3.2.1 Sentinel控制台安装</h4><p>​    Sentinel可以直接基于控制台定义系统保护的相关规则，并且阿里提供了两种控制台的介入方式：<strong>本地jar包启动</strong>、<strong>Docker运行、阿里云平台</strong>。</p>
+<p> 官方下载地址：<a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel/releases">https://github.com/alibaba/Sentinel/releases</a></p>
+<p>Wiki主页：<a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel/wiki/%E4%B8%BB%E9%A1%B5">https://github.com/alibaba/Sentinel/wiki/%E4%B8%BB%E9%A1%B5</a></p>
+<p><strong>方式一：</strong></p>
+<p>​    <strong>基于cmd，启动资料/sentinel下的sentinel-dashboard.jar</strong> ，即可启动sentinel控制台。 <strong>访问路径：localhost:8080。默认账号密码：sentinel/sentinel</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210517151608747.png" alt="image-20210517151608747"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 守护进程运行</span></span><br><span class="line">nohup java -jar sentinel-dashboard-1.8.0.jar &amp; </span><br></pre></td></tr></table></figure>
+
+<p><strong>方式二：</strong></p>
+<p><font color="red"><strong>基于 Docker 运行容器启动：</strong></font> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name sentinel  -d -p 8858:8858  bladex/sentinel-dashboard:1.8.0</span><br></pre></td></tr></table></figure>
+
+<p>访问：<a target="_blank" rel="noopener" href="http://192.168.206.99:8858/">http://192.168.206.99:8858/</a></p>
+<h4 id="1-3-2-2-微服务接入Sentinel"><a href="#1-3-2-2-微服务接入Sentinel" class="headerlink" title="1.3.2.2 微服务接入Sentinel"></a>1.3.2.2 微服务接入Sentinel</h4><p>1）修改consumer-service的pom文件，添加sentinel依赖，<strong>前提必须引入spring-cloud-alibaba-dependencies</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">&lt;!--sentinel--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-sentinel<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.dataformat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-dataformat-xml<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>2）修改consumer-service的application.yml，配置sentinel控制台地址</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">      <span class="attr">transport:</span></span><br><span class="line">        <span class="attr">dashboard:</span> <span class="number">192.168</span><span class="number">.190</span><span class="number">.149</span><span class="string">:8858</span> <span class="comment">#sentinel控制台地址</span></span><br></pre></td></tr></table></figure>
+
+<p>3）服务器启动后访问sentinel看不到任何项目信息，需要访问一次项目后，Sentinel才会加载项目信息。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625000014673.png" alt="image-20210625000014673"></p>
+<p>可以在终端：<strong>docker logs sentinel</strong> 来查看启动连接行为是否成功</p>
+<h3 id="1-3-3-流量控制规则"><a href="#1-3-3-流量控制规则" class="headerlink" title="1.3.3 流量控制规则"></a>1.3.3 流量控制规则</h3><h4 id="1-3-3-1-流量控制介绍"><a href="#1-3-3-1-流量控制介绍" class="headerlink" title="1.3.3.1 流量控制介绍"></a>1.3.3.1 流量控制介绍</h4><p>对于服务稳定性的    保护，限流是一个非常重要的手段。任意时间到来的请求往往是随机不可控的，而系统的处理能力是有限的。我们需要根据系统的处理能力对流量进行控制，避免系统被瞬时的流量高峰冲垮，从而保障应用的高可用性。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218131201787.png" alt="image-20210218131201787"></p>
+<p>​    Sentinel提供了非常灵活的服务限流方式，用户可以<strong>根据自己的实际项目场景，非常方便的定义各种限流规则</strong>。其原理是监控应用流量的 <strong>QPS</strong> 或<strong>并发线程数</strong>指标，当达到指定的阈值时对流量进行控制。</p>
+<p><strong>流量控制</strong>（flow control），其原理是监控应用流量的 QPS 或并发线程数等指标，当达到指定的阈值时对流量进行控制，以避免被瞬时的流量高峰冲垮，从而保障应用的高可用性。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210424212303266.png" alt="image-20210424212303266"></p>
+<h4 id="1-3-3-2-阈值类型"><a href="#1-3-3-2-阈值类型" class="headerlink" title="1.3.3.2 阈值类型"></a>1.3.3.2 阈值类型</h4><h5 id="1-3-3-2-1-QPS"><a href="#1-3-3-2-1-QPS" class="headerlink" title="1.3.3.2.1 QPS"></a>1.3.3.2.1 QPS</h5><p>​    QPS即每秒查询率，可以对某个接口定义每秒允许的查询次数，超过则丢弃。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625000242924.png" alt="image-20210625000242924"></p>
+<ul>
+<li><strong>资源名：</strong> 唯一名称，默认请求路径。</li>
+<li><strong>针对来源：</strong>Sentinel可以针对调用者进行限流，填写服务名，默default（不区分来源）。</li>
+<li><strong>阈值类型/单机阈值</strong><ul>
+<li>QPS（每秒钟的请求数量）： 当调用该API的QPS达到阈值的时候，进行限流。</li>
+<li>线程数：当调用该API的线程数达到阈值的时候，进行限流。</li>
+</ul>
+</li>
+<li><strong>是否集群：</strong> 不需要集群。</li>
+</ul>
+<p><strong>打开Jemeter进行测试</strong></p>
+<p>设置简体中文</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625000536091.png" alt="image-20210625000536091"></p>
+<p>设置一个线程，一秒内访问5次</p>
+<p><strong>添加线程组</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625000758342.png" alt="image-20210625000758342"></p>
+<p><strong>添加请求</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625000914144.png" alt="image-20210625000914144"></p>
+<p><strong>编辑线程数</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625113314012.png" alt="image-20210625113314012"></p>
+<p>设置协议、IP、端口、请求方式、接口地址</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625001139246.png" alt="image-20210625001139246"></p>
+<p>运行，查看接口，可知，由于定义了限流规则，每秒内只能访问两次，所以两个请求通过，三个请求被拒绝</p>
+<p>新增查看结果：</p>
+<img src="F:\java\%E4%B8%8A%E8%AF%BE%E8%B5%84%E6%96%99\itheima129\03.%E9%A1%B9%E7%9B%AE%E4%B8%80%E5%89%8D%E7%BD%AE%E8%AF%BE\%E8%B5%84%E6%96%99\day07-SpringCloud03\%E8%AE%B2%E4%B9%89\assets\image-20210424163933906.png" alt="image-20210424163933906" style="zoom:50%;" />
+
+<p>点击执行查看结果：</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218123021951.png" alt="image-20210218123021951"></p>
+<h5 id="1-3-3-2-2-线程数"><a href="#1-3-3-2-2-线程数" class="headerlink" title="1.3.3.2.2 线程数"></a>1.3.3.2.2 线程数</h5><p>修改<strong>阈值类型为线程数</strong>、<strong>单机阈值为1</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625001356749.png" alt="image-20210625001356749"></p>
+<p><strong>使用Jemeter进行测试</strong></p>
+<p>修改setup线程组，0秒内启动5个线程循环一次。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218123643691.png" alt="image-20210218123643691"></p>
+<p>指定访问接口</p>
+<p>运行，查看接口，可知，由于定义了限流规则，<strong>每秒内只能一个线程访问，所以一个线程通过</strong>，四个线程被拒绝</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218123730442.png" alt="image-20210218123730442"></p>
+<h4 id="1-3-3-3-流控模式"><a href="#1-3-3-3-流控模式" class="headerlink" title="1.3.3.3 流控模式"></a>1.3.3.3 流控模式</h4><p>​    流控模式分为三种：<strong>直接、关联、链路。</strong> 每种流控模式的效果都不同，可以根据当前需求选择对应的流控模式。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625001807382.png" alt="image-20210625001807382"></p>
+<p>注意，上面所讲的，都是<strong>先启动项目，再在sentinel设置规则！</strong>而且<strong>，重启项目后，进行资源访问，还要等一小段时间，sentinel才会同步监控的数据信息</strong></p>
+<h5 id="1-3-3-3-1-直接"><a href="#1-3-3-3-1-直接" class="headerlink" title="1.3.3.3.1 直接"></a>1.3.3.3.1 直接</h5><p>该模式为<strong>默认模式，其会针对某个资源直接操作，当达到了阈值则触发</strong>。</p>
+<h5 id="1-3-3-3-2-关联"><a href="#1-3-3-3-2-关联" class="headerlink" title="1.3.3.3.2 关联"></a>1.3.3.3.2 关联</h5><p>在该模式下，当<strong>关联的资源触发规则</strong>，<strong>原来的资源触发流控效果</strong>。</p>
+<p><strong>新建SentinelUserController.java</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SentinelUserController</span> </span>&#123;</span><br><span class="line">    <span class="comment">//资源1</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello1&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel1&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//资源2</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello2&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel2&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置流控规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218130057509.png" alt="image-20210218130057509"></p>
+<p><strong>打开Jemeter进行测试</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218125628700.png" alt="image-20210218125628700"></p>
+<p><strong>添加http请求，无限访问hello2</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218125803456.png" alt="image-20210218125803456"></p>
+<p><strong>浏览器访问hello1，可以发现，其已经被限流，无法被访问。</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625003011846.png" alt="image-20210625003011846"></p>
+<p>上面的模拟场景是：<strong>1本来是要访问2的，但是2 由于其他访问来源而达到了限流，那么1就会被阻断</strong></p>
+<h5 id="1-3-3-3-3-链路"><a href="#1-3-3-3-3-链路" class="headerlink" title="1.3.3.3.3 链路"></a>1.3.3.3.3 链路</h5><p>在链路模式下会对一条链路的访问进行控制。当从某个接口过来的资源达到限流条件时，则开启限流。</p>
+<p><strong>1）修改consumer-service的SentinelUserController</strong>，添加方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dosomething</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）声明方法为链路资源</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将此方法标注为sentinel的资源。value=资源名</span></span><br><span class="line"><span class="meta">@SentinelResource(&quot;chain&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dosomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;chain&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3）添加两个handlerMethod，调用相同资源</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源3</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello3&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    dosomething();</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel3&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//资源4</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello4&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    dosomething();</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel4&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4）修改consumer-service的application.yml</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">      <span class="attr">web-context-unify:</span> <span class="literal">false</span> <span class="comment">#关闭context收敛防止chain限流不生效</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>5）配置sentinel规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218134254739.png" alt="image-20210218134254739"></p>
+<p><strong>6）Jemter中配置一个线程无限循环访问</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218134346544.png" alt="image-20210218134346544"></p>
+<p><strong>7）Jemeter中配置http请求，访问/user/hello3</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218134422241.png" alt="image-20210218134422241"></p>
+<p><strong>8）请求访问可以发现/user/hello3被限流</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218134448147.png" alt="image-20210218134448147"></p>
+<p><strong>9）通过浏览器访问/user/hello4，可以发现仍然可以对chain资源进行访问</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218134525972.png" alt="image-20210218134525972"></p>
+<h4 id="1-3-3-4-流控效果"><a href="#1-3-3-4-流控效果" class="headerlink" title="1.3.3.4 流控效果"></a>1.3.3.4 流控效果</h4><p>​    Sentinel中存在三种流控效果：<strong>快速失败</strong>、<strong>WarmUp</strong>、<strong>排队等待</strong>。</p>
+<h5 id="1-3-3-4-1-快速失败"><a href="#1-3-3-4-1-快速失败" class="headerlink" title="1.3.3.4.1 快速失败"></a>1.3.3.4.1 快速失败</h5><p>​    该效果为默认效果，当达到限流规则后，则不允许进行访问。</p>
+<h5 id="1-3-3-4-2-WarmUp"><a href="#1-3-3-4-2-WarmUp" class="headerlink" title="1.3.3.4.2 WarmUp"></a>1.3.3.4.2 WarmUp</h5><p>​    当流量突然增大的时候，我们常常会希望系统<strong>从空闲状态到繁忙状态的切换的时间长一些</strong>。即如果系统在此之前长期处于空闲的状态，<strong>我们希望处理请求的数量是缓步的增多，经过预期的时间以后，到达系统处理请求个数的最大值</strong>。<strong>Warm Up（冷启动，预热）</strong>模式就是为了实现这个目的的。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210219155550313.png" alt="image-20210219155550313"></p>
+<p>　该模式主要用于启动需要额外开销的场景，例如建立连接等。</p>
+<p>它的使用存在一个公式<code>threshold (阈值)/coldFactor（冷加载因子，默认为3）=最初的阈值</code>。接着<code>最初的阈值*预热时长</code>来最终实现限流。（<strong>前5秒为3，当预热时间5秒过去后变成了最大值的10哈哈哈哈哈</strong>）</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218135803393.png" alt="image-20210218135803393"></p>
+<h5 id="1-3-3-4-3-排队等待"><a href="#1-3-3-4-3-排队等待" class="headerlink" title="1.3.3.4.3 排队等待"></a>1.3.3.4.3 排队等待</h5><p>​    所谓<strong>排队等待</strong>又可以称为匀速器即<strong>让请求以均匀的速度通过</strong>。</p>
+<p>​    实现原理是当请求到来的时候：</p>
+<ul>
+<li><p>如果当前请求距离上个通过的请求通过的时间间隔大于预设值，则让当前请求通过；</p>
+</li>
+<li><p>否则，计算当前请求的预期通过时间，如果该请求的预期通过时间小于规则预设的 timeout 时间，则该请求会等待直到预设时间到来通过（排队等待处理）；若预期的通过时间超出最大排队时长，则直接拒接这个请求。</p>
+</li>
+</ul>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218135936673.png" alt="image-20210218135936673"></p>
+<p>​    这种方式主要用于处理间隔性突发的流量。假设现在有一个消息队列，<strong>突然接收到大量的消息，对于这些消息肯定不会直接拒绝多余的请求，而是希望系统以稳定的速度，逐步处理这些请求，以起到“削峰填谷”的效果</strong>。</p>
+<p>　<strong>如下：设置为每秒允许有10次请求，如果每秒超过了10个请求，则需要排队等待，每个请求最长等待时间为10s。</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218140145615.png" alt="image-20210218140145615"></p>
+<h3 id="1-3-4-熔断降级规则"><a href="#1-3-4-熔断降级规则" class="headerlink" title="1.3.4 熔断降级规则"></a>1.3.4 熔断降级规则</h3><h4 id="1-3-4-1-熔断降级介绍"><a href="#1-3-4-1-熔断降级介绍" class="headerlink" title="1.3.4.1 熔断降级介绍"></a>1.3.4.1 熔断降级介绍</h4><p>现代微服务架构都是分布式的，由非常多的服务组成。不同服务之间相互调用，组成复杂的调用链路。如果链路上的某一环不稳定，就可能会层层级联，最终导致整个链路都不可用。因此我们需要对不稳定的服务调用进行<strong>熔断降级</strong>，暂时切断不稳定调用，避免局部不稳定因素导致整体的雪崩。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218142220134.png" alt="image-20210218142220134"></p>
+<ul>
+<li><strong>熔断：</strong>当某服务出现不可用或响应超时的情况时，停止对该服务的调用，让其不可访问。</li>
+<li><strong>降级：</strong>当服务被熔断后，需要有一个兜底策略，如返回一个错误友好界面，或让被熔断的服务过一段时间后，再对外提供访问。</li>
+</ul>
+<p>​    <strong>Sentinel中提供了三种熔断降级策略：慢比例调用、异常比例、异常数。</strong></p>
+<h4 id="1-3-4-2-根据平均响应时间降级"><a href="#1-3-4-2-根据平均响应时间降级" class="headerlink" title="1.3.4.2 根据平均响应时间降级"></a>1.3.4.2 根据平均响应时间降级</h4><p>​    <strong>当统计时长内请求数目大于设置的最小请求数目，并且慢调用的比例大于阈值，则接下来的熔断时长内请求会自动被熔断</strong>。比例阈值范围是 <code>[0.0, 1.0]</code>，代表 0% - 100%。</p>
+<p>​    <strong>经过熔断时长后熔断器会进入探测恢复状态（HALF-OPEN 状态），若接下来的一个请求响应时间小于设置的慢调用 RT 则结束熔断，若大于设置的慢调用 RT 则会再次被熔断</strong>。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218142823885.png" alt="image-20210218142823885"></p>
+<p>由于版本bug，需要切换资料中提供的sentinel</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625011617694-1624554980708.png" alt="image-20210625011617694"></p>
+<p>修改consumer-service的application.yml</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625011838865.png" alt="image-20210625011838865"></p>
+<p><strong>1）修改SentinelUserController，增加等待时长</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源5</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello5/&#123;flag&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello5</span><span class="params">(<span class="meta">@PathVariable(&quot;flag&quot;)</span> <span class="keyword">int</span> flag)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (flag == <span class="number">1</span>)&#123;</span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel5&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）定义熔断降级规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218143727863.png" alt="image-20210218143727863"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">解释：两秒内，请求数量超过5，且响应时长超过2秒的请求数量比例大于10%，则对该资源熔断3秒</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3）Jemter配置10个线程无限访问</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218144307138.png" alt="image-20210218144307138"></p>
+<p><strong>4）Jemter配置访问/user/hello5资源，并携带参数为1</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218144354439.png" alt="image-20210218144354439"></p>
+<p><strong>5）Jemter启动访问，可以发现请求被拒绝，且浏览器访问该资源携带参数为2，也被拒绝访问</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218144458223.png" alt="image-20210218144458223"></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625012938584.png" alt="image-20210625012938584"></p>
+<p><strong>6）停止Jemter，过了3秒后，则/user/hello5/2即可访问。</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625013007974.png" alt="image-20210625013007974"></p>
+<h4 id="1-3-4-3-根据异常比例降级"><a href="#1-3-4-3-根据异常比例降级" class="headerlink" title="1.3.4.3 根据异常比例降级"></a>1.3.4.3 根据异常比例降级</h4><p>当统计时长内请求数目大于设置的最小请求数目，并且异常的比例大于阈值，则接下来的熔断时长内请求会自动被熔断。经过熔断时长后熔断器会进入探测恢复状态（HALF-OPEN 状态），若接下来的一个请求成功完成则结束熔断。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218144904779.png" alt="image-20210218144904779"></p>
+<p><strong>1）修改SentinelUserController</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源6</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello6/&#123;flag&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello6</span><span class="params">(<span class="meta">@PathVariable(&quot;flag&quot;)</span> <span class="keyword">int</span> flag)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (flag == <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">int</span> i =<span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel6&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）定义熔断降级规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218150945939.png" alt="image-20210218150945939"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">解释：一秒内，请求数量超过5个，且请求异常比例超过10%，则3秒内不允许访问。</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3）浏览器访问测试</strong></p>
+<p>​    可以发现，当达到熔断降级规则后，该资源3秒内不允许访问，过了三秒则继续允许访问。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625145701782.png" alt="image-20210625145701782"></p>
+<p>熔断后访问其它服务地址：<a target="_blank" rel="noopener" href="http://localhost:8089/user/hello6/3">http://localhost:8089/user/hello6/3</a></p>
+<p>也会出现提示：Blocked by Sentinel (flow limiting)</p>
+<h4 id="1-3-4-4-根据异常数降级"><a href="#1-3-4-4-根据异常数降级" class="headerlink" title="1.3.4.4 根据异常数降级"></a>1.3.4.4 根据异常数降级</h4><p>当统计时长内的异常数目超过阈值之后会自动进行熔断。过熔断时长后熔断器会进入探测恢复状态（HALF-OPEN 状态），若接下来的一个请求成功完成则结束熔断。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218151508422.png" alt="image-20210218151508422"></p>
+<p><strong>1）定义熔断降级规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218152705631.png" alt="image-20210218152705631"></p>
+<p><strong>2）浏览器访问测试</strong></p>
+<p>​    可以发现，当一秒内超过5个请求访问，且出现了3次异常，则该接口会被降级5秒。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625150132820.png" alt="image-20210625150132820"></p>
+<h3 id="1-3-5-系统保护规则"><a href="#1-3-5-系统保护规则" class="headerlink" title="1.3.5 系统保护规则"></a>1.3.5 系统保护规则</h3><p>系统保护的目的：</p>
+<ul>
+<li>保证系统不被拖垮</li>
+<li>在系统稳定的前提下，保持系统的吞吐量</li>
+</ul>
+<p>​    <a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81">系统保护规则</a>是从应用级别的入口流量进行控制，从单台机器的 <strong>load</strong>、<strong>CPU 使用率</strong>、<strong>平均 RT</strong>、<strong>入口 QPS</strong> 和<strong>并发线程数</strong>等几个维度监控应用指标，让系统尽可能跑在最大吞吐量的同时保证系统整体的稳定性。</p>
+<p>​    系统保护规则是应用整体维度的，而不是资源维度的，并且<strong>仅对入口流量生效</strong>。入口流量指的是进入应用的流量，比如 Web 服务或 Dubbo 服务端接收的请求，都属于入口流量。</p>
+<p>系统规则支持以下的模式：</p>
+<ul>
+<li><strong>Load 自适应</strong>（仅对 Linux/Unix-like 机器生效）：系统的 load1 作为启发指标，进行自适应系统保护。当系统 load1 超过设定的启发值，且系统当前的并发线程数超过估算的系统容量时才会触发系统保护（BBR 阶段）。系统容量由系统的 <code>maxQps * minRt</code> 估算得出。设定参考值一般是 <code>CPU cores * 2.5</code>。</li>
+<li><strong>CPU usage</strong>（1.5.0+ 版本）：当系统 CPU 使用率超过阈值即触发系统保护（取值范围 0.0-1.0），比较灵敏。</li>
+<li><strong>平均 RT</strong>：当单台机器上所有入口流量的平均 RT 达到阈值即触发系统保护，单位是毫秒。</li>
+<li><strong>并发线程数</strong>：当单台机器上所有入口流量的并发线程数达到阈值即触发系统保护。</li>
+<li><strong>入口 QPS</strong>：当单台机器上所有入口流量的 QPS 达到阈值即触发系统保护。</li>
+</ul>
+<h3 id="1-3-6-热点规则"><a href="#1-3-6-热点规则" class="headerlink" title="1.3.6 热点规则"></a>1.3.6 热点规则</h3><h4 id="1-3-6-1-热点参数限流介绍"><a href="#1-3-6-1-热点参数限流介绍" class="headerlink" title="1.3.6.1 热点参数限流介绍"></a>1.3.6.1 热点参数限流介绍</h4><p>​    热点即经常访问的数据。假设<strong>希望统计某个热点数据中访问频次最高的 TopN数据，并对其访问进行限制</strong>。比如：</p>
+<ul>
+<li>商品 ID 为参数，统计一段时间内最常购买的商品 ID 并进行限制</li>
+<li>用户 ID 为参数，针对一段时间内频繁访问的用户 ID 进行限制</li>
+</ul>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218153658551.png" alt="image-20210218153658551"></p>
+<h4 id="1-3-6-2-参数位限流"><a href="#1-3-6-2-参数位限流" class="headerlink" title="1.3.6.2 参数位限流"></a>1.3.6.2 参数位限流</h4><p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218154134473.png" alt="image-20210218154134473"></p>
+<ul>
+<li><strong>参数索引：</strong>即要对第几个请求参数限流，从0开始。</li>
+<li><strong>统计窗口时长：</strong>多久统计一次。</li>
+</ul>
+<p><strong>1）修改SentinelUserController</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源  热点参数限流</span></span><br><span class="line">   <span class="meta">@SentinelResource(value = &quot;hello66&quot;)</span>   <span class="comment">// ***** 添加资源注解</span></span><br><span class="line">   <span class="meta">@GetMapping(value = &quot;/hello66&quot;)</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">hello6</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">           <span class="meta">@RequestParam(value = &quot;username&quot;,required = false)</span> String username)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel66 username=&quot;</span>+username;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）定义热点限流规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625151328372.png" alt="image-20210625151328372"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">解释：如果hello66资源携带参数，则每秒只能访问一次</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3）浏览器访问测试</strong></p>
+<p>​    通过测试可知，当携带请求参数时，会被触发限流。如果不携带则不会触发限流。</p>
+<p>限流异常提示：</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625151404898.png" alt="image-20210625151404898"></p>
+<p>控制台错误提示：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:12:01.771 ERROR 26540 --- [nio-8089-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:12:01.961 ERROR 26540 --- [nio-8089-exec-3] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:12:03.941 ERROR 26540 --- [nio-8089-exec-7] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:12:04.179 ERROR 26540 --- [nio-8089-exec-9] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:12:04.643 ERROR 26540 --- [nio-8089-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br><span class="line"></span><br><span class="line">2021-06-25 15:13:44.133 ERROR 26540 --- [nio-8089-exec-6] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.reflect.UndeclaredThrowableException] with root cause</span><br><span class="line"></span><br><span class="line"><span class="section">com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException: heima</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>4）返回友好错误提示</strong></p>
+<p>​    如上所示，当触发热点参数限流后，前端会出现异常提示，但是一般情况下发生了错误，不应该给用户返回错误500信息，而应该给用户返回友好的错误提示。</p>
+<p><strong>修改代码如下所示：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源  热点参数限流</span></span><br><span class="line"><span class="meta">@SentinelResource(value = &quot;hello66&quot;,blockHandler = &quot;hotHandler&quot;)</span>   <span class="comment">// ***** 添加资源注解</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello66&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello6</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="meta">@RequestParam(value = &quot;username&quot;,required = false)</span> String username)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel66 username=&quot;</span>+username;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hotHandler</span><span class="params">(String username, BlockException e)</span> </span>&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;抱歉，关于：&quot;</span>+username+<span class="string">&quot; 的查询有误&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5）浏览器访问测试</strong></p>
+<p><a target="_blank" rel="noopener" href="http://localhost:8089/user/hello66?username=heima">http://localhost:8089/user/hello66?username=heima</a></p>
+<p>​    重新通过浏览器访问测试，可以发现，前端不再出现500异常，而是返回自定义错误提示信息。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625152004191.png" alt="image-20210625152004191"></p>
+<h4 id="1-3-6-3-参数值限流"><a href="#1-3-6-3-参数值限流" class="headerlink" title="1.3.6.3 参数值限流"></a>1.3.6.3 参数值限流</h4><p>在一些特定场景下，可能光对指定参数位限流可能满足不了实际需求，有可能还需要对具体参数值进行限流。</p>
+<p>例如：</p>
+<p>​    商品id为2设定限流阈值为2</p>
+<p>​    商品id为3设定限流阈值为1000</p>
+<p><strong>1）定义限流规则</strong></p>
+<p>编辑限流规则，打开高级选项，设置参数类型、参数值、限流阈值</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625152353914.png" alt="image-20210625152353914"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">解释：</span></span><br><span class="line"><span class="attr">当访问hello66资源时，如果第一个参数的参数值为heima，则每秒只能访问2次。第一个参数其他参数值每秒最多10次</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2）浏览器访问测试</strong></p>
+<p>​    通过测试可知，当参数值为2，当达到限流阈值则触发限流。</p>
+<blockquote>
+<p>注意：热点规则的参数必须是基本数据类型或者是String类型。</p>
+</blockquote>
+<h3 id="1-3-7-访问控制规则"><a href="#1-3-7-访问控制规则" class="headerlink" title="1.3.7 访问控制规则"></a>1.3.7 访问控制规则</h3><p><strong>1 黑白名单授权控制</strong></p>
+<p>很多时候，我们需要根据调用来源来判断该次请求是否允许放行，这时候可以使用 Sentinel 的来源访问控制（黑白名单控制）的功能。</p>
+<p>根据请求来源限制是否通过:</p>
+<ul>
+<li>若配置白名单则只有请求来源位于白名单内时才可通过；</li>
+<li>若配置黑名单则请求来源位于黑名单时不通过，其余的请求通过。</li>
+</ul>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218161850744.png" alt="image-20210218161850744"></p>
+<p><strong>1）定义Bean，用于解析IP来源</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IPLimiter</span> <span class="keyword">implements</span> <span class="title">RequestOriginParser</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">parseOrigin</span><span class="params">(HttpServletRequest httpServletRequest)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> httpServletRequest.getRemoteAddr();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）定义授权规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625162655869.png" alt="image-20210625162655869"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">解释：不允许ip为127.0.0.1的来源访问该资源，其他IP均可以访问，如localhost</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3）浏览器测试</strong></p>
+<p>​    经过测试可以，当IP为127.0.0.1时，无法访问该资源，被限制访问，后台出现认证异常。</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210218162955258.png" alt="image-20210218162955258"></p>
+<h3 id="1-3-8-注解方式定义资源"><a href="#1-3-8-注解方式定义资源" class="headerlink" title="1.3.8 注解方式定义资源"></a>1.3.8 注解方式定义资源</h3><p><strong>（为了返回友好的提示）</strong></p>
+<h4 id="1-3-8-1-注解-SentinelResource介绍"><a href="#1-3-8-1-注解-SentinelResource介绍" class="headerlink" title="1.3.8.1 注解@SentinelResource介绍"></a>1.3.8.1 注解@SentinelResource介绍</h4><p>​    Sentinel 提供了 <a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel/wiki/%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81">@SentinelResource</a> 注解用于定义资源，并提供了 AspectJ 的扩展用于自动定义资源、处理 BlockException 等。常见属性：</p>
+<ul>
+<li><p><strong>value</strong></p>
+<p>资源名称，必需项，因为需要通过resource name找到对应的规则，这个是必须配置的。</p>
+</li>
+<li><p><strong>blockHandler</strong></p>
+<p>blockHandler 对应处理 BlockException 的函数名称，可选项。<br>blockHandler 函数访问范围需要是 public，返回类型需要与原方法相匹配，<br>参数类型需要和原方法相匹配并且最后加一个额外的参数，类型为 BlockException。</p>
+</li>
+<li><p><strong>blockHandlerClass</strong></p>
+<p>​    blockHandler 函数默认需要和原方法在同一个类中，如果希望使用其他类的函数，则需要指定 blockHandlerClass 为对应的类的 Class 对象，注意对应的函数必需为 static 函数，否则无法解析。</p>
+</li>
+<li><p><strong>fallback</strong></p>
+<p>​    fallback 函数名称，可选项，用于在抛出异常的时候提供 fallback 处理逻辑。fallback 函数可以针对所有类型的异常（除了 exceptionsToIgnore 里面排除掉的异常类型）进行处理。</p>
+</li>
+<li><p><strong>fallbackClass</strong></p>
+<p>fallbackClass的应用和blockHandlerClass类似，fallback 函数默认需要和原方法在同一个类中。若希望使用其他类的函数，则可以指定 fallbackClass 为对应的类的 Class 对象，注意对应的函数必需为 static 函数，否则无法解析。</p>
+</li>
+</ul>
+<h4 id="1-3-8-2-fallback属性"><a href="#1-3-8-2-fallback属性" class="headerlink" title="1.3.8.2 fallback属性"></a>1.3.8.2 fallback属性</h4><p>​    fallback属性 用于在业务发生异常的时候，指定兜底方法，从而完成后续异常处理实现。</p>
+<p><strong>1）修改SentinelUserController</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//资源7</span></span><br><span class="line"><span class="meta">@GetMapping(value = &quot;/hello7&quot;)</span></span><br><span class="line"><span class="meta">@SentinelResource(value = &quot;hello7&quot;, blockHandler = &quot;blockHandler&quot;,fallback = &quot;fallbackHandler&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello7</span><span class="params">(<span class="meta">@RequestParam(&quot;flag&quot;)</span> <span class="keyword">int</span> flag)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i =<span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel7&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义兜底方法，该方法的返回值类型、形参数量、形参类型均与原方法一致</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">fallbackHandler</span><span class="params">(<span class="keyword">int</span> flag)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;业务执行出现异常&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">blockHandler</span><span class="params">(<span class="keyword">int</span> flag, BlockException bk)</span> </span>&#123;</span><br><span class="line">  bk.printStackTrace();</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&quot;blockHandler 被限流了&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>2）浏览器访问测试</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625163036701.png" alt="image-20210625163036701"></p>
+<p><strong>小结：</strong></p>
+<p>若 blockHandler 和 fallback 都进行了配置则：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">*</span> <span class="string">若配置限流操作，达到限流则执行 blockHandler 方法</span></span><br><span class="line"><span class="meta">*</span> <span class="string">若没有达到限流配置，程序出现异常则执行 fallback 方法</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="1-3-8-3-全局使用"><a href="#1-3-8-3-全局使用" class="headerlink" title="1.3.8.3 全局使用"></a>1.3.8.3 全局使用</h4><p>​    有时<strong>多个方法定义相同的异常处理逻辑</strong>，则可以定义全局异常逻辑处理类</p>
+<p><strong>1）定义全局异常处理Handler</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalFallBackHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">fallbackHandler</span><span class="params">(<span class="keyword">int</span> flag)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;业务执行出现异常-全局处理&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2）修改UserController，指定全局异常处理Handler</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(value = &quot;/hello7&quot;)</span></span><br><span class="line"><span class="meta">@SentinelResource(value = &quot;hello7&quot;,fallbackClass = GlobalFallBackHandler.class,fallback = &quot;fallbackHandler&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">hello7</span><span class="params">(<span class="meta">@RequestParam(&quot;flag&quot;)</span> <span class="keyword">int</span> flag)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i =<span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Hello Sentinel7&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>**3）浏览器访问测试 <a target="_blank" rel="noopener" href="http://localhost:8089/user/hello7?flag=1">http://localhost:8089/user/hello7?flag=1</a></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625163408397.png" alt="image-20210625163408397"></p>
+<h3 id="1-3-9-网关限流"><a href="#1-3-9-网关限流" class="headerlink" title="1.3.9 网关限流"></a>1.3.9 网关限流</h3><p>Sentinel提供了与<a target="_blank" rel="noopener" href="https://github.com/alibaba/spring-cloud-alibaba/wiki/Sentinel#spring-cloud-gateway-%E6%94%AF%E6%8C%81">Spring Cloud GateWay</a>的依赖适配，开发者在使用Sentinel时，可以<strong>直接基于网关对后端微服务资源进行逐一规则配置，而不需要在每个微服务中配置，从而简化开发，提升开发效率。</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210426162613686.png" alt="image-20210426162613686"></p>
+<h4 id="1-3-9-1-网关整合Sentinel"><a href="#1-3-9-1-网关整合Sentinel" class="headerlink" title="1.3.9.1 网关整合Sentinel"></a>1.3.9.1 网关整合Sentinel</h4><p><strong>1）网关服务添加依赖</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-nacos-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 监控检查--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- gateway与sentinel适配依赖 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-alibaba-sentinel-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-sentinel<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2）修改网关服务application.yml</strong></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">10010</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">gateway-service</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">default-filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">StripPrefix=1</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">consumer</span> <span class="comment"># 当前路由的唯一标识</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">lb://consumer</span></span><br><span class="line">          <span class="attr">predicates:</span> <span class="comment"># 断言</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/consumer/**</span> <span class="comment"># 按照路径匹配的规则</span></span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">      <span class="attr">transport:</span></span><br><span class="line">        <span class="attr">dashboard:</span> <span class="number">192.168</span><span class="number">.190</span><span class="number">.149</span><span class="string">:8858</span></span><br><span class="line">      <span class="attr">filter:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="number">192.168</span><span class="number">.190</span><span class="number">.149</span><span class="string">:8848</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>3）基于网关访问后端微服务，可以看到sentinel中出现网关服务</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625140208144.png" alt="image-20210625140208144"></p>
+<p><strong>4）网关服务 选择 “请求链路” 定义限流规则</strong></p>
+<p><strong>方式一：根据 route id 设置限流或者是降级规则</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625140423973.png" alt="image-20210625140423973"></p>
+<p><strong>方式二：根据 API分组 设置限流或者是降级规则</strong></p>
+<p>点击 API管理，先添加 API分组</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625140752042.png" alt="image-20210625140752042"></p>
+<p>添加成功：</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625140821639.png" alt="image-20210625140821639"></p>
+<p>设置限流或者降级规则</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625140948601.png" alt="image-20210625140948601"></p>
+<p><strong>5）测试访问限流规则生效</strong></p>
+<p>地址：<a target="_blank" rel="noopener" href="http://localhost:10010/consumer/user/hello2">http://localhost:10010/consumer/user/hello2</a></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625141218809.png" alt="image-20210625141218809"></p>
+<h4 id="1-3-9-2-自定义返回限流数据"><a href="#1-3-9-2-自定义返回限流数据" class="headerlink" title="1.3.9.2 自定义返回限流数据"></a>1.3.9.2 自定义返回限流数据</h4><p>上述返回的数据还是 <code>Blocked by Sentinel: ParamFlowException</code>,  在实际开发中，需要返回友好的提示信息。</p>
+<p>官网地址：<a target="_blank" rel="noopener" href="https://github.com/alibaba/spring-cloud-alibaba/wiki/Sentinel#%E9%85%8D%E7%BD%AE">https://github.com/alibaba/spring-cloud-alibaba/wiki/Sentinel#%E9%85%8D%E7%BD%AE</a></p>
+<p>两种方式：</p>
+<p><strong>方式一</strong>：显示当应用的 <code>ApplicationContext</code> 中存在对应的Bean的类型时，会进行自动化设置：</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210426172839570.png" alt="image-20210426172839570"></p>
+<p>实现：在网关编写一个配置类即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.gateway.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.csp.sentinel.adapter.gateway.sc.callback.BlockRequestHandler;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.csp.sentinel.adapter.gateway.sc.callback.GatewayCallbackManager;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSON;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.server.reactive.ServerHttpResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.reactive.function.server.ServerResponse;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.server.ServerWebExchange;</span><br><span class="line"><span class="keyword">import</span> reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SentinelConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">SentinelConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    GatewayCallbackManager.setBlockHandler(<span class="keyword">new</span> BlockRequestHandler() &#123;</span><br><span class="line"></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title">handleRequest</span><span class="params">(ServerWebExchange serverWebExchange, Throwable throwable)</span> </span>&#123;</span><br><span class="line">        ServerHttpResponse response = serverWebExchange.getResponse();</span><br><span class="line">        response.getHeaders().add(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/json&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//设置返回json数据</span></span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;code&quot;</span>, <span class="string">&quot;502&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;被限流了&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;SentinelConfig 流控.....&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> ServerResponse.status(HttpStatus.TOO_MANY_REQUESTS)</span><br><span class="line">          .body(Mono.just(JSON.toJSONString(map)), String.class);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>方式二</strong>：Spring Cloud Alibaba Sentinel 提供了这些配置选项</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210426172917824.png" alt="image-20210426172917824"></p>
+<p>在网关 application.yml 配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sentinel:</span></span><br><span class="line">  <span class="attr">transport:</span></span><br><span class="line">    <span class="attr">dashboard:</span> <span class="number">192.168</span><span class="number">.206</span><span class="number">.99</span><span class="string">:8858</span></span><br><span class="line">  <span class="attr">filter:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">scg:</span></span><br><span class="line">    <span class="attr">fallback:</span></span><br><span class="line">      <span class="attr">content-type:</span> <span class="string">&quot;application/json&quot;</span></span><br><span class="line">      <span class="attr">response-body:</span> <span class="string">&quot;&#123;\&quot;msg\&quot;: \&quot;访问过快...请稍后重试\&quot;,\&quot;code\&quot;: \&quot;502\&quot;&#125;&quot;</span></span><br><span class="line">      <span class="attr">response-status:</span> <span class="number">502</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">&quot;response&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-10-Sentinel-整合-Feign"><a href="#1-3-10-Sentinel-整合-Feign" class="headerlink" title="1.3.10 Sentinel 整合 Feign"></a>1.3.10 Sentinel 整合 Feign</h3><p>Sentinel 适配了 <a target="_blank" rel="noopener" href="https://github.com/OpenFeign/feign">Feign</a> 组件。如果想使用，除了引入 <code>spring-cloud-starter-alibaba-sentinel</code> 的依赖外还需要 2 个步骤：</p>
+<ul>
+<li>配置文件打开 Sentinel 对 Feign 的支持：<code>feign.sentinel.enabled=true</code></li>
+<li>加入 <code>spring-cloud-starter-openfeign</code> 依赖使 Sentinel starter 中的自动化配置类生效</li>
+</ul>
+<p>实现步骤：</p>
+<p><strong>0）添加feign依赖，在启动类上加feign开关</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--feign依赖--&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableFeignClients</span> <span class="comment">//开启feign支持</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(ConsumerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>1）在 consumer-service服务 application.yml 配置文件开启对feign支持</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">  <span class="attr">sentinel:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2）在consumer-service中定义UserClient.java作为feign接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient(&quot;user-service&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/address/me&quot;)</span></span><br><span class="line">    <span class="function">String <span class="title">myAddress</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3）修改consumer-service的ConsuerController.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserClient userClient;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/address&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getAddress</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.userClient.myAddress();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4）定义 fallback 类实现 feign接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserClientFallback</span> <span class="keyword">implements</span> <span class="title">UserClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">myAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;抱歉：请求超时，请稍后重试&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3）在feign接口中指定  fallback 类</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient(value = &quot;user-service&quot;,fallback = UserClientFallback.class)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>4）请求测试：<a target="_blank" rel="noopener" href="http://localhost:10010/consumer/user/address">http://localhost:10010/consumer/user/address</a></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625144113505.png" alt="image-20210625144113505"></p>
+<p><strong>5）定义限流规则测试</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625144228387.png" alt="image-20210625144228387"></p>
+<blockquote>
+<p>服务提供方也可以整合Sentinel，在user-service服务里设置限流规则。</p>
+</blockquote>
+<p>添加流控</p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625144458456.png" alt="image-20210625144458456"></p>
+<p>访问 <a target="_blank" rel="noopener" href="http://localhost:10010/consumer/user/address%E7%BB%93%E6%9E%9C%EF%BC%9A">http://localhost:10010/consumer/user/address结果：</a></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210625144537202.png" alt="image-20210625144537202"></p>
+<p><strong>Sentinel 使用总结：</strong></p>
+<p><img src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/image-20210426211336363.png" alt="image-20210426211336363"></p>
+<h3 id="1-3-11-规则持久化-了解"><a href="#1-3-11-规则持久化-了解" class="headerlink" title="1.3.11 规则持久化(了解)"></a>1.3.11 规则持久化(了解)</h3><p>​    Sentinel默认会把规则信息保存到内存中，当服务重启之后，规则就会丢失，生产环境下绝对不会这么做。更多时候规则会存储在文件、数据库或者配置中心当中。</p>
+<p>参考官网：<a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel/wiki/%E5%9C%A8%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%AD%E4%BD%BF%E7%94%A8-Sentinel">生产环境中使用Sentinel</a></p>
+<p>阿里云AHAS：<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/110599.html?spm=a2c4g.11186623.6.591.1c3c27f92FJf7P">应用防护接入</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/05/23/SpringCloud-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4-sentinel/">http://example.com/2022/05/23/SpringCloud-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4-sentinel/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/SpringCloud/">SpringCloud</a><a class="post-meta__tags" href="/tags/Sentinel/">Sentinel</a></div><div class="post_share"><div class="social-share" data-image="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A22.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/05/23/numpy-%E6%A6%82%E8%BF%B0/"><img class="prev-cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/numpy-pandas-matplotlib/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">numpy-概述</div></div></a></div><div class="next-post pull-right"><a href="/2022/05/22/tf2%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8BAPI%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"><img class="next-cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/tf_objection_detection/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">tf2目标检测API环境配置</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/05/21/SpringCloud-Nacos/" title="SpringCloud-Nacos"><img class="cover" src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A21.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-21</div><div class="title">SpringCloud-Nacos</div></div></a></div><div><a href="/2022/05/21/SpringCloud-2/" title="SpringCloud-2"><img class="cover" src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-21</div><div class="title">SpringCloud-2</div></div></a></div><div><a href="/2022/05/18/SpringCloud-1/" title="SpringCloud-1"><img class="cover" src="/img/java/05%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/04-SpringCloud/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-18</div><div class="title">SpringCloud-1</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.</span> <span class="toc-text">1 系统保护</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 为什么需要系统保护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 技术选型对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-Sentinel%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 Sentinel使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1-%E6%A6%82%E8%BF%B0"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.3.1 概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2-Sentinel%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">1.3.2 Sentinel快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-2-1-Sentinel%E6%8E%A7%E5%88%B6%E5%8F%B0%E5%AE%89%E8%A3%85"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">1.3.2.1 Sentinel控制台安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-2-2-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8E%A5%E5%85%A5Sentinel"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">1.3.2.2 微服务接入Sentinel</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-3-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E8%A7%84%E5%88%99"><span class="toc-number">1.3.3.</span> <span class="toc-text">1.3.3 流量控制规则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-3-1-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">1.3.3.1 流量控制介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-3-2-%E9%98%88%E5%80%BC%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">1.3.3.2 阈值类型</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-2-1-QPS"><span class="toc-number">1.3.3.2.1.</span> <span class="toc-text">1.3.3.2.1 QPS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-2-2-%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="toc-number">1.3.3.2.2.</span> <span class="toc-text">1.3.3.2.2 线程数</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-3-3-%E6%B5%81%E6%8E%A7%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">1.3.3.3 流控模式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-3-1-%E7%9B%B4%E6%8E%A5"><span class="toc-number">1.3.3.3.1.</span> <span class="toc-text">1.3.3.3.1 直接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-3-2-%E5%85%B3%E8%81%94"><span class="toc-number">1.3.3.3.2.</span> <span class="toc-text">1.3.3.3.2 关联</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-3-3-%E9%93%BE%E8%B7%AF"><span class="toc-number">1.3.3.3.3.</span> <span class="toc-text">1.3.3.3.3 链路</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-3-4-%E6%B5%81%E6%8E%A7%E6%95%88%E6%9E%9C"><span class="toc-number">1.3.3.4.</span> <span class="toc-text">1.3.3.4 流控效果</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-4-1-%E5%BF%AB%E9%80%9F%E5%A4%B1%E8%B4%A5"><span class="toc-number">1.3.3.4.1.</span> <span class="toc-text">1.3.3.4.1 快速失败</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-4-2-WarmUp"><span class="toc-number">1.3.3.4.2.</span> <span class="toc-text">1.3.3.4.2 WarmUp</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#1-3-3-4-3-%E6%8E%92%E9%98%9F%E7%AD%89%E5%BE%85"><span class="toc-number">1.3.3.4.3.</span> <span class="toc-text">1.3.3.4.3 排队等待</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-4-%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7%E8%A7%84%E5%88%99"><span class="toc-number">1.3.4.</span> <span class="toc-text">1.3.4 熔断降级规则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-4-1-%E7%86%94%E6%96%AD%E9%99%8D%E7%BA%A7%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">1.3.4.1 熔断降级介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-4-2-%E6%A0%B9%E6%8D%AE%E5%B9%B3%E5%9D%87%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E9%99%8D%E7%BA%A7"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">1.3.4.2 根据平均响应时间降级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-4-3-%E6%A0%B9%E6%8D%AE%E5%BC%82%E5%B8%B8%E6%AF%94%E4%BE%8B%E9%99%8D%E7%BA%A7"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">1.3.4.3 根据异常比例降级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-4-4-%E6%A0%B9%E6%8D%AE%E5%BC%82%E5%B8%B8%E6%95%B0%E9%99%8D%E7%BA%A7"><span class="toc-number">1.3.4.4.</span> <span class="toc-text">1.3.4.4 根据异常数降级</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-5-%E7%B3%BB%E7%BB%9F%E4%BF%9D%E6%8A%A4%E8%A7%84%E5%88%99"><span class="toc-number">1.3.5.</span> <span class="toc-text">1.3.5 系统保护规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-6-%E7%83%AD%E7%82%B9%E8%A7%84%E5%88%99"><span class="toc-number">1.3.6.</span> <span class="toc-text">1.3.6 热点规则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-6-1-%E7%83%AD%E7%82%B9%E5%8F%82%E6%95%B0%E9%99%90%E6%B5%81%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">1.3.6.1 热点参数限流介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-6-2-%E5%8F%82%E6%95%B0%E4%BD%8D%E9%99%90%E6%B5%81"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">1.3.6.2 参数位限流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-6-3-%E5%8F%82%E6%95%B0%E5%80%BC%E9%99%90%E6%B5%81"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">1.3.6.3 参数值限流</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-7-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E8%A7%84%E5%88%99"><span class="toc-number">1.3.7.</span> <span class="toc-text">1.3.7 访问控制规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-8-%E6%B3%A8%E8%A7%A3%E6%96%B9%E5%BC%8F%E5%AE%9A%E4%B9%89%E8%B5%84%E6%BA%90"><span class="toc-number">1.3.8.</span> <span class="toc-text">1.3.8 注解方式定义资源</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-8-1-%E6%B3%A8%E8%A7%A3-SentinelResource%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.8.1.</span> <span class="toc-text">1.3.8.1 注解@SentinelResource介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-8-2-fallback%E5%B1%9E%E6%80%A7"><span class="toc-number">1.3.8.2.</span> <span class="toc-text">1.3.8.2 fallback属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-8-3-%E5%85%A8%E5%B1%80%E4%BD%BF%E7%94%A8"><span class="toc-number">1.3.8.3.</span> <span class="toc-text">1.3.8.3 全局使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-9-%E7%BD%91%E5%85%B3%E9%99%90%E6%B5%81"><span class="toc-number">1.3.9.</span> <span class="toc-text">1.3.9 网关限流</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-9-1-%E7%BD%91%E5%85%B3%E6%95%B4%E5%90%88Sentinel"><span class="toc-number">1.3.9.1.</span> <span class="toc-text">1.3.9.1 网关整合Sentinel</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-9-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%BF%94%E5%9B%9E%E9%99%90%E6%B5%81%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.9.2.</span> <span class="toc-text">1.3.9.2 自定义返回限流数据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-10-Sentinel-%E6%95%B4%E5%90%88-Feign"><span class="toc-number">1.3.10.</span> <span class="toc-text">1.3.10 Sentinel 整合 Feign</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-11-%E8%A7%84%E5%88%99%E6%8C%81%E4%B9%85%E5%8C%96-%E4%BA%86%E8%A7%A3"><span class="toc-number">1.3.11.</span> <span class="toc-text">1.3.11 规则持久化(了解)</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

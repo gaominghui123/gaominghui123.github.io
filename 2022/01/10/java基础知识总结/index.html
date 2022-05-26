@@ -1,0 +1,495 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>java基础知识总结 | Jason</title><meta name="keywords" content="java基础"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="主要包括： 1234567891 java 基础概述2 类型转换以及常用运算符3 程序流程控制4 数组5 方法6 debug7 对象的学习8 常用API9 String以及ArrayList  具体如下思维导图 总结以及对应的每一章博客查看详细学习内容。  学好java，不要着急，稳扎稳打， 1234567891 虽然说没有回顾时间， 但是每次学之前还是要回顾一下前一天的知识（看ppt，pdf，或">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础知识总结">
+<meta property="og:url" content="http://example.com/2022/01/10/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="主要包括： 1234567891 java 基础概述2 类型转换以及常用运算符3 程序流程控制4 数组5 方法6 debug7 对象的学习8 常用API9 String以及ArrayList  具体如下思维导图 总结以及对应的每一章博客查看详细学习内容。  学好java，不要着急，稳扎稳打， 1234567891 虽然说没有回顾时间， 但是每次学之前还是要回顾一下前一天的知识（看ppt，pdf，或">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif">
+<meta property="article:published_time" content="2022-01-10T04:08:10.000Z">
+<meta property="article:modified_time" content="2022-03-02T10:49:51.520Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/01/10/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java基础知识总结',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-02 18:49:51'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">135</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">179</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java基础知识总结</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-10T04:08:10.000Z" title="发表于 2022-01-10 12:08:10">2022-01-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-02T10:49:51.520Z" title="更新于 2022-03-02 18:49:51">2022-03-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/java/">java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java基础知识总结"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>主要包括：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">java 基础概述</span></span><br><span class="line"><span class="attr">2</span> <span class="string">类型转换以及常用运算符</span></span><br><span class="line"><span class="attr">3</span> <span class="string">程序流程控制</span></span><br><span class="line"><span class="attr">4</span> <span class="string">数组</span></span><br><span class="line"><span class="attr">5</span> <span class="string">方法</span></span><br><span class="line"><span class="attr">6</span> <span class="string">debug</span></span><br><span class="line"><span class="attr">7</span> <span class="string">对象的学习</span></span><br><span class="line"><span class="attr">8</span> <span class="string">常用API</span></span><br><span class="line"><span class="attr">9</span> <span class="string">String以及ArrayList</span></span><br></pre></td></tr></table></figure>
+
+<p>具体如下思维导图 总结以及对应的每一章博客查看详细学习内容。</p>
+<ul>
+<li><p>学好java，不要着急，稳扎稳打，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1 虽然说没有回顾时间， 但是每次学之前还是要回顾一下前一天的知识</span><br><span class="line">（看ppt，pdf，或者看思维导图。一边看一边回顾）</span><br><span class="line">挑着敲一下昨天学习的代码！！！</span><br><span class="line"></span><br><span class="line">2 而且学习的过程要多问为什么？？怎么做？？有什么作用</span><br><span class="line">（拿封装举例子，看你还记不记得哈）</span><br><span class="line"></span><br><span class="line">3 学习不能只注重细枝末节，虽然说细枝末节很重要，但是知识的体系化，</span><br><span class="line">还有知识之间的因果逻辑，当开发到一定程度之后，更重要！！！	</span><br></pre></td></tr></table></figure></li>
+<li><h1 id="day01：Java基础概述"><a href="#day01：Java基础概述" class="headerlink" title="day01：Java基础概述"></a>day01：Java基础概述</h1><ul>
+<li><h2 id="java入门"><a href="#java入门" class="headerlink" title="java入门"></a>java入门</h2><ul>
+<li><p>JDK介绍与安装</p>
+</li>
+<li><p>HelloWorld代码的编写，编译，运行</p>
+</li>
+<li><p>配置path环境变量</p>
+</li>
+</ul>
+</li>
+<li><h3 id="IntelliJ-IDEA工具的使用"><a href="#IntelliJ-IDEA工具的使用" class="headerlink" title="IntelliJ IDEA工具的使用"></a>IntelliJ IDEA工具的使用</h3></li>
+<li><h2 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h2><ul>
+<li><h3 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h3><ul>
+<li><p>注释几种</p>
+<ul>
+<li><p>1、单行：// …..</p>
+</li>
+<li><p>2、多行：/* 注释内容可以多行 */ </p>
+</li>
+<li><p>3、文档：/** 注释内容可以多行 */ </p>
+<ul>
+<li>一般用在类上，方法上</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="字面量"><a href="#字面量" class="headerlink" title="字面量"></a>字面量</h3></li>
+<li><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ul>
+<li><p>内存中的一块数据区域，可以理解成盒子，可以装一个数据</p>
+</li>
+<li><p>怎么定义？</p>
+<ul>
+<li><p>数据类型 变量名称 = 初始值;</p>
+<ul>
+<li><p>int age = 21;</p>
+</li>
+<li><p>double money = 6.0;</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>变量的核心点</p>
+<ul>
+<li><p>装数据的</p>
+</li>
+<li><p>里面的数据可以改变</p>
+<ul>
+<li>=进行赋值，从右边往左执行</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>变量的注意事项</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">什么类型的变量只能存放什么类型的字面量</span></span><br><span class="line"><span class="attr">2</span> <span class="string">变量存在作用范围，从定义开始到截止</span></span><br><span class="line"><span class="attr">3</span> <span class="string">变量定义时可以没有初始化值，但是使用前必须有初始化值。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><ul>
+<li><p>作用：用于定义变量的，然后约束变量只能存储什么类型的数据</p>
+</li>
+<li><p>数据类型分类：</p>
+<p>1 引用数据类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">比如：String。不是基本数据类型就是引用数据类型</span><br></pre></td></tr></table></figure>
+
+<p>2 基本数据类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4</span>类，<span class="number">8</span>种</span><br><span class="line"></span><br><span class="line">- 整型</span><br><span class="line"></span><br><span class="line">  - <span class="number">1</span> <span class="keyword">byte</span>:字节型</span><br><span class="line">    - 占<span class="number">1</span>个字节</span><br><span class="line">      - -<span class="number">128</span> - <span class="number">127</span></span><br><span class="line"></span><br><span class="line">  - <span class="number">2</span> <span class="keyword">short</span>短整型</span><br><span class="line">    - 占<span class="number">2</span>个字节</span><br><span class="line"></span><br><span class="line">  - <span class="number">3</span> <span class="keyword">int</span> 整型(默认)</span><br><span class="line">    - 占<span class="number">4</span>个字节</span><br><span class="line"></span><br><span class="line">  - <span class="number">4</span> <span class="keyword">long</span>长整型</span><br><span class="line">    - 占<span class="number">8</span>个字节</span><br><span class="line"></span><br><span class="line">- 浮点型（小数）</span><br><span class="line"></span><br><span class="line">  - <span class="number">5</span> <span class="keyword">float</span>单精度</span><br><span class="line">    - 占<span class="number">4</span>个字节</span><br><span class="line"></span><br><span class="line">  - <span class="number">6</span> <span class="keyword">double</span>双精度</span><br><span class="line">    - 占<span class="number">8</span>个字节</span><br><span class="line"></span><br><span class="line">- 字符型</span><br><span class="line">  - <span class="number">7</span> <span class="keyword">char</span></span><br><span class="line"></span><br><span class="line">- 布尔型</span><br><span class="line">  - <span class="number">8</span> <span class="keyword">boolean</span></span><br></pre></td></tr></table></figure></li>
+<li><p>注意</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-</span> <span class="string">随便写整数，默认是int类型，要当成long 加L 或者 l</span></span><br><span class="line"><span class="meta">-</span> <span class="string">随便写小数，默认是double类型，要当成float 加F 或者 f</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h3 id="ASCII编码表"><a href="#ASCII编码表" class="headerlink" title="ASCII编码表"></a>ASCII编码表</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;0&#x27;</span>-<span class="string">&#x27;9&#x27;</span> 对应：<span class="number">48</span>-<span class="number">57</span></span><br><span class="line"><span class="string">&#x27;A&#x27;</span>-<span class="string">&#x27;B&#x27;</span> 对应：<span class="number">65</span>-<span class="number">90</span></span><br><span class="line"><span class="string">&#x27;a&#x27;</span>-<span class="string">&#x27;z&#x27;</span> 对应：<span class="number">97</span>-<span class="number">122</span></span><br></pre></td></tr></table></figure></li>
+<li><h3 id="关键字、标志符"><a href="#关键字、标志符" class="headerlink" title="关键字、标志符"></a>关键字、标志符</h3></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h1 id="day02-类型转换以及常用运算符以及API的下载以及查看并使用"><a href="#day02-类型转换以及常用运算符以及API的下载以及查看并使用" class="headerlink" title="day02 类型转换以及常用运算符以及API的下载以及查看并使用"></a>day02 类型转换以及常用运算符以及API的下载以及查看并使用</h1><ul>
+<li><h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><ul>
+<li><h3 id="自动"><a href="#自动" class="headerlink" title="自动"></a>自动</h3><ul>
+<li><p><strong>1 赋值过程中自动类型转换</strong>：类型范围小的变量，可以直接赋值给类型范围大的变量<br>byte     char  short     int     long     float    double</p>
+</li>
+<li><p><strong>2 表达式中的自动类型转换</strong>：小范围类型的变量会自动转换成当前较大范围的类型再运算。byte 、short、char      int    long     float     double</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- 注意：</span><br><span class="line"><span class="number">1</span> 表达式的最终结果类型由表达式中的最高类型决定。</span><br><span class="line"></span><br><span class="line">- <span class="number">2</span> 在表达式中，<span class="keyword">byte</span>、<span class="keyword">short</span>、<span class="keyword">char</span></span><br><span class="line">	是直接转换成<span class="keyword">int</span>类型参与运算的</span><br><span class="line">如：</span><br><span class="line"><span class="keyword">byte</span> i = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">byte</span> j = <span class="number">30</span>;</span><br><span class="line"><span class="keyword">byte</span> k = j+i;</span><br><span class="line">结果是：i,j,k三个变量都是<span class="keyword">int</span>型，</span><br><span class="line">虽然前面i，j定义是<span class="keyword">byte</span>类型。</span><br><span class="line">但是因为赋值时为<span class="number">20</span>，默认为<span class="keyword">int</span>，所以i，j都是<span class="keyword">int</span>类型。</span><br><span class="line">因此第三条语句运算时，赋值语句报错；</span><br><span class="line">必须要强制类型转换 <span class="keyword">byte</span> k = (<span class="keyword">byte</span>)(i+j);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h3 id="3-赋值中强制类型转换："><a href="#3-赋值中强制类型转换：" class="headerlink" title="3 赋值中强制类型转换："></a>3 赋值中强制类型转换：</h3></li>
+<li><p>格式：数据类型 变量2 = (数据类型)变量1、数据</p>
+</li>
+<li><p>注意事项：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 类型范围大的数据或者变量，直接赋值给类型范围小的变量，会报错。</span><br><span class="line">2  强制类型转换可能造成数据(丢失)溢出；</span><br><span class="line">3 浮点型强转成整型，直接丢掉小数部分，保留整数部分返回。</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><h2 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h2><p>注意事项</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-</span> <span class="string">1 ：int/int结果是int</span></span><br><span class="line"><span class="meta">-</span> <span class="string">2 ：String类型做加法运算</span></span><br><span class="line">  <span class="attr">能算则算，不能算就在一起</span></span><br><span class="line"><span class="meta">-</span> <span class="string">3 ：&amp;，|，^!既可以是逻辑运算符也可以是位运算法</span></span><br><span class="line"><span class="meta">-</span> <span class="string">4：短路逻辑运算符：&amp;&amp;，||</span></span><br><span class="line">    <span class="attr">&amp;&amp;的判断结果与“&amp;”一样。</span></span><br><span class="line">    <span class="meta">但是左边为</span> <span class="string">false，右边则不执行，</span></span><br><span class="line">	<span class="attr">而&amp;的话，两边都会执行</span></span><br><span class="line"> 	<span class="attr">||与|运算的区别同理。</span></span><br><span class="line"><span class="meta">-</span> <span class="string">5：注意：实际开发中、常用的逻辑运算符还是：&amp;&amp; 、 || 、 !</span></span><br><span class="line"><span class="meta">-</span> <span class="string">6：三元运算符：求三者最值（不会这么写，但是看到代码要会解读）</span></span><br><span class="line">        <span class="meta">求i,j,k三者最大值：int</span> <span class="string">max = i&gt;j?i&gt;k?i:k:j&gt;k?j:k;</span></span><br><span class="line">        <span class="meta">解读：</span> <span class="string">int max = i&gt;j?  （ i&gt;k?i:k ） : (j&gt;k?j:k );  </span></span><br><span class="line">  <span class="meta">​</span>      <span class="string">也就是i 大于j，那么i就和k对比取最大值，否则。。。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><strong>优先级：</strong>尤其要注意这里，&amp;&amp;要大于双 ||<br>优先级高的就先结合。</li>
+</ul>
+</li>
+<li><h2 id="API的下载以及查看并使用"><a href="#API的下载以及查看并使用" class="headerlink" title="API的下载以及查看并使用"></a>API的下载以及查看并使用</h2><ul>
+<li>1 如何在官网上下载api</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">百度搜索Oracle，进入官网，Products，java，</span></span><br><span class="line"><span class="attr">往下拉，download，可以看到一个是JDK下载，</span></span><br><span class="line"><span class="attr">一个是Documentation文档下载。</span></span><br><span class="line"><span class="attr">点击进去就可以下载了，有四十几个M。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>​      2 如何根据下载了的api通过浏览器查看api</p>
+  <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">中下载了zip文件，解压，进去，</span></span><br><span class="line"><span class="attr">浏览器打开index.html就可以查看了。</span></span><br><span class="line"><span class="attr">利用右上角的搜索功能。根据关键字，</span></span><br><span class="line"><span class="attr">可以显示匹配的模块，包，类和接口，还有成员变量。方便的狠！！！</span></span><br></pre></td></tr></table></figure>
+
+<p>  注意：</p>
+  <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">务必保持解压后的文件夹docs里面的所有文件结构</span></span><br><span class="line">	<span class="attr">不能改变，删除，否则浏览器查看api时会受影响。</span></span><br><span class="line"><span class="attr">2</span> <span class="string">我们实际上使用类时不用下载，因为java 开发环境（JDK）</span></span><br><span class="line">	<span class="attr">就已经有api了，我们只需要会看下载了的api，</span></span><br><span class="line">	<span class="attr">能自己正确把类导进来使用就ok了</span></span><br></pre></td></tr></table></figure>
+<p>  ​    </p>
+<ul>
+<li><h1 id="day03程序流程控制"><a href="#day03程序流程控制" class="headerlink" title="day03程序流程控制"></a>day03程序流程控制</h1><ul>
+<li><p>1 默认顺序结构</p>
+</li>
+<li><p>2 分支结构：if，switch</p>
+</li>
+</ul>
+</li>
+<li><p>if：三种格式</p>
+</li>
+<li><p>switch：</p>
+<ul>
+<li>适合做值匹配的分支选择，结构清晰，格式良好</li>
+<li>表达式类型：byte，short，int，char，String，不能是double，float，long</li>
+<li>穿透现象：没有break语句。</li>
+</ul>
+</li>
+<li><p>3 循环：while，for，dowhile。</p>
+</li>
+<li><p>跳转关键词：break，continue</p>
+</li>
+<li><p>知道循环几次：使用for；不知道循环几次建议使用：while</p>
+</li>
+<li><p>拓展：break 使用 OUT关键字 有跳出最外层循环的用法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> k=<span class="number">0</span>;k&lt;=<span class="number">1</span>;k++)&#123;</span><br><span class="line">    OUT:</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= <span class="number">5</span>; j++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我爱你~~&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span>(i == <span class="number">2</span> &amp;&amp; j == <span class="number">3</span>)&#123;</span><br><span class="line">                <span class="keyword">break</span> OUT;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;-----------------&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    	<span class="comment">//continue 也可以使用OUT关键字。如下，i从新从3开始来过。</span></span><br><span class="line">        <span class="keyword">if</span>(i == <span class="number">2</span> &amp;&amp; j == <span class="number">3</span>)&#123;</span><br><span class="line">            <span class="keyword">continue</span> OUT;&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>4 Random类</p>
+<ul>
+<li>借用Random类的使用(导包，实例化，调用实例的方法），</li>
+<li>顺便介绍了API的查看，使用。</li>
+<li>nextInt(n):生成：0 – (n-1)之间的随机数。<br>然后利用加减法技巧，生成区间随机数。</li>
+<li>对比Math的静态方法：public static double random() 返回 [0.0-1.0) 随机数。</li>
+</ul>
+</li>
+<li><h1 id="day04：数组"><a href="#day04：数组" class="headerlink" title="day04：数组"></a>day04：数组</h1><p>数组属于<strong>引用数据类型</strong>，不属于八大基本数据 类型</p>
+<ul>
+<li><p>1：定义</p>
+<ul>
+<li><p>1 静态初始化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> []nums = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或：int nums[]=new int[]{1,2,3}推荐上面一个<br>或：int[]nums = {1,2,3}</p>
+</li>
+<li><p>2 动态初始化：</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[]nums = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>默认值，0,0.0，false，null</p>
+</li>
+<li><p>注意：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arrs = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>]&#123;<span class="number">30</span>，<span class="number">40</span>,<span class="number">50</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>是错误的，千万不能动态跟静态一起混用。</p>
+<ul>
+<li><p>2：访问，遍历</p>
+</li>
+<li><p>3：长度：.length参数。</p>
+</li>
+<li><p>4 数组的内存图</p>
+<ul>
+<li><p><strong>方法区</strong></p>
+<ul>
+<li>放类信息class文件</li>
+</ul>
+</li>
+<li><p><strong>栈内存</strong></p>
+<ul>
+<li>方法执行的区域，变量存储的区域</li>
+</ul>
+</li>
+<li><p><strong>堆内存</strong></p>
+<ul>
+<li>new出来的东西都在这里，如数组对象，主要是引用类型数据存放的地方。</li>
+</ul>
+</li>
+<li><p>参见PPT</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h1 id="day05：方法"><a href="#day05：方法" class="headerlink" title="day05：方法"></a>day05：方法</h1><ul>
+<li><p><strong>定义格式</strong>：修饰符，返回类型，函数名，形参列表,函数体</p>
+</li>
+<li><p><strong>调用</strong>（讲到了debug动能）</p>
+</li>
+<li><p><strong>return</strong>：<br>当有返回值时，一定要有：return 对应返回类型；</p>
+</li>
+<li><p><strong>内存图</strong></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-</span> <span class="string">1 没被调用时：方法区中</span></span><br><span class="line"><span class="meta">-</span> <span class="string">2 被调用时：栈内存中</span></span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>参数从传递机制</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">形参：方法定义时的变量</span><br><span class="line">实参：在方法内部定义的变量。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>传递类型</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 1 基本类型：传输存储的数据值</span><br><span class="line">- 2 引用类型：传输存储的地址值</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>方法重载：</strong>（前提是同一个类中）</p>
+<pre><code>        方法名相同，不管修饰符以及返回类型，只要形参列表的数量，顺序，
+</code></pre>
+<p>类型有一个不同<br>  ​        <strong>作用：</strong>相似功能，但又不完全相同的这么一个方法，</p>
+<p>​        <strong>与方法重写区别：</strong>要区分开方法重写（父子类重写方法）的概念。</p>
+</li>
+<li><p><strong>单独return关键字：</strong><br>  可以放在任何地方，直接结束方法</p>
+</li>
+<li><h1 id="day06：编程思维训练。"><a href="#day06：编程思维训练。" class="headerlink" title="day06：编程思维训练。"></a>day06：编程思维训练。</h1><p>就是简单的八个案例，没什么可看的。可以回去看着ppt敲一敲代码。</p>
+</li>
+<li><h1 id="day07：对象的学习"><a href="#day07：对象的学习" class="headerlink" title="day07：对象的学习"></a>day07：对象的学习</h1><ul>
+<li><p><strong>学习重点</strong>：前期设计并使用，后期主要是获取并使用</p>
+</li>
+<li><p><strong>类的定义</strong>（成员变量，成员方法，构造器，代码块，内部类）今天只学前面两部分。</p>
+</li>
+<li><p><strong>成员变量的默认值规则</strong></p>
+</li>
+<li><p><strong>多个对象内存图</strong>：对象，对象变量，成员变量位置。</p>
+</li>
+<li><p><strong>垃圾回收</strong>：自动帮你回收了的，不用管。</p>
+</li>
+<li><p><strong>构造器</strong>：有参与无参数。</p>
+</li>
+<li><p><strong>this关键字</strong>：代表当前对象地址；存在于构造方法和成员方法中<br>目的就是为了解决局部变量跟成员变量同名的问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this代表的是本类对象的引用</span><br><span class="line">在构造方法中 , this代表的是new的对象</span><br><span class="line">在成员方法中 , this代表的是调用此方法的对象</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>封装</strong>：为什么，实现步骤，作用</p>
+</li>
+<li><p>alt+insert：添加getter跟setter方法。</p>
+</li>
+<li><p><strong>标准JavaBean</strong>：必须满足的三条件</p>
+</li>
+<li><p>成员变量与局部变量：五个角度来分析不同！！！</p>
+</li>
+</ul>
+ <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-</span> <span class="string">从 在类中位置，</span></span><br><span class="line"><span class="meta">-</span> <span class="string">初始化值，</span></span><br><span class="line"><span class="meta">-</span> <span class="string">内存位置，</span></span><br><span class="line"><span class="meta">-</span> <span class="string">生命周期，</span></span><br><span class="line"><span class="meta">-</span> <span class="string">作用域 </span></span><br></pre></td></tr></table></figure>
+
+</li>
+<li><h1 id="day08：String以及ArrayList"><a href="#day08：String以及ArrayList" class="headerlink" title="day08：String以及ArrayList"></a>day08：String以及ArrayList</h1><ul>
+<li><h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><ul>
+<li><p>1 不可变</p>
+</li>
+<li><p>2  两创建方式（推荐使用第一种方式）</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- 1 直接“”赋值</span><br><span class="line">- 2 四种构造器</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>区别：</strong>方式1 字符串常量池中存储同一个，而构造器方式会在堆内存中分开存储 </p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>3 **==**问题</p>
+<pre><code>判断原则：如果是同一个对象，也就是内容与地址都相等，那么就相等
+</code></pre>
+</li>
+<li><p>4 只关心内容一样，使用<strong>equals</strong>方法。</p>
+</li>
+<li><p><strong>5 常用API</strong>（使用时忘记了可以去看api）这里只大概记得有什么功能就好。</p>
+</li>
+<li><p><strong>6 三个案例</strong></p>
+<p>可以敲一敲，逻辑很简单，就是要锻炼代码编写风格，熟悉string’类。熟悉一些小模块代码。</p>
+<ul>
+<li>1 随机生成5个验证码</li>
+<li>2 模拟登录</li>
+<li>3 手机号码屏蔽</li>
+</ul>
+</li>
+<li><h2 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h2><ul>
+<li><p><strong>1 特点：</strong></p>
+<p>长度不固定，类型也可以不固定，然后具有丰富api</p>
+</li>
+<li><p><strong>2 创建以及添加元素等api</strong></p>
+</li>
+<li><p>增删改查：add，remove，set，get</p>
+</li>
+<li><p><strong>3ArrayList对于泛型的支持&lt;类型&gt;</strong><br>  在编译阶段约束集合对象只能操作某种数据类型<br>  集合中 存储的元素并不是对象本身，而是对象的地址 因此：</p>
+</li>
+<li><p><strong>4 注意：集合中只能存储引用类型，不支持基本数据类型</strong><br>  如：可以是Integer但不可int。可以是Character不可以char，</p>
+</li>
+<li><p>也可以是String，TreeNode等引用类型。</p>
+</li>
+<li><p><strong>5 ArrayList集合案例</strong></p>
+<ul>
+<li><p><strong>1 遍历并且删除</strong><br>  注意：遍历删除应该从后面遍历，前面遍历删除时，<br>  ​后面元素的下标都会改变，有可能漏删</p>
+</li>
+<li><p><strong>2 存储自定义类型。</strong><br>  泛型用的是我们自定义的数据类型。敲一敲代码</p>
+</li>
+<li><p><strong>3 元素搜索</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h1 id="day09-实战项目：ATMSystem"><a href="#day09-实战项目：ATMSystem" class="headerlink" title="day09:实战项目：ATMSystem"></a>day09:实战项目：ATMSystem</h1><ul>
+<li>有时间好好敲一下代码。按照ppt给的顺序，逻辑，一步步来写，一个一个模块功能慢慢实现，对于整个工程思维的构建，编程思想的培养很有帮助。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80%E7%8F%AD.png" alt="00阶段java基础班"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/01/10/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/">http://example.com/2022/01/10/java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java%E5%9F%BA%E7%A1%80/">java基础</a></div><div class="post_share"><div class="social-share" data-image="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/01/10/STM32MP157x-DK2%E5%BC%80%E5%8F%91demo%E6%9D%BF%E5%AD%90/"><img class="prev-cover" src="/img/OpenSTLinux/OpenSTLinux.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">STM32MP157x-DK2开发demo板子</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/02/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F/"><img class="next-cover" src="/img/it.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">归并排序</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-ArrayList%E9%9B%86%E5%90%88%E4%B9%8B%E5%AD%A6%E7%94%9F%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F-%E7%BB%83%E6%89%8B/" title="java基础-ArrayList集合之学生管理系统-练手"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-ArrayList集合之学生管理系统-练手</div></div></a></div><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-%E6%95%B0%E7%BB%84/" title="java基础-数组"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-数组</div></div></a></div><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" title="java基础-面向对象"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-面向对象</div></div></a></div><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-Debug%E4%BB%A5%E5%8F%8A%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0/" title="java基础-Debug以及基础练习"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-Debug以及基础练习</div></div></a></div><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-ATM%E7%B3%BB%E7%BB%9F%E9%A1%B9%E7%9B%AE/" title="java基础-ATM系统项目"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-ATM系统项目</div></div></a></div><div><a href="/2022/01/10/java%E5%9F%BA%E7%A1%80-%E5%B8%B8%E7%94%A8API/" title="java基础-常用API"><img class="cover" src="/img/java/00%E9%98%B6%E6%AE%B5java%E5%9F%BA%E7%A1%80/%E5%B0%81%E9%9D%A2.gif" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-01-10</div><div class="title">java基础-常用API</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#day01%EF%BC%9AJava%E5%9F%BA%E7%A1%80%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">day01：Java基础概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%85%A5%E9%97%A8"><span class="toc-number">1.1.</span> <span class="toc-text">java入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IntelliJ-IDEA%E5%B7%A5%E5%85%B7%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">IntelliJ IDEA工具的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java%E5%9F%BA%E7%A1%80"><span class="toc-number">1.2.</span> <span class="toc-text">Java基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E9%87%8A"><span class="toc-number">1.2.1.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E9%9D%A2%E9%87%8F"><span class="toc-number">1.2.2.</span> <span class="toc-text">字面量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.3.</span> <span class="toc-text">变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.2.4.</span> <span class="toc-text">数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ASCII%E7%BC%96%E7%A0%81%E8%A1%A8"><span class="toc-number">1.2.5.</span> <span class="toc-text">ASCII编码表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E3%80%81%E6%A0%87%E5%BF%97%E7%AC%A6"><span class="toc-number">1.2.6.</span> <span class="toc-text">关键字、标志符</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day02-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E4%BB%A5%E5%8F%8A%E5%B8%B8%E7%94%A8%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BB%A5%E5%8F%8AAPI%E7%9A%84%E4%B8%8B%E8%BD%BD%E4%BB%A5%E5%8F%8A%E6%9F%A5%E7%9C%8B%E5%B9%B6%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">day02 类型转换以及常用运算符以及API的下载以及查看并使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.1.</span> <span class="toc-text">类型转换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8"><span class="toc-number">2.1.1.</span> <span class="toc-text">自动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B5%8B%E5%80%BC%E4%B8%AD%E5%BC%BA%E5%88%B6%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%EF%BC%9A"><span class="toc-number">2.1.2.</span> <span class="toc-text">3 赋值中强制类型转换：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">2.2.</span> <span class="toc-text">运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#API%E7%9A%84%E4%B8%8B%E8%BD%BD%E4%BB%A5%E5%8F%8A%E6%9F%A5%E7%9C%8B%E5%B9%B6%E4%BD%BF%E7%94%A8"><span class="toc-number">2.3.</span> <span class="toc-text">API的下载以及查看并使用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day03%E7%A8%8B%E5%BA%8F%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">day03程序流程控制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day04%EF%BC%9A%E6%95%B0%E7%BB%84"><span class="toc-number">4.</span> <span class="toc-text">day04：数组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day05%EF%BC%9A%E6%96%B9%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">day05：方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day06%EF%BC%9A%E7%BC%96%E7%A8%8B%E6%80%9D%E7%BB%B4%E8%AE%AD%E7%BB%83%E3%80%82"><span class="toc-number">6.</span> <span class="toc-text">day06：编程思维训练。</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day07%EF%BC%9A%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%AD%A6%E4%B9%A0"><span class="toc-number">7.</span> <span class="toc-text">day07：对象的学习</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day08%EF%BC%9AString%E4%BB%A5%E5%8F%8AArrayList"><span class="toc-number">8.</span> <span class="toc-text">day08：String以及ArrayList</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#String"><span class="toc-number">8.1.</span> <span class="toc-text">String</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArrayList"><span class="toc-number">8.2.</span> <span class="toc-text">ArrayList</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#day09-%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE%EF%BC%9AATMSystem"><span class="toc-number">9.</span> <span class="toc-text">day09:实战项目：ATMSystem</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

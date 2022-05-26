@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>本人对边缘计算的拙见 | Jason</title><meta name="keywords" content="边缘计算"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="对边缘计算一些小看法，小总结最近看完了《一本书读懂边缘计算》这本书，总结总结，希望通过我这篇博客，能把读者讲清楚道明白，边缘计算到底是个什么东西，话不多上，上车！！！ 边缘计算的诞生：传统物联网计算是底层终端节点计算+功能强大的云计算，但由于网络技术和应用服务的进一步发展使得网络流量呈现爆炸式增长。面对爆炸式的数据增量，通信网络会曾受巨大的压力，所以必须调整网络架构，以满足大规模链接，超低时延以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="本人对边缘计算的拙见">
+<meta property="og:url" content="http://example.com/2021/10/24/%E6%9C%AC%E4%BA%BA%E5%AF%B9%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8B%99%E8%A7%81/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="对边缘计算一些小看法，小总结最近看完了《一本书读懂边缘计算》这本书，总结总结，希望通过我这篇博客，能把读者讲清楚道明白，边缘计算到底是个什么东西，话不多上，上车！！！ 边缘计算的诞生：传统物联网计算是底层终端节点计算+功能强大的云计算，但由于网络技术和应用服务的进一步发展使得网络流量呈现爆炸式增长。面对爆炸式的数据增量，通信网络会曾受巨大的压力，所以必须调整网络架构，以满足大规模链接，超低时延以及">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg">
+<meta property="article:published_time" content="2021-10-24T11:51:18.000Z">
+<meta property="article:modified_time" content="2022-04-18T05:51:14.772Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="边缘计算">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2021/10/24/%E6%9C%AC%E4%BA%BA%E5%AF%B9%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8B%99%E8%A7%81/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '本人对边缘计算的拙见',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-18 13:51:14'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">135</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">179</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">本人对边缘计算的拙见</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-10-24T11:51:18.000Z" title="发表于 2021-10-24 19:51:18">2021-10-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-18T05:51:14.772Z" title="更新于 2022-04-18 13:51:14">2022-04-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97/">边缘计算</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="本人对边缘计算的拙见"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="对边缘计算一些小看法，小总结"><a href="#对边缘计算一些小看法，小总结" class="headerlink" title="对边缘计算一些小看法，小总结"></a>对边缘计算一些小看法，小总结</h1><p>最近看完了《一本书读懂边缘计算》这本书，总结总结，希望通过我这篇博客，能把读者讲清楚道明白，边缘计算到底是个什么东西，话不多上，上车！！！</p>
+<h2 id="边缘计算的诞生："><a href="#边缘计算的诞生：" class="headerlink" title="边缘计算的诞生："></a>边缘计算的诞生：</h2><p>传统物联网计算是底层终端节点计算+功能强大的云计算，但由于网络技术和应用服务的进一步发展使得网络流量呈现爆炸式增长。面对爆炸式的数据增量，通信网络会曾受巨大的压力，所以必须调整网络架构，以满足大规模链接，超低时延以及大带宽等业务需求，因此，边缘计算应运而生！</p>
+<hr>
+<h2 id="边缘计算的理念："><a href="#边缘计算的理念：" class="headerlink" title="边缘计算的理念："></a>边缘计算的理念：</h2><p>边缘计算的基本理念就是将计算任务在接近数据源的计算资源上运行，可以有效减少数据传输宽带，减少计算系统的延迟，环节元计算中心的压力，提高可用性，并能够有效保护数据安全和隐私。</p>
+<hr>
+<h2 id="边缘计算的操作对象："><a href="#边缘计算的操作对象：" class="headerlink" title="边缘计算的操作对象："></a>边缘计算的操作对象：</h2><p>边缘计算的操作对象包括来自云服务的下行数据以及来自万物互联服务的上行数据，而边缘计算的边缘是指从数据源到云计算中心路径之间的任意计算和网络资源，是一个连续统。</p>
+<p>边缘计算在靠近数据源头的地方提供智能分析处理服务，减少时延，提升效率，提高对安全隐私的保护。</p>
+<hr>
+<h2 id="边缘计算节点"><a href="#边缘计算节点" class="headerlink" title="边缘计算节点"></a>边缘计算节点</h2><p>边缘计算节点大概可以分为：边缘网关，边缘控制器，边缘服务器，边缘传感器。</p>
+<hr>
+<h2 id="边缘计算参考架构："><a href="#边缘计算参考架构：" class="headerlink" title="边缘计算参考架构："></a>边缘计算参考架构：</h2><p>1 云服务管理器。</p>
+<p>2 边缘计算</p>
+<p>3 现场设备</p>
+<p>按照我的理解，整个物联网的三层计算可以分为云计算，边缘计算，底层终端节计算，如何将这三者协同起来是边缘架构中的重点。</p>
+<h2 id="边缘计算架构的比喻："><a href="#边缘计算架构的比喻：" class="headerlink" title="边缘计算架构的比喻："></a>边缘计算架构的比喻：</h2><h4 id="（读者可以自行百度一下）"><a href="#（读者可以自行百度一下）" class="headerlink" title="（读者可以自行百度一下）"></a>（读者可以自行百度一下）</h4><p>1 章鱼说： 多个小脑（边缘计算）+一个大脑。</p>
+<p>2 仿生说：神经末销（边缘计算）具有一定的决策能力，无条件反射，等反射完了再跟大脑（云中心）沟通。</p>
+<p>3 公司说：总结起来就是在总经理和普通员工之间增加个部长职务，上传下达，并且有一定的决策能力呗。</p>
+<hr>
+<h2 id="边缘计算的应用场景："><a href="#边缘计算的应用场景：" class="headerlink" title="边缘计算的应用场景："></a>边缘计算的应用场景：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1 VR、AR：不用说，解决实时性呗。将VR，AR的图片渲染需要具有很强的实时性。</span><br><span class="line"></span><br><span class="line">2 智慧城市：边缘计算可以很好解决居民隐私以及安全问题，以及智慧城市建设所依赖的数据来源多样化和异构化问题。</span><br><span class="line"></span><br><span class="line">3 车联网：MEC可以用于将车联网云扩展到广泛分布的移动基站环境中，并且使得数据和应用能够在车辆附近部署，提高实时响应 。</span><br><span class="line"></span><br><span class="line">4 企业专网：MEC（移动边缘计算）为企业提供一个虚拟的RAN（无线接入网络）。企业的业务应用既可以部署在企业网络内部，也可以直接部署在MEC服务器					上，降低成本。</span><br><span class="line"></span><br><span class="line">5 网络视频优化加速：边缘部署可以给中心视频服务器提供动态网络分析信息，辅助TCP拥塞和码率适配，改善内容分发效率低下的情况。</span><br><span class="line"></span><br><span class="line">6 工业互联网：对工业实时控制以及边缘设备安全隐私的要求较高，并且产生的数据需要本地化处理。</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="边缘计算的发展历程："><a href="#边缘计算的发展历程：" class="headerlink" title="边缘计算的发展历程："></a>边缘计算的发展历程：</h2><p>1 CDN-从缓存到内容分发</p>
+<p>2  微云–盒子里的数据中心</p>
+<p>3 雾计算</p>
+<p>4 MEC移动边缘计算</p>
+<hr>
+<h2 id="边缘计算核心技术概述："><a href="#边缘计算核心技术概述：" class="headerlink" title="边缘计算核心技术概述："></a>边缘计算核心技术概述：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 网络技术</span><br><span class="line"></span><br><span class="line">2 隔离技术</span><br><span class="line"></span><br><span class="line">​	1）计算资源的隔离</span><br><span class="line"></span><br><span class="line">​	2）数据的隔离</span><br><span class="line"></span><br><span class="line">3 边缘操作系统</span><br><span class="line"></span><br><span class="line">4 算法执行框架：随着AI快速发展，边缘设备需要执行越来越多的智能算法任务，因此边缘计算还需要一个执行框架</span><br><span class="line"></span><br><span class="line">5 安全和隐私保护技术。</span><br></pre></td></tr></table></figure>
+
+<p>讲了那么多，都没有讲到部署方案，常见边缘设备，如何部署，开源的框架，产品等，高明辉开始急了。。。。。</p>
+<hr>
+<h2 id="边缘计算的关键技术"><a href="#边缘计算的关键技术" class="headerlink" title="边缘计算的关键技术"></a>边缘计算的关键技术</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1 计算卸载：移动设备如何将所承担的任务卸载到边缘服务器，进行高效合理的卸载决策，成为了目前边缘计算问题的主要研究方向。</span><br><span class="line"></span><br><span class="line">​					传统的单单云计算模式，只是把计算任务卸载到云服务器，现在引入了变量也就增多了将计算卸载到边缘服务器这一part。</span><br><span class="line"></span><br><span class="line">2 计算迁移：在网络边缘处，对海量边缘设备采集或者产生的数据进行部分或者全部计算的预处理操作，对无用的数据进行过滤，从而降低数据传输的宽带需求。</span><br><span class="line"></span><br><span class="line">​					主要分为三种模式：</span><br><span class="line"></span><br><span class="line">​				1）移动端迁移到移动端。</span><br><span class="line"></span><br><span class="line">​				3）移动设备--&gt;微云。</span><br><span class="line"></span><br><span class="line">​				3） 云端--&gt;边缘节点。 </span><br><span class="line"></span><br><span class="line">3 边缘缓存</span><br><span class="line"></span><br><span class="line">4 安全保护</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="边缘计算的“朋友圈”"><a href="#边缘计算的“朋友圈”" class="headerlink" title="边缘计算的“朋友圈”"></a>边缘计算的“朋友圈”</h2><p>边缘计算被称为5G与大数据以及人工智能融合技术达到项目落地的最后一公里！</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1 边缘计算与5G：5G传输承载网络侧，硬件技术提升优先情况下，需要对网络架构进行革新，因此，边缘计算是5G承载整体最核心的新技术之一。</span><br><span class="line"></span><br><span class="line">2 边缘计算与物联网：边缘计算可以使得物联网更加的智能化，促使物联网在各个行业落地生根。</span><br><span class="line"></span><br><span class="line">3 边缘计算与大数据：大数据使得互联网“开始思考”了，边缘计算可以把海量数据在边缘侧、终端周围筛选，分析，处理；</span><br><span class="line"></span><br><span class="line">   只把重要的数据再回传到数据中心，一定程度上缓解了大数据带来的负荷！</span><br><span class="line"></span><br><span class="line">4 边缘计算与云计算：云计算侧重于人和计算设备的互动，而边缘计算侧重于设备与设备之间的互动，最后间接服务于人。总之一句话：云边协同呗！</span><br><span class="line"></span><br><span class="line">5 边缘计算与雾计算：雾计算是将资源和服务分布在网络边缘和核心网络直至云的任何地方，可以说是云计算的延伸，是逐层接近网络边缘的小云；</span><br><span class="line"></span><br><span class="line">   而边缘计算则是只将应用程序分布在网络边缘，与云概念无关（虽然有边缘服务器的说法）。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="边缘计算的“玩家”们"><a href="#边缘计算的“玩家”们" class="headerlink" title="边缘计算的“玩家”们"></a>边缘计算的“玩家”们</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1 三大运行商</span><br><span class="line">	1）移动</span><br><span class="line">	2）联通</span><br><span class="line">	3）电信</span><br><span class="line">2 云计算厂家</span><br><span class="line">	1）阿里云：边缘节点服务ENS，边缘计算产品 Link Edge。</span><br><span class="line">	2）百度云：github上的Open Edge Computing Project至今已经成为国际知名的边缘计算开源项目。</span><br><span class="line">	3）腾讯云：IECP以及TSEC。</span><br><span class="line">3 ICT硬件厂商</span><br><span class="line">	1）华为</span><br><span class="line">	2）中兴</span><br><span class="line">	3）新华三集团</span><br></pre></td></tr></table></figure>
+
+<h2 id="对于边缘计算的一些看法"><a href="#对于边缘计算的一些看法" class="headerlink" title="对于边缘计算的一些看法"></a>对于边缘计算的一些看法</h2><p>我们应该客观冷静看待边缘计算，不要夸大了他的优点和用途。边缘计算的确定也很明显，比如部署成本，运营管理，安全防护，分部协作和能耗等。</p>
+<p>边缘计算只是一种解决方案，没有创造出新的核心技术或者重大的技术组合，难在如何部署，如何适配到我们的实际需求，是一种新的网络架构部署。</p>
+<p>边缘计算融合区块链是物联网的下一个风口。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2021/10/24/%E6%9C%AC%E4%BA%BA%E5%AF%B9%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8B%99%E8%A7%81/">http://example.com/2021/10/24/%E6%9C%AC%E4%BA%BA%E5%AF%B9%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E6%8B%99%E8%A7%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97/">边缘计算</a></div><div class="post_share"><div class="social-share" data-image="/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/10/26/nano-%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB%E6%A8%A1%E5%9E%8B/"><img class="prev-cover" src="/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">nano-手势识别模型</div></div></a></div><div class="next-post pull-right"><a href="/2021/10/22/%E5%89%91%E6%8C%87offer-%E6%96%87%E5%AD%97%E7%BF%BB%E8%AF%91/"><img class="next-cover" src="/img/it.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">剑指offer-文字翻译</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E4%B8%80%E4%BA%9B%E5%B0%8F%E7%9C%8B%E6%B3%95%EF%BC%8C%E5%B0%8F%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">对边缘计算一些小看法，小总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E8%AF%9E%E7%94%9F%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">边缘计算的诞生：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E7%90%86%E5%BF%B5%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">边缘计算的理念：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E6%93%8D%E4%BD%9C%E5%AF%B9%E8%B1%A1%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">边缘计算的操作对象：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.</span> <span class="toc-text">边缘计算节点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E5%8F%82%E8%80%83%E6%9E%B6%E6%9E%84%EF%BC%9A"><span class="toc-number">1.5.</span> <span class="toc-text">边缘计算参考架构：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E6%9E%B6%E6%9E%84%E7%9A%84%E6%AF%94%E5%96%BB%EF%BC%9A"><span class="toc-number">1.6.</span> <span class="toc-text">边缘计算架构的比喻：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%88%E8%AF%BB%E8%80%85%E5%8F%AF%E4%BB%A5%E8%87%AA%E8%A1%8C%E7%99%BE%E5%BA%A6%E4%B8%80%E4%B8%8B%EF%BC%89"><span class="toc-number">1.6.0.1.</span> <span class="toc-text">（读者可以自行百度一下）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9A"><span class="toc-number">1.7.</span> <span class="toc-text">边缘计算的应用场景：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B%EF%BC%9A"><span class="toc-number">1.8.</span> <span class="toc-text">边缘计算的发展历程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.9.</span> <span class="toc-text">边缘计算核心技术概述：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF"><span class="toc-number">1.10.</span> <span class="toc-text">边缘计算的关键技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E2%80%9C%E6%9C%8B%E5%8F%8B%E5%9C%88%E2%80%9D"><span class="toc-number">1.11.</span> <span class="toc-text">边缘计算的“朋友圈”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E2%80%9C%E7%8E%A9%E5%AE%B6%E2%80%9D%E4%BB%AC"><span class="toc-number">1.12.</span> <span class="toc-text">边缘计算的“玩家”们</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8E%E8%BE%B9%E7%BC%98%E8%AE%A1%E7%AE%97%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95"><span class="toc-number">1.13.</span> <span class="toc-text">对于边缘计算的一些看法</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

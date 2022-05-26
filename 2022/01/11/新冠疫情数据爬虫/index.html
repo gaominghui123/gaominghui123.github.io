@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>新冠疫情数据爬虫 | Jason</title><meta name="keywords" content="python,新型冠状病毒,爬虫"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="今天回顾以前做的好多项目都没有记录下来，趁这两天有时间赶紧写几篇博客哈！先写写用python写的爬虫项目 1.利用Python爬虫访问并爬取一次新型冠状病毒相关网页如百度网、丁香园等的疫情新闻数据，保存为json文件格式，并且保存所有历史数据的更新，以便在未来回溯分析病情时提供样本。 2.爬取各个网页关于疫情的报道数据，并对数据进行分类整合，如最新全国各省疫情数据，世界各国疫情数据，世界各国以及中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="新冠疫情数据爬虫">
+<meta property="og:url" content="http://example.com/2022/01/11/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="今天回顾以前做的好多项目都没有记录下来，趁这两天有时间赶紧写几篇博客哈！先写写用python写的爬虫项目 1.利用Python爬虫访问并爬取一次新型冠状病毒相关网页如百度网、丁香园等的疫情新闻数据，保存为json文件格式，并且保存所有历史数据的更新，以便在未来回溯分析病情时提供样本。 2.爬取各个网页关于疫情的报道数据，并对数据进行分类整合，如最新全国各省疫情数据，世界各国疫情数据，世界各国以及中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg">
+<meta property="article:published_time" content="2022-01-11T07:15:51.000Z">
+<meta property="article:modified_time" content="2022-04-18T05:56:23.160Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="新型冠状病毒">
+<meta property="article:tag" content="爬虫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/01/11/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '新冠疫情数据爬虫',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-04-18 13:56:23'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">135</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">179</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">新冠疫情数据爬虫</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-11T07:15:51.000Z" title="发表于 2022-01-11 15:15:51">2022-01-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-04-18T05:56:23.160Z" title="更新于 2022-04-18 13:56:23">2022-04-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%88%AC%E8%99%AB/">爬虫</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="新冠疫情数据爬虫"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>今天回顾以前做的好多项目都没有记录下来，趁这两天有时间赶紧写几篇博客哈！先写写用python写的爬虫项目</p>
+<p>1.利用Python爬虫访问并爬取一次新型冠状病毒相关网页如百度网、丁香园等的疫情新闻数据，保存为json文件格式，并且保存所有历史数据的更新，以便在未来回溯分析病情时提供样本。</p>
+<p>2.爬取各个网页关于疫情的报道数据，并对数据进行分类整合，如最新全国各省疫情数据，世界各国疫情数据，世界各国以及中国各省等从2020年1月份截止今日为止的所有历史数据等。</p>
+<h2 id="1-抓取包含所有疫情信息的API"><a href="#1-抓取包含所有疫情信息的API" class="headerlink" title="1  抓取包含所有疫情信息的API"></a>1  抓取包含所有疫情信息的API</h2><p>首先，以百度网为例，用浏览器打开目标网站，按下F12进入web开发者模式，进入network模块并刷新网页：</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/1.jpg" alt="1"></p>
+<p>然后，按类型进行排序，找到json格式的文件，网站从服务器获取数据的方法为get，从而锁定其中请求。</p>
+<p>最后，在消息头中找到相应的请求网址进行排查，从而顺利找到数据接口。</p>
+<h2 id="2-数据爬取及处理"><a href="#2-数据爬取及处理" class="headerlink" title="2 数据爬取及处理"></a>2 数据爬取及处理</h2><h4 id="（1）需要导入的包："><a href="#（1）需要导入的包：" class="headerlink" title="（1）需要导入的包："></a>（1）需要导入的包：</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.animation <span class="keyword">as</span> animation</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> map_draw</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> wordcloud <span class="keyword">import</span> WordCloud</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Map</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）程序主体："><a href="#（2）程序主体：" class="headerlink" title="（2）程序主体："></a>（2）程序主体：</h4><p>程序通过requests先获取主页面的数据信息，然后利用正则表达式提取并分析当前最新疫情数据信息保存到json格式的文件中去，再提取有用信息保存到xlsx表格中去，然后生成词云图，生成地图，然后下载过往历史数据，再进行动态图的可视化显示。</p>
+<h2 id="3-每一步的具体介绍"><a href="#3-每一步的具体介绍" class="headerlink" title="3 每一步的具体介绍"></a>3 每一步的具体介绍</h2><h4 id="（1）最新一天疫情数据采集："><a href="#（1）最新一天疫情数据采集：" class="headerlink" title="（1）最新一天疫情数据采集："></a>（1）最新一天疫情数据采集：</h4><p>读取网址信息 <a target="_blank" rel="noopener" href="https://ncov.dxy.cn/ncovh5/view/pneumonia%EF%BC%8C">https://ncov.dxy.cn/ncovh5/view/pneumonia，</a> 获得最近一天新冠状病毒的数据信息以及针对收集到的数据进行处理并保存为json文本，最新一天的世界各国疫情信息跟最新一天的中国各省数据的提取方法不同之处在于：前者是通过属性id为getListByCountryTypeService2true来获取到标签，而后者是通过属性id= getAreaStat来获得标签，获取到数据后再通过正则表达式来获取json格式的字符串并保存json格式文件；然后再保存到excl文件中！</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/2.jpg"></p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/3.jpg" alt="3"></p>
+<h4 id="（2）过往历史疫情数据收集："><a href="#（2）过往历史疫情数据收集：" class="headerlink" title="（2）过往历史疫情数据收集："></a>（2）过往历史疫情数据收集：</h4><p>首先加载由上面读取网址信息  <a target="_blank" rel="noopener" href="https://ncov.dxy.cn/ncovh5/view/pneumonia">https://ncov.dxy.cn/ncovh5/view/pneumonia</a>  后分析提取有用信息保存的json文件数据，里面保存了各个国家或者各国省的最新一天数据，还有https://….json链接，可以通过request模块对这些链接进行访问然后编码，提取到有用的信息，如：按照字典为保存单位，一个字典表示一个国家的一天的疫情数据，然后这些字典数据利用python列表对象的extend方法组合成为一个包含了各个国家各个不同日期的疫情数据，组合成一个大的列表，然后保存为json文件，以便我们后面动态图显示数据时做准备。</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/4.jpg" alt="4"></p>
+<h4 id="（3）词云图的生成："><a href="#（3）词云图的生成：" class="headerlink" title="（3）词云图的生成："></a>（3）词云图的生成：</h4><p>生成的词云图有两张，根据全国各省累计确诊还有世界各国的累计确诊人数而生成的词云图。词云图上面的字体格式可以根据自己windows上的font自行调整。利用了词云图更加直观的看到了那个地方的累计确诊人数的对比</p>
+<p>1 国内疫情词云图如下：</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/6.jpg" alt="6"></p>
+<p>2 世界各国疫情词云图如下：</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/7.jpg" alt="7"></p>
+<h4 id="（4）疫情地图的生成："><a href="#（4）疫情地图的生成：" class="headerlink" title="（4）疫情地图的生成："></a>（4）疫情地图的生成：</h4><p>Matplotlib中的Basemap它具有专业标准的地图绘制工具。它可以与matplotlib的一般绘图功能相结合，并在地图上绘制数据。 Matplotlib的Basemap工具包是一个用于在Python中的地图上绘制2D数据的库。本实验使用basemap库来构建中国的地图模型展示。</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/5.jpg" alt="5"></p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/10.jpg" alt="10"></p>
+<h4 id="（5）动态图显示历史确诊数据："><a href="#（5）动态图显示历史确诊数据：" class="headerlink" title="（5）动态图显示历史确诊数据："></a>（5）动态图显示历史确诊数据：</h4><p>FuncAnimation是Matplotlib库为我们提供的用于绘制动态图像的接口，其中包含如下参数：fig：画布对象，由创建画布时的返回得到，即fig = plt.figure()  frames：指定动图的帧数，但这个参数类型必须是可迭代的列表等。每次调用func函数对图像进行更新时，接口将自动向func函数提供此时的帧数num，这使得更新数据十分方便。func：用于更新图片从而产生动态效果的调用函数，在编写时通常会用到set_data等类似的方法，其返回值是一个元素为被更新的图形对象的列表。同时，func可以接受帧数参数num，用来更新每帧图像。具体内容我们将在示例中看到。interval：更新频率，单位是毫秒。这里的interval参数已经调整的非常小了，但是感觉还是不够快，是因为数据量太庞大了，取数据的过程会略有延迟，因此最终只取值为10ms。</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/8.jpg" alt="8"></p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/9.jpg" alt="9"></p>
+<h2 id="4总结"><a href="#4总结" class="headerlink" title="4总结"></a>4总结</h2><p>​       本次主要是对新冠肺炎疫情的数据采集，利用python爬虫对百度、丁香园等网站进行数据爬取，得到了中国整体、各省市以及世界各国的疫情实时数据和历史统计数据，能清楚的知道了各时各地各项的患者人数，比如说累计确诊，现有确诊，治愈人数，死亡人数等等数据。同时，利用爬取到的数据对新冠疫情进行可视化分析，比如说利用到了地图，词云图，动态图等可视化方式，以便更直观了解疫情形式。</p>
+<p>​        不足的地方是没有利用爬取到的新冠疫情数据来进行深入分析整理，比如对新冠疫情的形式、规律以及走势进行预测，后续的工作是对密切接触者的轨迹数据进行更详细爬取，得到更全面的数据，方便疫情的全面防控。</p>
+<p>最后由衷感谢奋战在一线的所有人员，希望疫情快点过去，加油加油加油！！！</p>
+<p><img src="/img/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/11.gif" alt="11"></p>
+<h3 id="代码下载"><a href="#代码下载" class="headerlink" title="代码下载"></a>代码下载</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">链接：https://pan.baidu.com/s/1LIWSzyy7KlfXxj7LdALq_g </span><br><span class="line">提取码：6666 </span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/01/11/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/">http://example.com/2022/01/11/%E6%96%B0%E5%86%A0%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E7%88%AC%E8%99%AB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/">python</a><a class="post-meta__tags" href="/tags/%E6%96%B0%E5%9E%8B%E5%86%A0%E7%8A%B6%E7%97%85%E6%AF%92/">新型冠状病毒</a><a class="post-meta__tags" href="/tags/%E7%88%AC%E8%99%AB/">爬虫</a></div><div class="post_share"><div class="social-share" data-image="/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/01/11/day11-%E5%AD%97%E8%8A%82%E6%B5%81-%E5%AD%97%E7%AC%A6%E6%B5%81/"><img class="prev-cover" src="/img/java/01%E9%98%B6%E6%AE%B5SE%E8%BF%9B%E9%98%B6/day11/4.gif" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">day11-字节流,字符流</div></div></a></div><div class="next-post pull-right"><a href="/2022/01/10/day10%E3%80%90Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%8CStream%E6%B5%81%EF%BC%8CFile%E7%B1%BB%EF%BC%8C%E9%80%92%E5%BD%92%E3%80%91/"><img class="next-cover" src="/img/java/01%E9%98%B6%E6%AE%B5SE%E8%BF%9B%E9%98%B6/day10/%E5%B0%81%E9%9D%A2.gif" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">day10【Lambda表达式，Stream流，File类，递归】</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%8A%93%E5%8F%96%E5%8C%85%E5%90%AB%E6%89%80%E6%9C%89%E7%96%AB%E6%83%85%E4%BF%A1%E6%81%AF%E7%9A%84API"><span class="toc-number">1.</span> <span class="toc-text">1  抓取包含所有疫情信息的API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E7%88%AC%E5%8F%96%E5%8F%8A%E5%A4%84%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">2 数据爬取及处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E9%9C%80%E8%A6%81%E5%AF%BC%E5%85%A5%E7%9A%84%E5%8C%85%EF%BC%9A"><span class="toc-number">2.0.1.</span> <span class="toc-text">（1）需要导入的包：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E7%A8%8B%E5%BA%8F%E4%B8%BB%E4%BD%93%EF%BC%9A"><span class="toc-number">2.0.2.</span> <span class="toc-text">（2）程序主体：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%AF%8F%E4%B8%80%E6%AD%A5%E7%9A%84%E5%85%B7%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">3 每一步的具体介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E6%9C%80%E6%96%B0%E4%B8%80%E5%A4%A9%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%EF%BC%9A"><span class="toc-number">3.0.1.</span> <span class="toc-text">（1）最新一天疫情数据采集：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E8%BF%87%E5%BE%80%E5%8E%86%E5%8F%B2%E7%96%AB%E6%83%85%E6%95%B0%E6%8D%AE%E6%94%B6%E9%9B%86%EF%BC%9A"><span class="toc-number">3.0.2.</span> <span class="toc-text">（2）过往历史疫情数据收集：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E8%AF%8D%E4%BA%91%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%EF%BC%9A"><span class="toc-number">3.0.3.</span> <span class="toc-text">（3）词云图的生成：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%884%EF%BC%89%E7%96%AB%E6%83%85%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%EF%BC%9A"><span class="toc-number">3.0.4.</span> <span class="toc-text">（4）疫情地图的生成：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%885%EF%BC%89%E5%8A%A8%E6%80%81%E5%9B%BE%E6%98%BE%E7%A4%BA%E5%8E%86%E5%8F%B2%E7%A1%AE%E8%AF%8A%E6%95%B0%E6%8D%AE%EF%BC%9A"><span class="toc-number">3.0.5.</span> <span class="toc-text">（5）动态图显示历史确诊数据：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">4总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="toc-number">4.1.</span> <span class="toc-text">代码下载</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

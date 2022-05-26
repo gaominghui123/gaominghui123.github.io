@@ -1,0 +1,557 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Day06-mysql高级-Mysql体系结构-sql存储引擎-mysql锁 | Jason</title><meta name="keywords" content="Mysql体系结构,sql存储引擎,mysql锁"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="学习之前先看看一下给出的全篇文章总结会更好哦： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586第一章：sql体系结构	由">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Day06-mysql高级-Mysql体系结构-sql存储引擎-mysql锁">
+<meta property="og:url" content="http://example.com/2022/01/23/Day06-mysql%E9%AB%98%E7%BA%A7-Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84-sql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-mysql%E9%94%81/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="学习之前先看看一下给出的全篇文章总结会更好哦： 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757677787980818283848586第一章：sql体系结构	由">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/%E5%B0%81%E9%9D%A2.jpg">
+<meta property="article:published_time" content="2022-01-23T03:30:17.000Z">
+<meta property="article:modified_time" content="2022-03-14T03:25:52.846Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="Mysql体系结构">
+<meta property="article:tag" content="sql存储引擎">
+<meta property="article:tag" content="mysql锁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/%E5%B0%81%E9%9D%A2.jpg"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/01/23/Day06-mysql%E9%AB%98%E7%BA%A7-Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84-sql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-mysql%E9%94%81/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Day06-mysql高级-Mysql体系结构-sql存储引擎-mysql锁',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-03-14 11:25:52'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">135</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">179</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">29</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/%E5%B0%81%E9%9D%A2.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Day06-mysql高级-Mysql体系结构-sql存储引擎-mysql锁</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-01-23T03:30:17.000Z" title="发表于 2022-01-23 11:30:17">2022-01-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-03-14T03:25:52.846Z" title="更新于 2022-03-14 11:25:52">2022-03-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/mysql/">mysql</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Day06-mysql高级-Mysql体系结构-sql存储引擎-mysql锁"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>学习之前先看看一下给出的全篇文章总结会更好哦：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">第一章：<span class="keyword">sql</span>体系结构</span><br><span class="line">	由<span class="number">9</span>个板块构成，分为四个层（连接层，服务层，引擎层，存储层）</span><br><span class="line">	mysql的特殊：插件式引擎，可以根据业务的需求和实际需要选择合适的存储引擎</span><br><span class="line">	</span><br><span class="line">第二章：存储引擎</span><br><span class="line">概述：存储引擎就是存储数据，建立索引，更新查询数据等等技术的具体实现方式。</span><br><span class="line">建表指定引擎：</span><br><span class="line">	<span class="keyword">create</span> <span class="keyword">table</span> country_innodb(</span><br><span class="line">		...</span><br><span class="line">	)ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line">分类：InnoDB (默认）、MyISAM </span><br><span class="line"><span class="number">1</span> InnoDB：</span><br><span class="line">	（<span class="number">1</span>）提交、回滚、崩溃恢复能力的事务安全功能，</span><br><span class="line">	（<span class="number">2</span>）支持外键。</span><br><span class="line">    ps：从表创建外键的时候， 要求主表必须有对应的索引。</span><br><span class="line">	<span class="keyword">create</span> <span class="keyword">table</span> country_innodb(</span><br><span class="line">		...</span><br><span class="line">     <span class="comment">-- 主表改变时从表如何变化的限定（restrict，cascade）。</span></span><br><span class="line">	country_innodb(country_id) <span class="keyword">ON</span> <span class="keyword">DELETE</span> RESTRICT <span class="keyword">ON</span> UPDATE CASCADE</span><br><span class="line">	)ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line">    <span class="number">1</span> <span class="keyword">NO</span> ACTION：在从表有关联记录的情况下， 主表不能更新；</span><br><span class="line">    <span class="number">2</span> RESTRICT：和<span class="keyword">NO</span> ACTION相同</span><br><span class="line">    <span class="number">3</span> CASCADE：主表在更新或者删除时，更新或者删除从表对应的记录</span><br><span class="line">    <span class="number">4</span> <span class="keyword">SET</span> <span class="keyword">NULL</span>：主表在更新或者删除的时候从表的对应字段被<span class="keyword">SET</span> <span class="keyword">NULL</span>。</span><br><span class="line">	（<span class="number">3</span>）存储位置</span><br><span class="line">	表结构：存放在.frm文件中（较小）</span><br><span class="line">	数据和索引：保存在.idb文件中（较大）</span><br><span class="line"><span class="number">2</span> MyISAM</span><br><span class="line">	不支持事务、也不支持外键；其优势是访问的速度快</span><br><span class="line">引擎的选择：</span><br><span class="line">    InnoDB：</span><br><span class="line">		对事务的完整性有比较高的要求，</span><br><span class="line">		在并发条件下要求数据的一致性，</span><br><span class="line">		数据操作除了插入和查询意外，还包含很多的更新、删除操作，</span><br><span class="line">		那么存储引擎是比较合适的选择。</span><br><span class="line">    MySIAM：</span><br><span class="line">	以读操作和插入操作为主，</span><br><span class="line">	只有很少的更新和删除操作</span><br><span class="line">	并且对事务的完整性、并发性要求不是很高</span><br><span class="line"></span><br><span class="line">第三章：锁</span><br><span class="line">概述：锁是计算机协调多个进程或线程并发访问某一资源的机制（避免争抢）</span><br><span class="line">    如前面提到的数据库隔离技术，也是一种并发操作上的协调，这不过锁的对象时</span><br><span class="line">    具体的表，而隔离技术针对的对象时事务。</span><br><span class="line">分类：</span><br><span class="line">	<span class="number">1</span> 表锁：操作时，会锁定整个表。（MyISAM表锁，查询为主）</span><br><span class="line">          以查询为主，只有少量按索引条件更新数据的应用</span><br><span class="line">	<span class="number">2</span> 行锁：操作时，会锁定当前操作行。(InnoDB行锁)</span><br><span class="line">          有大量按索引条件并发更新少量不同数据，同时又有并查询的应用</span><br><span class="line">	<span class="number">1</span> 读锁（共享锁）：针对同一份数据，多个读操作可以同时进行而不会互相影响。</span><br><span class="line">	<span class="number">2</span> 写锁（排它锁）：当前操作没有完成之前，它会阻断其他写锁和读锁。</span><br><span class="line">	不同的存储引擎支持不同的锁机制</span><br><span class="line">           </span><br><span class="line">表锁特点：偏向MyISAM存储引擎，开销小，加锁快；</span><br><span class="line">     不会出现死锁；锁定粒度最大，发生锁冲突的概率最高,并发度最低。</span><br><span class="line">MyISAM表锁中的读写锁特点：</span><br><span class="line">	<span class="number">1</span> 获取读锁后：</span><br><span class="line">	本线程：只能读取该表，不能读取其他表（报错），同时不能改动该表（报错）	</span><br><span class="line">     其他线程：能读，写阻塞。</span><br><span class="line">	<span class="number">2</span> 获取写锁：</span><br><span class="line">	本线程：能读能写</span><br><span class="line">	其他线程：读写都会阻塞。</span><br><span class="line">	<span class="number">1</span> 在执行查询语句（<span class="keyword">SELECT</span>）前，会自动给涉及的所有表加读锁，</span><br><span class="line">	<span class="number">2</span> 执行（UPDATE、<span class="keyword">DELETE</span>、<span class="keyword">INSERT</span> 等）前，会自动给涉及的表加写锁</span><br><span class="line">	手动方法：</span><br><span class="line">	加读锁 : lock <span class="keyword">table</span> table_name read;</span><br><span class="line">	加写锁 : lock <span class="keyword">table</span> table_name write；</span><br><span class="line">	释放锁 ： unlock tabels;</span><br><span class="line">           </span><br><span class="line">InnoDB 行锁特点（行锁特点 ）</span><br><span class="line">	偏向InnoDB 存储引擎，开销大，加锁慢；</span><br><span class="line">	会出现死锁；锁定粒度最小，发生锁冲突的概率最低,并发度也最高。</span><br><span class="line">	获取读写锁后的操作特点，跟（MyISAM的）表锁一样。</span><br><span class="line">           </span><br><span class="line">	对于UPDATE、<span class="keyword">DELETE</span>和<span class="keyword">INSERT</span>语句，InnoDB会自动给涉及数据集加排他锁</span><br><span class="line">	对于普通<span class="keyword">SELECT</span>语句，InnoDB不会加任何锁(共享锁都不加）；</span><br><span class="line">	手动：</span><br><span class="line">	<span class="keyword">set</span> autocommit<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line">	共享锁: <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> table_name <span class="keyword">WHERE</span> ... LOCK <span class="keyword">IN</span> SHARE MODE</span><br><span class="line">	排他锁: <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> table_name <span class="keyword">WHERE</span> ... <span class="keyword">FOR</span> UPDATE</span><br><span class="line">	<span class="keyword">set</span> autocommit<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line">                              </span><br><span class="line">无索引行锁升级为表锁：</span><br><span class="line">	如果不通过索引条件检索数据，</span><br><span class="line">	那么InnoDB将对表中的所有记录加锁，实际效果跟表锁一样。</span><br><span class="line">	因此：尽可能让所有数据检索都能通过索引来完成，避免无索引行锁升级为表锁</span><br></pre></td></tr></table></figure>
+
+<h1 id="第一章-Mysql体系结构"><a href="#第一章-Mysql体系结构" class="headerlink" title="第一章 Mysql体系结构"></a>第一章 Mysql体系结构</h1><p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/92.png" alt="image-20200616104826352"></p>
+<h2 id="整个-MySQL-Server由九个板块组成，分为四个层。"><a href="#整个-MySQL-Server由九个板块组成，分为四个层。" class="headerlink" title="整个 MySQL Server由九个板块组成，分为四个层。"></a>整个 MySQL Server由九个板块组成，分为四个层。</h2><ul>
+<li>Connections :  连接组件</li>
+<li>Connection Pool :  连接池组件</li>
+<li>Management Services &amp; Utilities :  管理服务和工具组件</li>
+<li>SQL Interface : SQL 接口组件</li>
+<li>Parser :  查询分析器组件</li>
+<li>Optimizer :  优化器组件</li>
+<li>Caches &amp; Buffers :  缓冲池组件</li>
+<li>Pluggable Storage Engines :  存储引擎</li>
+<li>File System :  文件系统</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">Connections :  连接组件</span></span><br><span class="line">  	<span class="meta">​</span> <span class="string">Connectors组件，是MySQL向外提供的交互组件，</span></span><br><span class="line">  	<span class="attr">如java,.net,php等语言可以通过该组件来操作SQL语句，实现与SQL的交互。</span></span><br><span class="line"><span class="attr">2</span> <span class="string">Management Services &amp; Utilities :  管理服务和工具组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">提供对MySQL的集成管理，</span></span><br><span class="line">	<span class="meta">如备份(Backup),恢复(Recovery),安全管理(Security)等</span> <span class="string"></span></span><br><span class="line"><span class="attr">3</span> <span class="string">Connection Pool :  连接池组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">负责监听对客户端向MySQL Server端的各种请求，接收请求，转发请求到目标模块。</span></span><br><span class="line">	<span class="meta">每个成功连接MySQL</span> <span class="string">Server的客户请求都会被创建或分配一个线程，</span></span><br><span class="line">	<span class="meta">该线程负责客户端与MySQL</span> <span class="string">Server端的通信，</span></span><br><span class="line">	<span class="attr">接收客户端发送的命令，传递服务端的结果信息等。</span></span><br><span class="line"><span class="attr">4</span> <span class="string">SQL Interface : SQL 接口组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">接收用户SQL命令，如DML,DDL和存储过程等，并将最终结果返回给用户。</span></span><br><span class="line"><span class="attr">5</span> <span class="string">Parser :  查询分析器组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">首先分析SQL命令语法的合法性，并尝试将SQL命令分解成数据结构，</span></span><br><span class="line">	<span class="attr">若分解失败，则提示SQL语句不合理。</span></span><br><span class="line"><span class="attr">6</span> <span class="string">Optimizer :  优化器组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">对SQL命令按照标准流程进行优化分析。</span></span><br><span class="line"><span class="attr">7</span> <span class="string">Caches &amp; Buffers :  缓冲池组件</span></span><br><span class="line">	<span class="meta">​</span> <span class="string">缓存和缓冲组件</span></span><br><span class="line"><span class="attr">8</span> <span class="string">Pluggable Storage Engines :  存储引擎</span></span><br><span class="line"><span class="attr">9</span> <span class="string">File System :  文件系统</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-连接层"><a href="#1-连接层" class="headerlink" title="1 连接层"></a>1 连接层</h2><p>最上层是一些客户端和链接服务，包含本地socket 通信和大多数基于客户端/服务端工具实现的类似于 TCP/IP的通信。主要完成一些类似于<strong>连接处理、授权认证、及相关的安全方案</strong>。<strong>在该层上引入了线程池的概念，为通过认证安全接入的客户端提供线程</strong>。同样在该层上可以实现基于SSL的安全链接。服务器也会为安全接入的每个客户端验证它所具有的操作权限。</p>
+<h2 id="2-服务层"><a href="#2-服务层" class="headerlink" title="2 服务层"></a>2 服务层</h2><p>第二层架构主要完成大多数的核心服务功能，如 <strong>SQL接口，并完成缓存的查询，SQL的分析和优化，部分内置函数的执行。</strong>所有跨存储引擎的功能也在这一层实现，如 过程、函数等。在该层，服务器会解析查询并创建相应的内部解析树，并对其完成相应的优化如确定表的查询的顺序，是否利用索引等， 最后生成相应的执行操作。如果是select语句，服务器还会查询内部的缓存，如果缓存空间足够大，这样在解决大量读操作的环境中能够很好的提升系统的性能。</p>
+<h2 id="3-引擎层"><a href="#3-引擎层" class="headerlink" title="3 引擎层"></a>3 引擎层</h2><p>存储引擎层， 存储引擎<strong>真正的负责了MySQL中数据的存储和提取，服务器通过API和存储引擎进行通信</strong>。不同的存储引擎具有不同的功能，这样我们可以根据自己的需要，来选取合适的存储引擎。</p>
+<h2 id="4-存储层"><a href="#4-存储层" class="headerlink" title="4 存储层"></a>4 存储层</h2><p>数据存储层， 主要是<strong>将数据存储在文件系统之上，并完成与存储引擎的交互</strong>。</p>
+<h2 id="mysql的不同"><a href="#mysql的不同" class="headerlink" title="mysql的不同"></a>mysql的不同</h2><p>和其他数据库相比，MySQL有点与众不同，它的架构可以<strong>在多种不同场景中应用并发挥良好作用。主要体现在存储引擎上</strong>，<strong>插件式的存储引擎架构</strong>，将查询处理和其他的系统任务以及数据的存储提取分离。这种架构可以<strong>根据业务的需求和实际需要选择合适的存储引擎。</strong></p>
+<h1 id="第二章-存储引擎"><a href="#第二章-存储引擎" class="headerlink" title="第二章 存储引擎"></a>第二章 存储引擎</h1><h2 id="1-存储引擎概述"><a href="#1-存储引擎概述" class="headerlink" title="1 存储引擎概述"></a>1 存储引擎概述</h2><p><strong>和大多数的数据库不同, MySQL中有一个存储引擎的概念</strong>, 针对不同的存储需求可以选择最优的存储引擎。</p>
+<p>存储引擎就是<strong>存储数据，建立索引，更新查询数据等等技术的实现方式</strong> 。<strong>存储引擎是基于表的</strong>，而不是基于库的。<strong>所以存储引擎也可被称为表类型</strong>。</p>
+<p>Oracle，SqlServer等数据库只有一种存储引擎。MySQL提供了插件式的存储引擎架构。所以MySQL存在多种存储引擎，可以根据需要使用相应引擎，或者编写存储引擎。</p>
+<p>MySQL5.0支持的存储引擎包含 ： <strong>InnoDB (默认）、MyISAM</strong> 、BDB、MEMORY、MERGE、EXAMPLE、NDB Cluster、ARCHIVE、CSV、BLACKHOLE、FEDERATED等，<strong>其中InnoDB和BDB提供事务安全表</strong>，其他存储引擎是非事务安全表。</p>
+<p><strong>可以通过指定 show engines ， 来查询当前数据库支持的存储引擎 ：</strong></p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616104826352.png" alt="image-20200616104826352"></p>
+<p>创建新表时如果不指定存储引擎，那么系统就会<strong>使用默认的存储引擎</strong>， MySQL5.5之前的默认存储引擎是<br>MyISAM，5.5之后就改为了InnoDB。</p>
+<p><strong>查看Mysql数据库默认的存储引擎 ， 指令</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%storage_engine%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616105013230.png" alt="image-20200616105013230"></p>
+<h2 id="2-存储引擎特性"><a href="#2-存储引擎特性" class="headerlink" title="2 存储引擎特性"></a>2 存储引擎特性</h2><p>下面重点介绍几种常用的存储引擎， 并对比各个存储引擎之间的区别， 如下表所示 ：</p>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+<th>MEMORY</th>
+<th>MERGE</th>
+<th>NDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储限制</td>
+<td>64TB</td>
+<td>有</td>
+<td>有</td>
+<td>没有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>事务安全</td>
+<td><span style='background-color:yellow;'>支持</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td><span style='background-color:yellow;'>行锁(适合高并发)</span></td>
+<td><span style='background-color:yellow;'>表锁</span></td>
+<td>表锁</td>
+<td>表锁</td>
+<td>行锁</td>
+</tr>
+<tr>
+<td>B树索引</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>哈希索引</td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>支持(5.6版本后)</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>集群索引</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>数据索引</td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+</tr>
+<tr>
+<td>索引缓存</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>数据可压缩</td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>空间使用</td>
+<td>高</td>
+<td>低</td>
+<td>N/A</td>
+<td>低</td>
+<td>低</td>
+</tr>
+<tr>
+<td>内存使用</td>
+<td>高</td>
+<td>低</td>
+<td>中等</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>批量插入速度</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>支持外键</td>
+<td><span style='background-color:yellow;'>支持</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>下面我们将重点介绍最长使用的两种存储引擎： InnoDB、MyISAM ， 另外两种 MEMORY、MERGE ， 了解即可。</p>
+<h3 id="1-InnoDB存储引擎"><a href="#1-InnoDB存储引擎" class="headerlink" title="1  InnoDB存储引擎"></a>1  InnoDB存储引擎</h3><p>1 InnoDB存储引擎是<strong>Mysql的默认存储引擎</strong>。</p>
+<p>2 InnoDB存储引擎提供了具有<strong>提交、回滚、崩溃恢复能力的事务安全</strong>。</p>
+<p>3 但是对比MyISAM的存储引擎，InnoDB<strong>写的处理效率差一些</strong>，并且会<strong>占用更多的磁盘空间以保留数据和索引</strong>。</p>
+<p>InnoDB存储引擎不同于其他存储引擎的特点 ：</p>
+<h5 id="（1）事务控制"><a href="#（1）事务控制" class="headerlink" title="（1）事务控制"></a>（1）事务控制</h5><p>InnoDB是支持事务控制,示例如下:</p>
+<p>sql脚本建立表（指定为InnoDB存储引擎）:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> goods_innodb(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">     <span class="keyword">primary</span> key(id)</span><br><span class="line">)ENGINE<span class="operator">=</span>innodb <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>执行sql:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">start</span> transaction;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> goods_innodb(id,name)<span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;华为p40&#x27;</span>);</span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616111755137.png" alt="image-20200616111755137"></p>
+<h5 id="（2）外键约束"><a href="#（2）外键约束" class="headerlink" title="（2）外键约束"></a>（2）外键约束</h5><p><strong>MySQL支持外键的存储引擎只有InnoDB</strong> ， 在创建外键的时候， 要求主表必须有对应的索引 ，从表在创建外键的时候，关联对应的索引字段。</p>
+<p>下面两张表中 ， country_innodb是主表 ， country_id为主键索引，city_innodb表是从表，country_id字段为外键，对应于country_innodb表的主键country_id 。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> country_innodb(</span><br><span class="line">    country_id <span class="type">int</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">     country_name <span class="type">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">     <span class="keyword">primary</span> key(country_id)</span><br><span class="line">)ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> city_innodb(</span><br><span class="line">	 city_id <span class="type">int</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">     city_name <span class="type">varchar</span>(<span class="number">50</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">     country_id <span class="type">int</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">     <span class="keyword">primary</span> key(city_id),</span><br><span class="line">     key idx_fk_country_id(country_id),<span class="comment">-- idx_fk_country_id是外键索引名。</span></span><br><span class="line">     <span class="keyword">CONSTRAINT</span> `fk_city_country` <span class="keyword">FOREIGN</span> KEY(country_id) <span class="keyword">REFERENCES</span> <span class="comment">-- fk_city_country外键名。</span></span><br><span class="line">    country_innodb(country_id) <span class="keyword">ON</span> <span class="keyword">DELETE</span> RESTRICT <span class="keyword">ON</span> UPDATE CASCADE<span class="comment">-- 主表改变时从表如何变化的限定。</span></span><br><span class="line">)ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> country_innodb <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;China&#x27;</span>),(<span class="keyword">null</span>,<span class="string">&#x27;America&#x27;</span>),(<span class="keyword">null</span>,<span class="string">&#x27;Japan&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> city_innodb <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;Xian&#x27;</span>,<span class="number">1</span>),(<span class="keyword">null</span>,<span class="string">&#x27;NewYork&#x27;</span>,<span class="number">2</span>),</span><br><span class="line">(<span class="keyword">null</span>,<span class="string">&#x27;BeiJing&#x27;</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616113807231.png" alt="image-20200616113807231"></p>
+<p><strong>删除country_id为1 的country数据：</strong></p>
+<p><strong>（###不能删除，因为ON DELETE RESTRICT ）</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> country_innodb <span class="keyword">where</span> country_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616113721331.png" alt="image-20200616113721331"></p>
+<p><strong>更新主表 country表的字段 country_id :</strong></p>
+<p>*<strong>（###引用本字段的country_id 值的外键值也跟着改变,因为 ON UPDATE CASCADE 表示关联）</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update country_innodb <span class="keyword">set</span> country_id <span class="operator">=</span> <span class="number">100</span> <span class="keyword">where</span> country_id <span class="operator">=</span> <span class="number">1</span>; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616113907900.png" alt="image-20200616113907900"></p>
+<p><b><font color='red'>知识小贴士</font></b></p>
+<p>在创建索引时， 可以指定在删除、更新主表时，对从表进行的相应操作，包括 RESTRICT、CASCADE、SET NULL和 NO ACTION。</p>
+<p><strong>1 NO ACTION</strong>相同， 是指限制<strong>在从表有关联记录的情况下， 主表不能更新；</strong></p>
+<p><strong>2 RESTRICT</strong> 和NO ACTION相同，限制在从表有关联记录的情况下， <strong>主表不能更新；</strong></p>
+<p><strong>3 CASCADE</strong>表示主表在更新或者删除时，<strong>更新或者删除</strong>从表对应的记录；即 <strong>关联</strong> 的意思。</p>
+<p><strong>4 SET NULL</strong> 则表示<strong>主表在更新或者删除的时候</strong>，<strong>从表的对应字段被SET NULL</strong> 。</p>
+<p>针对上面创建的两个表， 从表的外键指定是ON DELETE RESTRICT ON UPDATE CASCADE 方式的， 那么在主表删除记录的时候， 如果从表有对应记录， 则不允许删除， 主表在更新记录的时候， 如果从表有对应记录， 则从表对应更新 。</p>
+<h5 id="（3）存储位置"><a href="#（3）存储位置" class="headerlink" title="（3）存储位置"></a>（3）存储位置</h5><p><strong>表结构</strong>存放在.frm文件中（较小）</p>
+<p><strong>数据</strong>和索引保存在.idb文件中（较大）</p>
+<h3 id="2-MyISAM-存储引擎"><a href="#2-MyISAM-存储引擎" class="headerlink" title="2  MyISAM 存储引擎"></a>2  MyISAM 存储引擎</h3><p>MyISAM <strong>不支持事务、也不支持外键</strong>，其优势是<strong>访问的速度快</strong>，对<strong>事务的完整性没有要求或者以SELECT、INSERT为主的应用</strong>基本上都可以使用这个引擎来创建表 。有以下两个比较重要的特点：</p>
+<h5 id="不支持事务"><a href="#不支持事务" class="headerlink" title="不支持事务"></a>不支持事务</h5><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> goods_myisam(</span><br><span class="line">    id <span class="type">int</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">     <span class="keyword">primary</span> key(id)</span><br><span class="line">)ENGINE<span class="operator">=</span>myisam <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>执行sql</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> goods_myisam <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;笔记本&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616115400323.png" alt="image-20200616115400323"></p>
+<p>通过测试（rollback 根本没用），我们发现，在 MyISAM存储引擎中，是没有事务控制的</p>
+<h5 id="文件存储方式"><a href="#文件存储方式" class="headerlink" title="文件存储方式"></a>文件存储方式</h5><p>每个MyISAM在磁盘上存储成3个文件，其<strong>文件名都和表名</strong>相同，但拓展名分别是 ：</p>
+<ul>
+<li><p>1 .frm (存储表定义，即表结构)；</p>
+</li>
+<li><p>2 .MYD(MYData , 存储数据)；</p>
+</li>
+<li><p>3 .MYI(MYIndex , 存储索引)；</p>
+</li>
+</ul>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616121721610.png" alt="image-20200616121721610"></p>
+<h2 id="3-存储引擎选择"><a href="#3-存储引擎选择" class="headerlink" title="3 存储引擎选择"></a>3 存储引擎选择</h2><p>在选择存储引擎时，应该根据应用系统的特点选择合适的存储引擎。对于复杂的应用系统，还可以根据实际情况选择多种存储引擎进行组合。以下是几种常用的存储引擎的使用环境。</p>
+<ul>
+<li>1 <strong>InnoDB</strong> :  </li>
+<li>是Mysql的默认存储引擎，用于事务处理应用程序，支持外键。如果应用<strong>对事务的完整性有比较高的要求，在并发条件下要求数据的一致性，数据操作除了插入和查询意外，还包含很多的更新、删除操作，那么InnoDB存储引擎是比较合适的选择。</strong>InnoDB存储引擎除了有效的降低由于删除和更新导致的锁定， 还可以确保事务的完整提交和回滚，对于类似于<strong>计费系统或者财务系统等对数据准确性要求比较高的系统</strong>，InnoDB是最合适的选择。</li>
+<li>2 <strong>MyISAM</strong>  ： </li>
+<li>如果应用以<strong>读操作和插入操作</strong>为主，只有<strong>很少的更新和删除操作</strong>，并且<strong>对事务的完整性、并发性要求不是很高</strong>，那么选择这个存储引擎是非常合适的。</li>
+<li>3 <strong>MEMORY</strong> ：</li>
+<li>将所有数据保存在内存中，在需要快速定位记录和其他类似数据环境下，可以提供几块的访问。MEMORY的缺陷就是对表的大小有限制，太大的表无法缓存在内存中，其次是要确保表的数据可以恢复，数据库异常终止后表中的数据是可以恢复的。MEMORY表通常用于更新不太频繁的小表，用以快速得到访问结果。</li>
+<li>4 <strong>MERGE</strong> ：</li>
+<li>用于将一系列等同的MyISAM表以逻辑方式组合在一起，并作为一个对象引用他们。MERGE表的优点在于可以突破对单个MyISAM表的大小限制，并且通过将不同的表分布在多个磁盘上，可以有效的改善MERGE表的访问效率。这对于存储诸如数据仓储等VLDB环境十分合适。</li>
+</ul>
+<h1 id="第三章-锁"><a href="#第三章-锁" class="headerlink" title="第三章 锁"></a>第三章 锁</h1><h2 id="1-锁概述"><a href="#1-锁概述" class="headerlink" title="1 锁概述"></a>1 锁概述</h2><p>锁是计算机<strong>协调多个进程或线程并发访问某一资源的机制（避免争抢）</strong>。</p>
+<p>在数据库中，除传统的计算资源（如 CPU、RAM、I/O 等）的争用以外，数据也是一种供许多用户共享的资源。如何保证数据并发访问的一致性、有效性是所有数据库必须解决的一个问题，锁冲突也是影响数据库并发访问性能的一个重要因素。从这个角度来说，锁对数据库而言显得尤其重要，也更加复杂。</p>
+<h2 id="2-锁分类"><a href="#2-锁分类" class="headerlink" title="2 锁分类"></a>2 锁分类</h2><p>从对数据操作的粒度分 ：</p>
+<ul>
+<li><p> <strong>1 表锁：</strong>操作时，会锁定整个表。</p>
+</li>
+<li><p> <strong>2 行锁</strong>：操作时，会锁定当前操作行。</p>
+</li>
+</ul>
+<p>从对数据操作的类型分：</p>
+<ul>
+<li><p><strong>1 读锁（共享锁）</strong>：针对同一份数据，多个读操作可以同时进行而不会互相影响。</p>
+</li>
+<li><p><strong>2 写锁（排它锁）</strong>：当前操作没有完成之前，它会阻断其他写锁和读锁。</p>
+</li>
+</ul>
+<h2 id="3-mysql锁"><a href="#3-mysql锁" class="headerlink" title="3 mysql锁"></a>3 mysql锁</h2><p>相对其他数据库而言，MySQL的锁机制比较简单，其最显著的特点是<strong>不同的存储引擎支持不同的锁机制</strong>。下表中罗列出了各存储引擎对锁的支持情况：</p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616170827159.png" alt="image-20200616170827159"></p>
+<p>MySQL这3种锁的特性可大致归纳如下 ：</p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616170852814.png" alt="image-20200616170852814"></p>
+<p>从上述特点可见，很难笼统地说哪种锁更好，只能就<strong>具体应用的特点来说哪种锁更合适</strong>！仅从锁的角度来说：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">表级锁：以查询为主，只有少量按索引条件更新数据的应用，如Web 应用；</span></span><br><span class="line"><span class="attr">2</span> <span class="string">行级锁：有大量按索引条件并发更新少量不同数据，同时又有并查询的应用，如一些在线事务处理（OLTP）系统。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-MyISAM-表锁"><a href="#4-MyISAM-表锁" class="headerlink" title="4 MyISAM 表锁"></a>4 MyISAM 表锁</h2><p><strong>MyISAM 存储引擎只支持表锁</strong>，这也是MySQL开始几个版本中唯一支持的锁类型。</p>
+<h3 id="1-如何加，释放表锁"><a href="#1-如何加，释放表锁" class="headerlink" title="1 如何加，释放表锁"></a>1 如何加，释放表锁</h3><p>1 在执行<strong>查询</strong>语句（SELECT）前，会自动给涉及的所有表加<strong>读锁</strong>，<br>2 在执行<strong>更新</strong>操作（UPDATE、DELETE、INSERT 等）前，会自动给涉及的表加<strong>写锁</strong></p>
+<p>这个过程并不需要用户干预，因此，<strong>用户一般不需要直接用 LOCKTABLE 命令给 MyISAM 表显式加锁。</strong></p>
+<p>​                                            显示加锁的话，还得手动解锁呢！！！</p>
+<div style='background-color:orange;'>加表锁语法: </div>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">加读锁 : lock <span class="keyword">table</span> table_name read;</span><br><span class="line">加写锁 : lock <span class="keyword">table</span> table_name write；</span><br><span class="line"></span><br><span class="line">释放锁 ： unlock tabels;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-读锁案例"><a href="#2-读锁案例" class="headerlink" title="2 读锁案例"></a>2 读锁案例</h3><h4 id="1-准备环境（数据准备）"><a href="#1-准备环境（数据准备）" class="headerlink" title="1 准备环境（数据准备）"></a>1 准备环境（数据准备）</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database demo03 <span class="keyword">default</span> charset<span class="operator">=</span>utf8mb4;</span><br><span class="line">use demo03;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tb_book` (</span><br><span class="line">    `id` <span class="type">INT</span>(<span class="number">11</span>) auto_increment,</span><br><span class="line">    `name` <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    `publish_time` <span class="type">DATE</span> <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    `status` <span class="type">CHAR</span>(<span class="number">1</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>myisam <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_book (id, name, publish_time, status) <span class="keyword">VALUES</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;java编程思</span></span><br><span class="line"><span class="string">想&#x27;</span>,<span class="string">&#x27;2088-08-01&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_book (id, name, publish_time, status) <span class="keyword">VALUES</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;solr编程思</span></span><br><span class="line"><span class="string">想&#x27;</span>,<span class="string">&#x27;2088-08-08&#x27;</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tb_user` (</span><br><span class="line">    `id` <span class="type">INT</span>(<span class="number">11</span>) auto_increment,</span><br><span class="line">    `name` <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">    <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>myisam <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_user (id, name) <span class="keyword">VALUES</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;令狐冲&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_user (id, name) <span class="keyword">VALUES</span>(<span class="keyword">NULL</span>,<span class="string">&#x27;田伯光&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-示例"><a href="#2-示例" class="headerlink" title="2 示例"></a>2 示例</h4><h5 id="客户端-一"><a href="#客户端-一" class="headerlink" title="客户端 一:"></a>客户端 一:</h5><p>1 获得tb_book 表的读锁:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock <span class="keyword">table</span> tb_book read;</span><br></pre></td></tr></table></figure>
+
+<p>2 执行查询操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_book;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616171709882.png" alt="image-20200616171709882"></p>
+<p>可以正常执行 ， 查询出数据。</p>
+<h5 id="客户端-二-："><a href="#客户端-二-：" class="headerlink" title="客户端 二 ："></a>客户端 二 ：</h5><p>3 执行查询操作也能正常读。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_book; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616171709882.png" alt="image-20200616171709882"></p>
+<h5 id="客户端-一-："><a href="#客户端-一-：" class="headerlink" title="客户端 一 ："></a>客户端 一 ：</h5><p>4 查询未锁定的表</p>
+<p>（查询不成，因为进入房间关上锁头了，怎么可以还能去到另一间房读呢）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> tb_user; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172104645.png" alt="image-20200616172104645"></p>
+<h5 id="客户端-二-：-1"><a href="#客户端-二-：-1" class="headerlink" title="客户端 二 ："></a>客户端 二 ：</h5><p>5 查询未锁定的表（成功）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> name <span class="keyword">from</span> tb_user; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172128092.png" alt="image-20200616172128092"></p>
+<h5 id="客户端-一-：-1"><a href="#客户端-一-：-1" class="headerlink" title="客户端 一 ："></a>客户端 一 ：</h5><p>6 执行插入操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> tb_book <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;Mysql 高级&#x27;</span>,<span class="string">&#x27;2088-01-01&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172336937.png" alt="image-20200616172336937"></p>
+<p>执行插入， 直接报错 ， 由于当前tb_book 获得的是 读锁， 不能执行更新操作。</p>
+<h5 id="客户端-二-：-2"><a href="#客户端-二-：-2" class="headerlink" title="客户端 二 ："></a>客户端 二 ：</h5><p>7  执行插入操作（阻塞）</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> tb_book <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;Mysql 高级&#x27;</span>,<span class="string">&#x27;2088-01-01&#x27;</span>,<span class="string">&#x27;1&#x27;</span>); </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172435791.png" alt="image-20200616172435791"></p>
+<p>当在客户端一中释放锁指令 ==unlock tables== 后 ， 客户端二中的 inesrt 语句 ， 立即执行 ；</p>
+<h3 id="3-写锁案例"><a href="#3-写锁案例" class="headerlink" title="3 写锁案例"></a>3 写锁案例</h3><h5 id="客户端-一-1"><a href="#客户端-一-1" class="headerlink" title="客户端 一 :"></a>客户端 一 :</h5><p>1 获得tb_book 表的写锁</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lock <span class="keyword">table</span> tb_book write ; </span><br></pre></td></tr></table></figure>
+
+<p>2 执行查询操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_book ; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172808253.png" alt="image-20200616172808253"></p>
+<p>​    查询操作执行成功；</p>
+<p>3 执行更新操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update tb_book <span class="keyword">set</span> name <span class="operator">=</span> <span class="string">&#x27;java 编程思想（第二版）&#x27;</span> <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">1</span>; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616172922536.png" alt="image-20200616172922536"></p>
+<h5 id="客户端-二"><a href="#客户端-二" class="headerlink" title="客户端 二 :"></a>客户端 二 :</h5><p>4 执行查询操作</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_book ; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616173010147.png" alt="image-20200616173010147"></p>
+<p>当在客户端一中<strong>释放锁指令 unlock tables</strong> 后 ， 客户端二中的 select 语句 ， 立即执行 ；</p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616173038655.png" alt="image-20200616173038655"></p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">获取读锁：</span></span><br><span class="line">    <span class="attr">本线程：只能读取该表，不能读取其他表（报错），同时不能改动该表（报错）。</span></span><br><span class="line">    <span class="attr">其他线程：能读，写阻塞。</span></span><br><span class="line"></span><br><span class="line"><span class="attr">2</span> <span class="string">获取写锁：</span></span><br><span class="line">	<span class="meta">本线程</span> <span class="string">能读能写</span></span><br><span class="line">	<span class="meta">其他线程</span> <span class="string">读写都会阻塞。</span></span><br></pre></td></tr></table></figure>
+
+<p>简而言之，就是读锁会阻塞写，但是不会阻塞读。而写锁，则既会阻塞读，又会阻塞写。</p>
+<p>此外，MyISAM 的读写锁调度是写优先，这也是MyISAM不适合做写为主的表的存储引擎的原因。因为写锁后，其他线程不能做任何操作，大量的更新会使查询很难得到锁，从而造成永远阻塞。</p>
+<h3 id="查看锁的争用情况"><a href="#查看锁的争用情况" class="headerlink" title="查看锁的争用情况"></a>查看锁的争用情况</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">open</span> tables ;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616173345072.png" alt="image-20200616173345072"></p>
+<p>In_user :  表当前被查询使用的次数。如果该数为零，则表是打开的，但是当前没有被使用。</p>
+<p>Name_locked：表名称是否被锁定。名称锁定用于取消表或对表进行重命名等操作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> status <span class="keyword">like</span> <span class="string">&#x27;Table_locks%&#x27;</span>; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616173439787.png" alt="image-20200616173439787"></p>
+<p>Table_locks_immediate  ： 指的是能够立即获得表级锁的次数，每立即获取锁，值加1。</p>
+<p>Table_locks_waited ： 指的是不能立即获取表级锁而需要等待的次数，每等待一次，该值加1，此值高说明存在着较为严重的表级锁争用情况。</p>
+<h2 id="5-InnoDB-行锁"><a href="#5-InnoDB-行锁" class="headerlink" title="5 InnoDB 行锁"></a>5 InnoDB 行锁</h2><h3 id="行锁介绍"><a href="#行锁介绍" class="headerlink" title="行锁介绍"></a>行锁介绍</h3><p>行锁特点 ：<strong>偏向InnoDB 存储引擎</strong>，<strong>开销大，加锁慢；会出现死锁；锁定粒度最小</strong>，发生锁冲突的概率最低,并发度也最高。<br>InnoDB 与 MyISAM 的最大不同有两点<strong>：一是支持事务；二是 采用了行级锁</strong>。</p>
+<h3 id="InnoDB的行锁模式"><a href="#InnoDB的行锁模式" class="headerlink" title="InnoDB的行锁模式"></a>InnoDB的行锁模式</h3><ul>
+<li><p>InnoDB 实现了以下两种类型的行锁。</p>
+</li>
+<li><p><strong>1 共享锁（ S）：</strong>又称为读锁<strong>，简称</strong>S锁</p>
+<p><strong>共享锁就是多个事务对于同一数据可以共享一把锁，</strong>都能访问到数据，但是只能读不能修改。**</p>
+</li>
+<li><p><strong>2 排他锁（ X）：又称为写锁</strong>，简称X锁</p>
+<p>排他锁就是不能与其他锁并存，如一个事务获取了一个数据行的排他锁，<strong>其他事务就不能再获取该行的其他锁</strong>，包括共享锁和排他锁，但是<strong>获取排他锁的事务是可以对数据就行读取和修改</strong>。</p>
+</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及数据集加排他锁（X)；**</span></span><br><span class="line"></span><br><span class="line"><span class="attr">对于普通SELECT语句，InnoDB不会加任何锁(共享锁都不加）；</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以通过以下语句显示给记录集加共享锁或排他锁 。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">共享锁（ S）: <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> table_name <span class="keyword">WHERE</span> ... LOCK <span class="keyword">IN</span> SHARE MODE</span><br><span class="line">排他锁（X) : <span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> table_name <span class="keyword">WHERE</span> ... <span class="keyword">FOR</span> UPDATE</span><br></pre></td></tr></table></figure>
+
+<h3 id="案例准备工作"><a href="#案例准备工作" class="headerlink" title="案例准备工作"></a>案例准备工作</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_innodb_lock(</span><br><span class="line">    id <span class="type">int</span>(<span class="number">11</span>),</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">16</span>),</span><br><span class="line">    sex <span class="type">varchar</span>(<span class="number">1</span>)</span><br><span class="line">)engine <span class="operator">=</span> innodb <span class="keyword">default</span> charset<span class="operator">=</span>utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">&#x27;100&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">3</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">4</span>,<span class="string">&#x27;400&#x27;</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">5</span>,<span class="string">&#x27;500&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">6</span>,<span class="string">&#x27;600&#x27;</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">7</span>,<span class="string">&#x27;700&#x27;</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">8</span>,<span class="string">&#x27;800&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">9</span>,<span class="string">&#x27;900&#x27;</span>,<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_innodb_lock <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">&#x27;200&#x27;</span>,<span class="string">&#x27;0&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> index idx_test_innodb_lock_id <span class="keyword">on</span> test_innodb_lock(id);<span class="comment">-- 添加索引。</span></span><br><span class="line"><span class="keyword">create</span> index idx_test_innodb_lock_name <span class="keyword">on</span> test_innodb_lock(name);</span><br></pre></td></tr></table></figure>
+
+<h3 id="行锁基本演示"><a href="#行锁基本演示" class="headerlink" title="行锁基本演示"></a>行锁基本演示</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 对某一行进行查询时不会加任何锁。</span><br><span class="line">2 对某一行进行更改时自动加上行锁的写锁，当提交时才会自动释放锁。</span><br><span class="line">其他线程想要更改行（该行的写锁被其他拿走了），则会阻塞。</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175211142.png" alt="image-20200616175211142"></p>
+<p>以上， 操作的都是同一行的数据，接下来，演示不同行的数据 ：</p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175250973.png" alt="image-20200616175250973"></p>
+<h3 id="无索引行锁升级为表锁"><a href="#无索引行锁升级为表锁" class="headerlink" title="无索引行锁升级为表锁"></a>无索引行锁升级为表锁</h3><p>如果不通过索引条件检索数据，那么InnoDB将对表中的所有记录加锁，实际效果跟表锁一样。</p>
+<p>查看当前表的索引 ： </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span> test_innodb_lock ;</span><br><span class="line">可以看到表test_innodb_lock具有两个字段的索引哈！</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175341899.png" alt="image-20200616175341899"></p>
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175413589.png" alt="image-20200616175413589"></p>
+<p>由于 执行更新时 ， name字段本来为varchar类型， 我们是作为数组类型使用，存在类型转换，索引失效，最终行锁变为表锁 ；</p>
+<h3 id="间隙锁危害"><a href="#间隙锁危害" class="headerlink" title="间隙锁危害"></a>间隙锁危害</h3><p>当我们用范围条件，而不是使用相等条件检索数据，并请求共享或排他锁时，InnoDB会给符合条件的已有数据进行加锁； 对于键值在条件范围内但并不存在的记录，叫做 “间隙（GAP）” ， InnoDB也会对这个 “间隙” 加锁，这种锁机制就是所谓的 间隙锁（Next-Key锁） 。</p>
+<div style='background-color:#42C0A3;'>示例: </div>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175525671.png" alt="image-20200616175525671"></p>
+<h3 id="InnoDB行锁争用情况"><a href="#InnoDB行锁争用情况" class="headerlink" title="InnoDB行锁争用情况"></a>InnoDB行锁争用情况</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> status  <span class="keyword">like</span> <span class="string">&#x27;innodb_row_lock%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/image-20200616175601028.png" alt="image-20200616175601028"></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Innodb_row_lock_current_waits</span>:  <span class="string">当前正在等待锁定的数量</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Innodb_row_lock_time</span>: <span class="string">从系统启动到现在锁定总时间长度</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Innodb_row_lock_time_avg</span>:<span class="string">每次等待所花平均时长</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Innodb_row_lock_time_max</span>:<span class="string">从系统启动到现在等待最长的一次所花的时间</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Innodb_row_lock_waits</span>: <span class="string">系统启动后到现在总共等待的次数</span></span><br><span class="line"></span><br><span class="line"><span class="attr">当等待的次数很高，而且每次等待的时长也不小的时候，我们就需要分析系统中为什么会有如此多的等待，然后根据分析结果着手制定优化计划。</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>InnoDB 存储引擎由于实现了行级锁定，虽然<strong>在锁定机制的实现方面带来了性能损耗可能比表锁会更高一些</strong>，但是在整体并发处理能力方面要远远由于MyISAM的表锁的。当系统并发量较高的时候，InnoDB的整体性能和MyISAM相比就会有比较明显的优势。</p>
+<p>但是，InnoDB的行级锁同样也有其脆弱的一面，当我们<strong>使用不当的时候</strong>，可能会让InnoDB的整体性能表现不仅不能比MyISAM高，甚至可能会更差。</p>
+<p>优化建议：</p>
+<ul>
+<li><p>尽可能让所有数据检索都能通过索引来完成，避免无索引行锁升级为表锁。</p>
+</li>
+<li><p>合理设计索引，尽量缩小锁的范围</p>
+</li>
+<li><p>尽可能减少索引条件，及索引范围，避免间隙锁</p>
+</li>
+<li><p>尽量控制事务大小，减少锁定资源量和时间长度</p>
+</li>
+<li><p>尽可使用低级别事务隔离（但是需要业务层面满足需求）</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/01/23/Day06-mysql%E9%AB%98%E7%BA%A7-Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84-sql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-mysql%E9%94%81/">http://example.com/2022/01/23/Day06-mysql%E9%AB%98%E7%BA%A7-Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84-sql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-mysql%E9%94%81/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">Mysql体系结构</a><a class="post-meta__tags" href="/tags/sql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">sql存储引擎</a><a class="post-meta__tags" href="/tags/mysql%E9%94%81/">mysql锁</a></div><div class="post_share"><div class="social-share" data-image="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/%E5%B0%81%E9%9D%A2.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/01/23/Day06-MySQL-JDBC/"><img class="prev-cover" src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day06-mysql%E9%AB%98%E7%BA%A7%E5%92%8Cjdbc/%E5%B0%81%E9%9D%A2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Day06-MySQL-JDBC</div></div></a></div><div class="next-post pull-right"><a href="/2022/01/22/Day05-mysql%E9%AB%98%E7%BA%A7-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95-%E8%A7%86%E5%9B%BE-%E8%A7%A6%E5%8F%91%E5%99%A8-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/"><img class="next-cover" src="/img/java/02%E9%98%B6%E6%AE%B5mysql%E6%95%B0%E6%8D%AE%E5%BA%93/day05-mysql%E9%AB%98%E7%BA%A7/%E5%B0%81%E9%9D%A2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Day05-mysql高级-数据库索引-视图-触发器-存储过程</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">第一章 Mysql体系结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%B8%AA-MySQL-Server%E7%94%B1%E4%B9%9D%E4%B8%AA%E6%9D%BF%E5%9D%97%E7%BB%84%E6%88%90%EF%BC%8C%E5%88%86%E4%B8%BA%E5%9B%9B%E4%B8%AA%E5%B1%82%E3%80%82"><span class="toc-number">1.1.</span> <span class="toc-text">整个 MySQL Server由九个板块组成，分为四个层。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9E%E6%8E%A5%E5%B1%82"><span class="toc-number">1.2.</span> <span class="toc-text">1 连接层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9C%8D%E5%8A%A1%E5%B1%82"><span class="toc-number">1.3.</span> <span class="toc-text">2 服务层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%BC%95%E6%93%8E%E5%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">3 引擎层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AD%98%E5%82%A8%E5%B1%82"><span class="toc-number">1.5.</span> <span class="toc-text">4 存储层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="toc-number">1.6.</span> <span class="toc-text">mysql的不同</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">2.</span> <span class="toc-text">第二章 存储引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">1 存储引擎概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%89%B9%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">2 存储引擎特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">2.2.1.</span> <span class="toc-text">1  InnoDB存储引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E4%BA%8B%E5%8A%A1%E6%8E%A7%E5%88%B6"><span class="toc-number">2.2.1.0.1.</span> <span class="toc-text">（1）事务控制</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F"><span class="toc-number">2.2.1.0.2.</span> <span class="toc-text">（2）外键约束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E5%AD%98%E5%82%A8%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.2.1.0.3.</span> <span class="toc-text">（3）存储位置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-MyISAM-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-number">2.2.2.</span> <span class="toc-text">2  MyISAM 存储引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%8D%E6%94%AF%E6%8C%81%E4%BA%8B%E5%8A%A1"><span class="toc-number">2.2.2.0.1.</span> <span class="toc-text">不支持事务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.2.2.0.2.</span> <span class="toc-text">文件存储方式</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E9%80%89%E6%8B%A9"><span class="toc-number">2.3.</span> <span class="toc-text">3 存储引擎选择</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E9%94%81"><span class="toc-number">3.</span> <span class="toc-text">第三章 锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%94%81%E6%A6%82%E8%BF%B0"><span class="toc-number">3.1.</span> <span class="toc-text">1 锁概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%94%81%E5%88%86%E7%B1%BB"><span class="toc-number">3.2.</span> <span class="toc-text">2 锁分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-mysql%E9%94%81"><span class="toc-number">3.3.</span> <span class="toc-text">3 mysql锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-MyISAM-%E8%A1%A8%E9%94%81"><span class="toc-number">3.4.</span> <span class="toc-text">4 MyISAM 表锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A6%82%E4%BD%95%E5%8A%A0%EF%BC%8C%E9%87%8A%E6%94%BE%E8%A1%A8%E9%94%81"><span class="toc-number">3.4.1.</span> <span class="toc-text">1 如何加，释放表锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AF%BB%E9%94%81%E6%A1%88%E4%BE%8B"><span class="toc-number">3.4.2.</span> <span class="toc-text">2 读锁案例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83%EF%BC%88%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87%EF%BC%89"><span class="toc-number">3.4.2.1.</span> <span class="toc-text">1 准备环境（数据准备）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.4.2.2.</span> <span class="toc-text">2 示例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%B8%80"><span class="toc-number">3.4.2.2.1.</span> <span class="toc-text">客户端 一:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%BA%8C-%EF%BC%9A"><span class="toc-number">3.4.2.2.2.</span> <span class="toc-text">客户端 二 ：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%B8%80-%EF%BC%9A"><span class="toc-number">3.4.2.2.3.</span> <span class="toc-text">客户端 一 ：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%BA%8C-%EF%BC%9A-1"><span class="toc-number">3.4.2.2.4.</span> <span class="toc-text">客户端 二 ：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%B8%80-%EF%BC%9A-1"><span class="toc-number">3.4.2.2.5.</span> <span class="toc-text">客户端 一 ：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%BA%8C-%EF%BC%9A-2"><span class="toc-number">3.4.2.2.6.</span> <span class="toc-text">客户端 二 ：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%86%99%E9%94%81%E6%A1%88%E4%BE%8B"><span class="toc-number">3.4.3.</span> <span class="toc-text">3 写锁案例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%B8%80-1"><span class="toc-number">3.4.3.0.1.</span> <span class="toc-text">客户端 一 :</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF-%E4%BA%8C"><span class="toc-number">3.4.3.0.2.</span> <span class="toc-text">客户端 二 :</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">3.4.4.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E9%94%81%E7%9A%84%E4%BA%89%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">3.4.5.</span> <span class="toc-text">查看锁的争用情况</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-InnoDB-%E8%A1%8C%E9%94%81"><span class="toc-number">3.5.</span> <span class="toc-text">5 InnoDB 行锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E9%94%81%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.5.1.</span> <span class="toc-text">行锁介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E7%9A%84%E8%A1%8C%E9%94%81%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.5.2.</span> <span class="toc-text">InnoDB的行锁模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">3.5.3.</span> <span class="toc-text">案例准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%8C%E9%94%81%E5%9F%BA%E6%9C%AC%E6%BC%94%E7%A4%BA"><span class="toc-number">3.5.4.</span> <span class="toc-text">行锁基本演示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E7%B4%A2%E5%BC%95%E8%A1%8C%E9%94%81%E5%8D%87%E7%BA%A7%E4%B8%BA%E8%A1%A8%E9%94%81"><span class="toc-number">3.5.5.</span> <span class="toc-text">无索引行锁升级为表锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81%E5%8D%B1%E5%AE%B3"><span class="toc-number">3.5.6.</span> <span class="toc-text">间隙锁危害</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InnoDB%E8%A1%8C%E9%94%81%E4%BA%89%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">3.5.7.</span> <span class="toc-text">InnoDB行锁争用情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.5.8.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
