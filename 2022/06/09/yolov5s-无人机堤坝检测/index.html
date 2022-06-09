@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>yolov5s-无人机堤坝检测 | Jason</title><meta name="keywords" content="yolov5,自定义数据模型"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1 yolov5环境配置：（参考我前面的博客） 1https:&#x2F;&#x2F;gaominghui123.github.io&#x2F;2021&#x2F;10&#x2F;28&#x2F;%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E7%9A%84ubuntu%E9%83%A8%E7%BD%B2yolov5-5-0&#x2F;  2 数据集的制作(采用vcat工具，直接可以在视频上进行标注)（参考我前面的博客）， ps：配置vc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="yolov5s-无人机堤坝检测">
+<meta property="og:url" content="http://example.com/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="1 yolov5环境配置：（参考我前面的博客） 1https:&#x2F;&#x2F;gaominghui123.github.io&#x2F;2021&#x2F;10&#x2F;28&#x2F;%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E7%9A%84ubuntu%E9%83%A8%E7%BD%B2yolov5-5-0&#x2F;  2 数据集的制作(采用vcat工具，直接可以在视频上进行标注)（参考我前面的博客）， ps：配置vc">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%B0%81%E9%9D%A2.png">
+<meta property="article:published_time" content="2022-06-09T09:04:10.000Z">
+<meta property="article:modified_time" content="2022-06-09T09:42:35.513Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="yolov5">
+<meta property="article:tag" content="自定义数据模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%B0%81%E9%9D%A2.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'yolov5s-无人机堤坝检测',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-06-09 17:42:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">149</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">186</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">30</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%B0%81%E9%9D%A2.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">yolov5s-无人机堤坝检测</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-06-09T09:04:10.000Z" title="发表于 2022-06-09 17:04:10">2022-06-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T09:42:35.513Z" title="更新于 2022-06-09 17:42:35">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="yolov5s-无人机堤坝检测"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><strong>1 yolov5环境配置：</strong>（参考我前面的博客）</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="string">//gaominghui123.github.io/2021/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E7%9A%84ubuntu%E9%83%A8%E7%BD%B2yolov5-5-0/</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2 数据集的制作</strong>(采用vcat工具，直接可以在视频上进行标注)（参考我前面的博客），</p>
+<p>ps：配置vcat服务花费时间比较长，vcat这个工具不同于labelImg，后者是exe执行文件，直接就可以标注图片，但是vcat类似于面向服务编程，要安装docker，docker编排器拉取镜像，运行容器等等，最后将vcat服务跑起来，在浏览器访问，标注。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="string">//gaominghui123.github.io/2022/06/08/vcat%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%A0%A4%E5%9D%9D%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8Eyolov%E7%9B%AE%E5%BD%95%E5%85%B3%E7%B3%BB.png" alt="堤坝数据集与yolov目录关系"></p>
+<p><strong>3 yolov5s训练自定义数据集方法</strong>，参考：（参考我前面的博客）</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="string">//gaominghui123.github.io/2021/11/13/yolov5-customData/</span></span><br></pre></td></tr></table></figure>
+
+<p>效果：</p>
+<p><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/frame_004750.PNG" alt="frame_004750"></p>
+<p><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/frame_004375.PNG" alt="frame_004375"></p>
+<p><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/frame_004650.PNG" alt="frame_004650"></p>
+<p>可以看到效果并不算很好，原因主要是数据集太少了，别人训练一个模型需要几个G的数据集，我这只有几十兆</p>
+<p>解决方法：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">数据增强，网上找方法，接下来的工作</span></span><br><span class="line"><span class="attr">2</span> <span class="string">想办法拍更多的视频，继续标注，构建更加庞大的数据集</span></span><br><span class="line"><span class="attr">3</span> <span class="string">拍出来的几乎是正常的堤坝，标注时几乎没有几张图是可以作为有问题的堤坝标签</span></span><br><span class="line"><span class="attr">4</span> <span class="string">除了拍多一点照片，还需要不同类型的堤坝照片</span></span><br><span class="line"><span class="attr">5</span> <span class="string">有了不同类型堤坝的照片，训练时注意要先打乱数据集的顺序，有助于更好的收敛</span></span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/">http://example.com/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/yolov5/">yolov5</a><a class="post-meta__tags" href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/">自定义数据模型</a></div><div class="post_share"><div class="social-share" data-image="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%B0%81%E9%9D%A2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/06/09/yolov5-%E9%BB%84%E7%93%9C%E5%8F%B6%E7%89%87%E7%97%85%E8%99%AB%E5%AE%B3%E8%AF%86%E5%88%AB/"><img class="next-cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/2-yolov5-customDataSet/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">yolov5-黄瓜叶片病虫害识别</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/11/13/yolov5-customData/" title="yolov5+customData"><img class="cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/2-yolov5-customDataSet/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-13</div><div class="title">yolov5+customData</div></div></a></div><div><a href="/2022/06/09/yolov5-%E9%BB%84%E7%93%9C%E5%8F%B6%E7%89%87%E7%97%85%E8%99%AB%E5%AE%B3%E8%AF%86%E5%88%AB/" title="yolov5-黄瓜叶片病虫害识别"><img class="cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/2-yolov5-customDataSet/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-09</div><div class="title">yolov5-黄瓜叶片病虫害识别</div></div></a></div><div><a href="/2021/11/04/nano-yolov5-5-0-tensorRT-GPU-cam/" title="nano_yolov5_5.0_tensorRT+GPU+cam"><img class="cover" src="/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-04</div><div class="title">nano_yolov5_5.0_tensorRT+GPU+cam</div></div></a></div><div><a href="/2021/11/02/usb%E6%88%96%E8%80%85%E6%89%8B%E6%9C%BA%E6%91%84%E5%83%8F%E5%A4%B4%E5%AE%9E%E6%97%B6%E8%B7%91%E9%80%9Ayolov5/" title="usb或者手机摄像头实时跑通yolov5"><img class="cover" src="/img/%E4%B8%BB%E9%A1%B5%E9%9D%A2%E5%9B%BE%E7%89%87.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-02</div><div class="title">usb或者手机摄像头实时跑通yolov5</div></div></a></div><div><a href="/2021/10/28/%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%8A%E7%9A%84ubuntu%E9%83%A8%E7%BD%B2yolov5-5-0/" title="虚拟机上的ubuntu部署yolov5-5.0"><img class="cover" src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/1-ubuntu%E8%B7%91%E9%80%9Ayolov5/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-10-28</div><div class="title">虚拟机上的ubuntu部署yolov5-5.0</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">高明辉</div><div class="author-info__description">机会永远留给有准备的人</div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">149</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">186</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">30</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Jason's Blog</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/gaominghui123" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1401648773@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Welcom to Jason's Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/" title="yolov5s-无人机堤坝检测"><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/3-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B-yolov5%E9%83%A8%E5%88%86/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="yolov5s-无人机堤坝检测"/></a><div class="content"><a class="title" href="/2022/06/09/yolov5s-%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%A0%A4%E5%9D%9D%E6%A3%80%E6%B5%8B/" title="yolov5s-无人机堤坝检测">yolov5s-无人机堤坝检测</a><time datetime="2022-06-09T09:04:10.000Z" title="发表于 2022-06-09 17:04:10">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/09/yolov5-%E9%BB%84%E7%93%9C%E5%8F%B6%E7%89%87%E7%97%85%E8%99%AB%E5%AE%B3%E8%AF%86%E5%88%AB/" title="yolov5-黄瓜叶片病虫害识别"><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/yolo/2-yolov5-customDataSet/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="yolov5-黄瓜叶片病虫害识别"/></a><div class="content"><a class="title" href="/2022/06/09/yolov5-%E9%BB%84%E7%93%9C%E5%8F%B6%E7%89%87%E7%97%85%E8%99%AB%E5%AE%B3%E8%AF%86%E5%88%AB/" title="yolov5-黄瓜叶片病虫害识别">yolov5-黄瓜叶片病虫害识别</a><time datetime="2022-06-09T08:58:46.000Z" title="发表于 2022-06-09 16:58:46">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/08/vcat%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" title="vcat标注工具的安装以及使用"><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/cvat/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vcat标注工具的安装以及使用"/></a><div class="content"><a class="title" href="/2022/06/08/vcat%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E4%BD%BF%E7%94%A8/" title="vcat标注工具的安装以及使用">vcat标注工具的安装以及使用</a><time datetime="2022-06-08T15:16:59.000Z" title="发表于 2022-06-08 23:16:59">2022-06-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/01/pandas-%E8%BD%BB%E6%9D%BE%E5%AD%A6pandas-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="pandas-轻松学pandas-快速入门"><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/numpy-pandas-matplotlib/%E5%B0%81%E9%9D%A22.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pandas-轻松学pandas-快速入门"/></a><div class="content"><a class="title" href="/2022/06/01/pandas-%E8%BD%BB%E6%9D%BE%E5%AD%A6pandas-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="pandas-轻松学pandas-快速入门">pandas-轻松学pandas-快速入门</a><time datetime="2022-06-01T08:51:36.000Z" title="发表于 2022-06-01 16:51:36">2022-06-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/01/pandas-%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" title="pandas-数据清洗"><img src="/img/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/numpy-pandas-matplotlib/%E5%B0%81%E9%9D%A22.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pandas-数据清洗"/></a><div class="content"><a class="title" href="/2022/06/01/pandas-%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" title="pandas-数据清洗">pandas-数据清洗</a><time datetime="2022-06-01T08:50:56.000Z" title="发表于 2022-06-01 16:50:56">2022-06-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
