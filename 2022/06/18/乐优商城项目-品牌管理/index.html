@@ -1,0 +1,871 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>乐优商城项目-品牌管理 | Jason</title><meta name="keywords" content="乐优商城项目"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="乐优商城项目-品牌管理0.学习目标 了解品牌表结构 实现品牌相关业务 实现图片上传的业务  1.品牌管理业务商品都有自己的品牌，而商品分类、商品品牌、商品之间的关系是这样的：  分类与品牌之间是多对多关系 分类与商品之间是一对多关系 品牌与商品之间也是一对多关系  下面我们来完成品牌相关业务，包括下面的接口：   1.1.表结构来看下品牌的表结构： 123456789CREATE TABLE &#96;t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="乐优商城项目-品牌管理">
+<meta property="og:url" content="http://example.com/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="乐优商城项目-品牌管理0.学习目标 了解品牌表结构 实现品牌相关业务 实现图片上传的业务  1.品牌管理业务商品都有自己的品牌，而商品分类、商品品牌、商品之间的关系是这样的：  分类与品牌之间是多对多关系 分类与商品之间是一对多关系 品牌与商品之间也是一对多关系  下面我们来完成品牌相关业务，包括下面的接口：   1.1.表结构来看下品牌的表结构： 123456789CREATE TABLE &#96;t">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png">
+<meta property="article:published_time" content="2022-06-18T14:42:34.000Z">
+<meta property="article:modified_time" content="2022-06-18T14:45:14.848Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="乐优商城项目">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '乐优商城项目-品牌管理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-18 22:45:14'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">153</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">187</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">31</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">乐优商城项目-品牌管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-06-18T14:42:34.000Z" title="发表于 2022-06-18 22:42:34">2022-06-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-18T14:45:14.848Z" title="更新于 2022-06-18 22:45:14">2022-06-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="乐优商城项目-品牌管理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="乐优商城项目-品牌管理"><a href="#乐优商城项目-品牌管理" class="headerlink" title="乐优商城项目-品牌管理"></a>乐优商城项目-品牌管理</h1><h1 id="0-学习目标"><a href="#0-学习目标" class="headerlink" title="0.学习目标"></a>0.学习目标</h1><ul>
+<li>了解品牌表结构</li>
+<li>实现品牌相关业务</li>
+<li>实现图片上传的业务</li>
+</ul>
+<h1 id="1-品牌管理业务"><a href="#1-品牌管理业务" class="headerlink" title="1.品牌管理业务"></a>1.品牌管理业务</h1><p>商品都有自己的品牌，而商品分类、商品品牌、商品之间的关系是这样的：</p>
+<ul>
+<li>分类与品牌之间是多对多关系</li>
+<li>分类与商品之间是一对多关系</li>
+<li>品牌与商品之间也是一对多关系</li>
+</ul>
+<p>下面我们来完成品牌相关业务，包括下面的接口：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200127100920241.png" alt="image-20200127100920241"> </p>
+<h2 id="1-1-表结构"><a href="#1-1-表结构" class="headerlink" title="1.1.表结构"></a>1.1.表结构</h2><p>来看下品牌的表结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `tb_brand` (</span><br><span class="line">  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT &#x27;品牌id&#x27;,</span><br><span class="line">  `name` varchar(64) NOT NULL COMMENT &#x27;品牌名称&#x27;,</span><br><span class="line">  `image` varchar(256) DEFAULT &#x27;&#x27; COMMENT &#x27;品牌图片地址&#x27;,</span><br><span class="line">  `letter` char(1) DEFAULT &#x27;&#x27; COMMENT &#x27;品牌的首字母&#x27;,</span><br><span class="line">  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;品牌表&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>品牌与商品分类是一对多关系，因此他们需要一个中间表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `tb_category_brand` (</span><br><span class="line">  `category_id` bigint(20) NOT NULL COMMENT &#x27;商品类目id&#x27;,</span><br><span class="line">  `brand_id` bigint(20) NOT NULL COMMENT &#x27;品牌id&#x27;,</span><br><span class="line">  PRIMARY KEY (`category_id`,`brand_id`)</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;商品分类和品牌的中间表，两者是多对多关系&#x27;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-2-基础代码"><a href="#1-2-基础代码" class="headerlink" title="1.2.基础代码"></a>1.2.基础代码</h2><p>接下来，准备好PO、DTO、Mapper、Service、Controller等。</p>
+<h3 id="1-2-1-实体类"><a href="#1-2-1-实体类" class="headerlink" title="1.2.1.实体类"></a>1.2.1.实体类</h3><p>在<code>ly-item-service</code>的<code>com.leyou.item.entity</code>中准备两个PO，分别对应品牌表和中间表：</p>
+<p>品牌实体类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.entity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableId;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableName;</span><br><span class="line"><span class="keyword">import</span> com.leyou.common.entity.BaseEntity;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.EqualsAndHashCode;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode(callSuper = false)</span></span><br><span class="line"><span class="meta">@TableName(&quot;tb_brand&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Brand</span> <span class="keyword">extends</span> <span class="title">BaseEntity</span> </span>&#123;</span><br><span class="line">    <span class="meta">@TableId</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String image;</span><br><span class="line">    <span class="keyword">private</span> Character letter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>中间表实体类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.entity;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.IdType;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableId;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableName;</span><br><span class="line"><span class="keyword">import</span> lombok.AllArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor(staticName = &quot;of&quot;)</span></span><br><span class="line"><span class="meta">@TableName(&quot;tb_category_brand&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CategoryBrand</span> </span>&#123;</span><br><span class="line">    <span class="meta">@TableId(type = IdType.INPUT)</span></span><br><span class="line">    <span class="keyword">private</span> Long categoryId;</span><br><span class="line">    <span class="meta">@TableId(type = IdType.INPUT)</span></span><br><span class="line">    <span class="keyword">private</span> Long brandId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-2-mapper"><a href="#1-2-2-mapper" class="headerlink" title="1.2.2.mapper"></a>1.2.2.mapper</h3><p>在<code>ly-item-service</code>的<code>com.leyou.item.mapper</code>中准备mapper：</p>
+<p>首先是BrandMapper：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.mapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.Brand;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Param;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Select;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BrandMapper</span> <span class="keyword">extends</span> <span class="title">BaseMapper</span>&lt;<span class="title">Brand</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后是中间表的mapper：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.mapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.CategoryBrand;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CategoryBrandMapper</span> <span class="keyword">extends</span> <span class="title">BaseMapper</span>&lt;<span class="title">CategoryBrand</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-3-service"><a href="#1-2-3-service" class="headerlink" title="1.2.3.service"></a>1.2.3.service</h3><p>在<code>ly-item-service</code>的<code>com.leyou.item.service</code>中准备两个service接口：</p>
+<p>品牌：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.IService;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.Brand;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BrandService</span> <span class="keyword">extends</span> <span class="title">IService</span>&lt;<span class="title">Brand</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>中间表：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.IService;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.CategoryBrand;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CategoryBrandService</span> <span class="keyword">extends</span> <span class="title">IService</span>&lt;<span class="title">CategoryBrand</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在<code>ly-item-service</code>的<code>com.leyou.item.service.impl</code>中准备两个service的实现类：</p>
+<p>brand:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.Brand;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.mapper.BrandMapper;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.service.BrandService;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BrandServiceImpl</span> <span class="keyword">extends</span> <span class="title">ServiceImpl</span>&lt;<span class="title">BrandMapper</span>, <span class="title">Brand</span>&gt; <span class="keyword">implements</span> <span class="title">BrandService</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>中间表：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.entity.CategoryBrand;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.mapper.CategoryBrandMapper;</span><br><span class="line"><span class="keyword">import</span> com.leyou.item.service.CategoryBrandService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CategoryBrandServiceImpl</span> <span class="keyword">extends</span> <span class="title">ServiceImpl</span>&lt;<span class="title">CategoryBrandMapper</span>, <span class="title">CategoryBrand</span>&gt; <span class="keyword">implements</span> <span class="title">CategoryBrandService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-4-controller"><a href="#1-2-4-controller" class="headerlink" title="1.2.4.controller"></a>1.2.4.controller</h3><p>然后是brand的controller：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.item.service.BrandService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;brand&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BrandController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BrandService brandService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BrandController</span><span class="params">(BrandService brandService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.brandService = brandService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-5-DTO"><a href="#1-2-5-DTO" class="headerlink" title="1.2.5.DTO"></a>1.2.5.DTO</h3><p>查询品牌后，返回的DTO对象，包括：</p>
+<p>在<code>ly-common</code>中的<code>com.leyou.common.dto</code>中的用于封装分页结果的PageDTO：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.common.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageDTO</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long total;<span class="comment">// 总条数</span></span><br><span class="line">    <span class="keyword">private</span> Long totalPage;<span class="comment">// 总页数</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;T&gt; items;<span class="comment">// 当前页数据</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PageDTO</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PageDTO</span><span class="params">(Long total, List&lt;T&gt; items)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.total = total;</span><br><span class="line">        <span class="keyword">this</span>.items = items;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PageDTO</span><span class="params">(Long total, Long totalPage, List&lt;T&gt; items)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.total = total;</span><br><span class="line">        <span class="keyword">this</span>.totalPage = totalPage;</span><br><span class="line">        <span class="keyword">this</span>.items = items;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-api</code>中的<code>com.leyou.item.dto</code>中的BrandDTO：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.item.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.common.dto.BaseDTO;</span><br><span class="line"><span class="keyword">import</span> com.leyou.common.entity.BaseEntity;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.EqualsAndHashCode;</span><br><span class="line"><span class="keyword">import</span> lombok.NoArgsConstructor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Collection;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.stream.Collectors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode(callSuper = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BrandDTO</span> <span class="keyword">extends</span> <span class="title">BaseDTO</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String image;</span><br><span class="line">    <span class="keyword">private</span> Character letter;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Long&gt; categoryIds;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BrandDTO</span><span class="params">(BaseEntity entity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(entity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends BaseEntity&gt; <span class="function">List&lt;BrandDTO&gt; <span class="title">convertEntityList</span><span class="params">(Collection&lt;T&gt; list)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(list == <span class="keyword">null</span>)&#123;</span><br><span class="line">			<span class="keyword">return</span> Collections.emptyList();</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="keyword">return</span> list.stream().map(BrandDTO::<span class="keyword">new</span>).collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3-根据品牌id查询品牌"><a href="#1-3-根据品牌id查询品牌" class="headerlink" title="1.3.根据品牌id查询品牌"></a>1.3.根据品牌id查询品牌</h2><p>接口信息：</p>
+<ul>
+<li><p>请求方式：<code>Get</code></p>
+</li>
+<li><p>请求路径：<code>/brand/&#123;id&#125;</code></p>
+</li>
+<li><p>请求参数：id，品牌id</p>
+</li>
+<li><p>返回值类型：BrandDTO，并不包含id集合</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">&quot;id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">	<span class="attr">&quot;image&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">	<span class="attr">&quot;letter&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">	<span class="attr">&quot;name&quot;</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id查询品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 品牌的id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 品牌对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;BrandDTO&gt; <span class="title">queryBrandById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long id)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(<span class="keyword">new</span> BrandDTO(brandService.getById(id)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-4-根据品牌id集合查询品牌集合"><a href="#1-4-根据品牌id集合查询品牌集合" class="headerlink" title="1.4.根据品牌id集合查询品牌集合"></a>1.4.根据品牌id集合查询品牌集合</h2><p>接口信息：</p>
+<ul>
+<li>请求方式：<code>Get</code></li>
+<li>请求路径：<code>/brand/list</code></li>
+<li>请求参数：ids，品牌id的集合</li>
+<li>返回值类型：BrandDTO的集合</li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据品牌id集合查询品牌集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> idList id集合</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> BrandDTO 集合</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/list&quot;)</span></span><br><span class="line"><span class="keyword">public</span> ResponseEntity&lt;List&lt;BrandDTO&gt;&gt; queryBrandByIds(<span class="meta">@RequestParam(&quot;ids&quot;)</span> List&lt;Long&gt; idList)&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(BrandDTO.convertEntityList(brandService.listByIds(idList)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-5-分页查询品牌"><a href="#1-5-分页查询品牌" class="headerlink" title="1.5.分页查询品牌"></a>1.5.分页查询品牌</h2><p>接口信息：</p>
+<ul>
+<li><p>请求方式：<code>Get</code></p>
+</li>
+<li><p>请求路径：<code>/brand/page</code></p>
+</li>
+<li><p>请求参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+<th>请求类型</th>
+<th>是否必须</th>
+<th>数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>key</td>
+<td>搜索条件</td>
+<td>query</td>
+<td>false</td>
+<td>string</td>
+</tr>
+<tr>
+<td>page</td>
+<td>当前页码</td>
+<td>query</td>
+<td>false</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>rows</td>
+<td>每页大小</td>
+<td>query</td>
+<td>false</td>
+<td>integer</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>返回值类型：分页结果PageDTO，其中包含BrandDTO集合</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">&quot;items&quot;</span>: [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="attr">&quot;id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">			<span class="attr">&quot;image&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			<span class="attr">&quot;letter&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">			<span class="attr">&quot;name&quot;</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">	],</span><br><span class="line">	<span class="attr">&quot;total&quot;</span>: <span class="number">0</span>,</span><br><span class="line">	<span class="attr">&quot;totalPage&quot;</span>: <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的<code>BrandController</code>中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> page 当前页码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rows 每页大小</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key 查询条件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 品牌分页结果</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;page&quot;)</span></span><br><span class="line"><span class="keyword">public</span> ResponseEntity&lt;PageDTO&lt;BrandDTO&gt;&gt; queryBrandByPage(</span><br><span class="line">    <span class="meta">@RequestParam(value = &quot;page&quot;, defaultValue = &quot;1&quot;)</span>Integer page,</span><br><span class="line">    <span class="meta">@RequestParam(value = &quot;rows&quot;, defaultValue = &quot;5&quot;)</span>Integer rows,</span><br><span class="line">    <span class="meta">@RequestParam(value = &quot;key&quot;, required = false)</span>String key</span><br><span class="line">)&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity</span><br><span class="line">        .ok(brandService.queryBrandByPage(page,rows, key));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service</code>的<code>BrandService</code>中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 分页查询品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> page 当前页</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rows 每页大小</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key 搜索关键字</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 分页结果</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="function">PageDTO&lt;BrandDTO&gt; <span class="title">queryBrandByPage</span><span class="params">(Integer page, Integer rows, String key)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service.impl</code>的<code>BrandServiceImpl</code>中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> PageDTO&lt;BrandDTO&gt; <span class="title">queryBrandByPage</span><span class="params">(Integer page, Integer rows, String key)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 1.分页信息的健壮性处理</span></span><br><span class="line">       page = Math.min(page, <span class="number">100</span>);</span><br><span class="line">       rows = Math.max(rows, <span class="number">5</span>);</span><br><span class="line">       <span class="comment">// 2.分页</span></span><br><span class="line">       Page&lt;Brand&gt; info = <span class="keyword">new</span> Page&lt;&gt;(page, rows);</span><br><span class="line">       <span class="comment">// 3.判断key是否存在</span></span><br><span class="line">       <span class="keyword">boolean</span> isKeyExists = StringUtils.isNoneBlank(key);</span><br><span class="line">       <span class="comment">// 4.如果key存在，添加like和eq的查询条件，否则不添加######动态sql</span></span><br><span class="line">       query().like(isKeyExists, <span class="string">&quot;name&quot;</span>, key)</span><br><span class="line">               .or()</span><br><span class="line">               .eq(isKeyExists, <span class="string">&quot;letter&quot;</span>, key)</span><br><span class="line">               .page(info);</span><br><span class="line">       <span class="comment">// 5.封装结果</span></span><br><span class="line">       List&lt;Brand&gt; list = info.getRecords();</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> PageDTO&lt;&gt;(info.getTotal(), info.getPages(), BrandDTO.convertEntityList(list));</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-6-根据分类id查询品牌"><a href="#1-6-根据分类id查询品牌" class="headerlink" title="1.6.根据分类id查询品牌"></a>1.6.根据分类id查询品牌</h2><p>接口信息：</p>
+<ul>
+<li>请求方式：<code>Get</code></li>
+<li>请求路径：<code>/brand/of/category</code></li>
+<li>请求参数：id，分类的id</li>
+<li>返回值类型：BrandDTO的集合</li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据分类查询品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 品牌集合</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/of/category&quot;)</span></span><br><span class="line"><span class="keyword">public</span> ResponseEntity&lt;List&lt;BrandDTO&gt;&gt; queryBrandByCategory(<span class="meta">@RequestParam(&quot;id&quot;)</span> Long id)&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(brandService.queryBrandByCategory(id));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service</code>的<code>BrandService</code>中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据分类id查询品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 分类id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 品牌集合</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="function">List&lt;BrandDTO&gt; <span class="title">queryBrandByCategory</span><span class="params">(Long id)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>分类和品牌之间是通过中间表联系的，因此要想实现这个功能，需要结合中间表完成查询，实现思路有两种：</p>
+<ul>
+<li><p>思路一：关联查询:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	b.id, b.name, b.letter, b.image </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">	tb_category_brand cb </span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> </span><br><span class="line">	tb_brand b <span class="keyword">ON</span> b.id <span class="operator">=</span> cb.brand_id </span><br><span class="line"><span class="keyword">WHERE</span> </span><br><span class="line">	cb.category_id <span class="operator">=</span> #&#123;cid&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>思路二：子查询</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">	id,</span><br><span class="line">	`name`,</span><br><span class="line">	letter,</span><br><span class="line">	image </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	tb_brand</span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">	id <span class="keyword">IN</span> (<span class="keyword">SELECT</span> brand_id <span class="keyword">FROM</span> tb_category_brand <span class="keyword">WHERE</span> category_id <span class="operator">=</span> <span class="number">1</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>这里我们采用思路1.</p>
+<p>首先在<code>ly-item-service</code>中的<code>com.leyou.item.mapper</code>的在<code>BrandMapper</code>中添加一个新的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select(&quot;SELECT b.id, b.name, b.letter, b.image FROM tb_category_brand cb INNER JOIN tb_brand b ON b.id = cb.brand_id WHERE cb.category_id = #&#123;cid&#125;&quot;)</span></span><br><span class="line"><span class="function">List&lt;Brand&gt; <span class="title">queryByCategoryId</span><span class="params">(<span class="meta">@Param(&quot;cid&quot;)</span> Long cid)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service.impl</code>的<code>BrandServiceImpl</code>中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;BrandDTO&gt; <span class="title">queryBrandByCategory</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">    List&lt;Brand&gt; list = getBaseMapper().queryByCategoryId(id);</span><br><span class="line">    <span class="keyword">return</span> BrandDTO.convertEntityList(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-7-新增品牌"><a href="#1-7-新增品牌" class="headerlink" title="1.7.新增品牌"></a>1.7.新增品牌</h2><p>解析：<strong>新增品牌，应该是给tb_brand 表格添加信息，中间表tb_categorybrand添加数据</strong>。<strong>一个品牌有多种分类</strong>！！！</p>
+<p>接口信息：</p>
+<ul>
+<li><p>请求方式：<code>POST</code></p>
+</li>
+<li><p>请求路径：<code>/brand</code></p>
+</li>
+<li><p>请求参数：BrandDTO对象</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+<th>请求类型</th>
+<th>是否必须</th>
+<th>数据类型</th>
+<th>schema</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>categoryIds</td>
+<td>品牌相关的分类ID的集合</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>image</td>
+<td>品牌LOGO</td>
+<td>query</td>
+<td>false</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>letter</td>
+<td>品牌首字母</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>品牌名称</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>返回值类型：无，状态码</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>说明</th>
+<th>schema</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>201</td>
+<td>新增成功</td>
+<td></td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td></td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td></td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> brandDTO 品牌对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 无</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Void&gt; <span class="title">saveBrand</span><span class="params">(BrandDTO brandDTO)</span> </span>&#123;</span><br><span class="line">    brandService.saveBrand(brandDTO);</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.status(HttpStatus.CREATED).build();<span class="comment">//#####因为是新增，因此返回为null。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service</code>BrandService中添加新的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 新增品牌和中间表数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> brand 品牌的DTO</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">saveBrand</span><span class="params">(BrandDTO brand)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>新增品牌的同时，还需要新增中间表，在<code>ly-item-service</code>中的<code>com.leyou.item.service.impl</code>的<code>BrandServiceImpl</code>中添加代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> CategoryBrandService categoryBrandService;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BrandServiceImpl</span><span class="params">(CategoryBrandService categoryBrandService)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.categoryBrandService = categoryBrandService;</span><br><span class="line">&#125;    </span><br><span class="line"></span><br><span class="line"><span class="meta">@Transactional</span>  <span class="comment">//###### 新增数据，那么必然是要求事务控制的！</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="comment">//##brandDTO对象属性包含了tb_brand 表格部分字段跟categoryBrands表格部分字段。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveBrand</span><span class="params">(BrandDTO brandDTO)</span> </span>&#123;</span><br><span class="line">    Brand brand = brandDTO.toEntity(Brand.class);</span><br><span class="line">    <span class="comment">// 保存到表格tb_brand</span></span><br><span class="line">    <span class="keyword">this</span>.save(brand);</span><br><span class="line">    <span class="comment">//封装中间表对象的集合的低级写法：###############################</span></span><br><span class="line">    <span class="comment">/* // 2.获取分类id， 包含手机、空调、洗衣机</span></span><br><span class="line"><span class="comment">        List&lt;Long&gt; categoryIds = brandDTO.getCategoryIds();</span></span><br><span class="line"><span class="comment">        // 3.封装中间表对象集合</span></span><br><span class="line"><span class="comment">        Long brandId = brand.getId();// 小米</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">        List&lt;CategoryBrand&gt; categoryBrands = new ArrayList&lt;&gt;();</span></span><br><span class="line"><span class="comment">        for (Long categoryId : categoryIds) &#123;</span></span><br><span class="line"><span class="comment">            // 创建中间表对象</span></span><br><span class="line"><span class="comment">            CategoryBrand categoryBrand = CategoryBrand.of(categoryId, brandId);</span></span><br><span class="line"><span class="comment">            categoryBrands.add(categoryBrand);</span></span><br><span class="line"><span class="comment">        &#125;*/</span></span><br><span class="line">    <span class="comment">// 封装中间表对象的集合的高级写法：###############################</span></span><br><span class="line">    List&lt;CategoryBrand&gt; list = brandDTO.getCategoryIds().stream()</span><br><span class="line">        .map(id -&gt; CategoryBrand.of(id, brand.getId()))</span><br><span class="line">        .collect(Collectors.toList());</span><br><span class="line">    <span class="comment">// 批量写入中间表数据</span></span><br><span class="line">    categoryBrandService.saveBatch(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-8-更新品牌"><a href="#1-8-更新品牌" class="headerlink" title="1.8.更新品牌"></a>1.8.更新品牌</h2><p>接口信息：</p>
+<ul>
+<li><p>请求方式：<code>PUT</code></p>
+</li>
+<li><p>请求路径：<code>/brand</code></p>
+</li>
+<li><p>请求参数：BrandDTO对象</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+<th>请求类型</th>
+<th>是否必须</th>
+<th>数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>品牌的id</td>
+<td>query</td>
+<td>true</td>
+<td>long</td>
+</tr>
+<tr>
+<td>categoryIds</td>
+<td>品牌相关的分类ID的集合</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+</tr>
+<tr>
+<td>image</td>
+<td>品牌LOGO</td>
+<td>query</td>
+<td>false</td>
+<td>string</td>
+</tr>
+<tr>
+<td>letter</td>
+<td>品牌首字母</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+</tr>
+<tr>
+<td>name</td>
+<td>品牌名称</td>
+<td>query</td>
+<td>true</td>
+<td>string</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>返回值类型：无，状态码</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>201</td>
+<td>新增成功</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 修改品牌</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> brandDTO 品牌及分类信息</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 无</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@PutMapping</span>  <span class="comment">//##########这里编程了Put</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Void&gt; <span class="title">updateBrand</span><span class="params">(BrandDTO brandDTO)</span> </span>&#123;</span><br><span class="line">    brandService.updateBrand(brandDTO);</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.status(HttpStatus.NO_CONTENT).build();<span class="comment">//还是返回null，但是状态变为NO_CONTENT</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service</code>BrandService中添加新的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 更新品牌</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> brandDTO 品牌的DTO</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">updateBrand</span><span class="params">(BrandDTO brandDTO)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>更新品牌还需要同时完成中间表更新。而中间表本身没有其它属性，只包含品牌和分类的id，因此不能修改，只能先删除之前的数据，然后再新增。</p>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.service.impl</code>的<code>BrandServiceImpl</code>中添加代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Transactional</span>   <span class="comment">//###########还是事务控制，别忘了。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateBrand</span><span class="params">(BrandDTO brandDTO)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1.更新品牌</span></span><br><span class="line">    <span class="keyword">boolean</span> success = updateById(brandDTO.toEntity(Brand.class));</span><br><span class="line">    <span class="keyword">if</span> (!success) &#123;</span><br><span class="line">        <span class="comment">// 更新失败，抛出异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> LyException(<span class="number">500</span>, <span class="string">&quot;更新品牌失败！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2.根据品牌id删除中间表数据</span></span><br><span class="line">    success = categoryBrandService.remove(</span><br><span class="line">        <span class="keyword">new</span> QueryWrapper&lt;CategoryBrand&gt;().eq(<span class="string">&quot;brand_id&quot;</span>, brandDTO.getId()));</span><br><span class="line">    <span class="keyword">if</span> (!success) &#123;</span><br><span class="line">        <span class="comment">// 更新失败，抛出异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> LyException(<span class="number">500</span>,<span class="string">&quot;更新品牌失败，删除中间表数据出错&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 3.重新插入中间表数据</span></span><br><span class="line">    List&lt;CategoryBrand&gt; list = brandDTO.getCategoryIds().stream()</span><br><span class="line">        .map(id -&gt; CategoryBrand.of(id, brandDTO.getId()))</span><br><span class="line">        .collect(Collectors.toList());</span><br><span class="line">    <span class="comment">// 批量写入中间表数据</span></span><br><span class="line">    categoryBrandService.saveBatch(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-9-根据ID删除品牌"><a href="#1-9-根据ID删除品牌" class="headerlink" title="1.9.根据ID删除品牌"></a>1.9.根据ID删除品牌</h2><p>接口信息：</p>
+<ul>
+<li>请求方式：<code>DELETE</code></li>
+<li>请求路径：<code>/brand/&#123;id&#125;</code></li>
+<li>请求参数：id，品牌的id</li>
+<li>返回值类型：无</li>
+</ul>
+<p>在<code>ly-item-service</code>中的<code>com.leyou.item.web</code>的BrandController中，添加代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除品牌</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 要删除的品牌id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 无</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@DeleteMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Void&gt; <span class="title">deleteBrandById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long id)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 删除品牌表</span></span><br><span class="line">    brandService.removeById(id);</span><br><span class="line">    <span class="comment">// TODO 删除中间表</span></span><br><span class="line">    categoryBrandService.remove(</span><br><span class="line">        <span class="keyword">new</span> QueryWrapper&lt;CategoryBrand&gt;().eq(<span class="string">&quot;brand_id&quot;</span>, id));</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.status(HttpStatus.NO_CONTENT).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-10-品牌管理页面"><a href="#1-10-品牌管理页面" class="headerlink" title="1.10.品牌管理页面"></a>1.10.品牌管理页面</h2><p>打开后台管理系统，在左侧菜单中点击品牌管理，即可看到品牌管理页面，展示出品牌信息：</p>
+<p> <img src="F:/java/01-重要部分：2021基础就业/06阶段：樂樂项目/day03_品牌管理/笔记/assets/image-20200712222915519.png" alt="image-20200712222915519"></p>
+<p>在这里测试刚刚编写的接口是否可用。</p>
+<p>注意，我们正常开发的测试流程应该是</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">1</span> <span class="string">先在maven给的test文件夹下先对每一个service进行测试，看数据库数据是否交互成功</span></span><br><span class="line"><span class="attr">2</span> <span class="string">借助标准测试工具，测试controller层</span></span><br><span class="line"><span class="attr">3</span> <span class="string">在前端进行controller层进行测试</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="2-图片上传"><a href="#2-图片上传" class="headerlink" title="2.图片上传"></a>2.图片上传</h1><p>点击页面的新增品牌按钮，发现表单中有一个品牌的LOGO图片需要上传：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200127123754172.png" alt="image-20200127123754172"> </p>
+<p>之前我们的业务中并未处理品牌上传功能。</p>
+<p>在早期的单点项目中，我们<strong>上传文件都是保存在tomcat所在服务器的</strong>。这样存在一些问题：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">-</span> <span class="string">单机器存储，存储能力有限</span></span><br><span class="line"><span class="meta">-</span> <span class="string">无法进行水平扩展，因为多台机器的文件无法共享,会出现访问不到的情况</span></span><br><span class="line"><span class="meta">-</span> <span class="string">数据没有备份，有单点故障风险</span></span><br><span class="line"><span class="meta">-</span> <span class="string">并发能力差</span></span><br></pre></td></tr></table></figure>
+
+<p>这个时候，最好使用<strong>分布式文件存储</strong>来代替<strong>本地文件存储</strong>。</p>
+<h2 id="2-1-分布式文件存储"><a href="#2-1-分布式文件存储" class="headerlink" title="2.1.分布式文件存储"></a>2.1.分布式文件存储</h2><p><strong>分布式文件系统</strong>（Distributed File System）是指文件系统管理的物理存储资源不一定直接连接在本地节点上，而是通过计算机网络与节点相连。 </p>
+<p>通俗来讲：</p>
+<ul>
+<li>传统文件系统管理的文件就存储在本机。</li>
+<li>分布式文件系统管理的文件<strong>存储在很多机器，这些机器通过网络连接，要被统一管理。无论是上传或者访问文件，都需要通过管理中心来访问</strong>;说白了就是，<strong>我们项目，在网页中交互的图片上传，不是上传到本后端主机，而是使用第三方提供的服务，上传到第三方的分布式文件系统中去</strong>！</li>
+</ul>
+<p>常见的分布式文件系统有谷歌的GFS、HDFS（Hadoop）、TFS（淘宝）、FastDFS（淘宝）等。</p>
+<p>不过，<strong>企业自己搭建分布式文件系统成本较高，对于一些中小型企业而言，使用云上的文件存储，是性价比更高的选</strong>择，比如我们今天要学习的<strong>阿里OSS</strong>。</p>
+<h2 id="2-2-阿里云OSS"><a href="#2-2-阿里云OSS" class="headerlink" title="2.2.阿里云OSS"></a>2.2.阿里云OSS</h2><p>阿里的OSS就是一个文件云存储方案：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552265269170.png" alt="1552265269170"></p>
+<p>简介：</p>
+<blockquote>
+<p>阿里云<strong>对象存储服务</strong>（Object Storage Service，简称 OSS），是阿里云提供的海量、安全、低成本、高可靠的云存储服务。其数据设计持久性不低于99.999999999%，服务设计可用性不低于99.99%。具有与平台无关的RESTful API接口，您可以在任何应用、任何时间、任何地点存储和访问任意类型的数据。</p>
+<p>您可以使用阿里云提供的API、SDK接口或者OSS迁移工具轻松地将海量数据移入或移出阿里云OSS。数据存储到阿里云OSS以后，您可以选择标准类型（Standard）的阿里云OSS服务作为移动应用、大型网站、图片分享或热点音视频的主要存储方式，也可以选择成本更低、存储期限更长的低频访问类型（Infrequent Access）和归档类型（Archive）的阿里云OSS服务作为不经常访问数据的备份和归档。</p>
+</blockquote>
+<h3 id="2-2-1-开通oss访问"><a href="#2-2-1-开通oss访问" class="headerlink" title="2.2.1 开通oss访问"></a>2.2.1 开通oss访问</h3><p>首先登陆阿里云，然后找到对象存储的产品：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552307302707.png" alt="1552307302707"></p>
+<p>点击进入后，开通服务：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552307241886.png" alt="1552307241886"></p>
+<p>随后即可进入管理控制台：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552307724634.png" alt="1552307724634"></p>
+<h3 id="2-2-2-基本概念"><a href="#2-2-2-基本概念" class="headerlink" title="2.2.2.基本概念"></a>2.2.2.基本概念</h3><p>OSS中包含一些概念，我们来认识一下：</p>
+<ul>
+<li><p>存储类型（Storage Class）</p>
+<p>OSS提供<strong>标准、低频访问、归档</strong>三种存储类型，全面覆盖从热到冷的各种数据存储场景。其中标准存储类型提供高可靠、高可用、高性能的对象存储服务，能够支持频繁的数据访问；低频访问存储类型适合长期保存不经常访问的数据（平均每月访问频率1到2次），存储单价低于标准类型；归档存储类型适合需要长期保存（建议半年以上）的归档数据，在三种存储类型中单价最低。详情请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/51374.html#concept-fcn-3xt-tdb">存储类型介绍</a>。</p>
+</li>
+<li><p><code>存储空间（Bucket）</code></p>
+<p>存储空间是您用于存储对象（Object）的容器，所有的对象都必须隶属于某个存储空间。您可以设置和修改存储空间属性用来控制地域、访问权限、生命周期等，这些属性设置直接作用于该存储空间内所有对象，因此您可以通过灵活创建不同的存储空间来完成不同的管理功能。</p>
+</li>
+<li><p>对象/文件（Object）</p>
+<p>对象是 OSS 存储数据的基本单元，也被称为OSS的文件。对象由元信息（Object Meta），用户数据（Data）和文件名（Key）组成。对象由存储空间内部唯一的Key来标识。对象元信息是一组键值对，表示了对象的一些属性，比如最后修改时间、大小等信息，同时您也可以在元信息中存储一些自定义的信息。</p>
+</li>
+<li><p>地域（Region）</p>
+<p>地域表示 OSS 的数据中心所在物理位置。您可以根据费用、请求来源等综合选择数据存储的地域。详情请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31837.html#concept-zt4-cvy-5db">OSS已开通的Region</a>。</p>
+</li>
+<li><p><code>访问域名（Endpoint</code>）</p>
+<p>Endpoint 表示OSS对外服务的访问域名。OSS以HTTP RESTful API的形式对外提供服务，当访问不同地域的时候，需要不同的域名。通过内网和外网访问同一个地域所需要的域名也是不同的。具体的内容请参见<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31837.html#concept-zt4-cvy-5db">各个Region对应的Endpoint</a>。</p>
+</li>
+<li><p><code>访问密钥（AccessKey）</code></p>
+<p>AccessKey，简称 AK，指的是访问身份验证中用到的AccessKeyId 和AccessKeySecret。OSS通过使用AccessKeyId 和AccessKeySecret对称加密的方法来验证某个请求的发送者身份。AccessKeyId用于标识用户，AccessKeySecret是用户用于加密签名字符串和OSS用来验证签名字符串的密钥，其中AccessKeySecret 必须保密。</p>
+</li>
+</ul>
+<p>以上概念中，跟我们开发中密切相关的有三个：</p>
+<ul>
+<li>存储空间（Bucket）</li>
+<li>访问域名（Endpoint）</li>
+<li>访问密钥（AccessKey）：包含了AccessKeyId 和AccessKeySecret。</li>
+</ul>
+<h3 id="2-2-3-创建一个bucket"><a href="#2-2-3-创建一个bucket" class="headerlink" title="2.2.3.创建一个bucket"></a>2.2.3.创建一个bucket</h3><p>在控制台的右侧，可以看到一个<code>新建Bucket</code>按钮：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552308905874.png" alt="1552308905874"></p>
+<p>点击后，弹出对话框，填写基本信息：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309049398.png" alt="1552309049398"></p>
+<p>注意点：</p>
+<ul>
+<li>bucket：存储空间名称，名字只能是字母、数字、中划线</li>
+<li>区域：即服务器的地址，这里选择了上海</li>
+<li>Endpoint：选中区域后，会自动生成一个Endpoint地址，这将是我们访问OSS服务的域名的组成部分</li>
+<li>存储类型：默认</li>
+<li>读写权限：这里我们选择公共读，否则每次访问都需要额外生成签名并校验，比较麻烦。敏感数据不要请都设置为私有！</li>
+<li>日志：不开通</li>
+</ul>
+<h3 id="2-2-4-创建AccessKey"><a href="#2-2-4-创建AccessKey" class="headerlink" title="2.2.4.创建AccessKey"></a>2.2.4.创建AccessKey</h3><p><strong>有了bucket就可以进行文件上传或下载了</strong>。不过，为了安全考虑，我们给阿里云账户开通一个子账户，并设置对OSS的读写权限。</p>
+<p>点击屏幕右上角的个人图像，然后点击访问控制：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309424324.png" alt="1552309424324"></p>
+<p>在跳转的页面中，选择用户，并新建一个用户：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309517332.png" alt="1552309517332"></p>
+<p>然后填写用户信息：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309580867.png" alt="1552309580867"></p>
+<p>然后会为你生成用户的AccessKeyID和AccessKeySecret：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309726968.png" alt="1552309726968"></p>
+<p><strong>妥善保管，不要告诉任何人！</strong></p>
+<p>接下来，我们需要给这个用户添加对OSS的控制权限。</p>
+<p>进入这个新增的用户详情页面：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309892306.png" alt="1552309892306"></p>
+<p>点击添加权限，会进入权限选择页面，输入oss进行搜索，然后选择<code>管理对象存储服务（OSS）</code>权限：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552309962457.png" alt="1552309962457"></p>
+<h2 id="2-3-上传文件最佳实践"><a href="#2-3-上传文件最佳实践" class="headerlink" title="2.3.上传文件最佳实践"></a>2.3.上传文件最佳实践</h2><p>在控制台的右侧，点击<code>开发者指南</code>按钮，即可查看帮助文档：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552310900485.png" alt="1552310900485"></p>
+<p>然后在弹出的新页面的左侧菜单中找到开发者指南：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552310990458.png" alt="1552310990458"> </p>
+<p>可以看到上传文件中，支持多种上传方式，并且因为<strong>提供的Rest风格的API</strong>，<strong>任何语言都可以访问OSS实现上传</strong>。</p>
+<p>我们可以直接<strong>使用java代码来实现把图片上传到OSS</strong>，不过这样以来<strong>文件会先从客户端浏览器上传到我们的服务端tomcat，然后再上传到OSS</strong>，效率较低，如图：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552311281042.png" alt="1552311281042"></p>
+<p>以上方法有三个缺点：</p>
+<ul>
+<li><strong>上传慢。</strong>先上传到应用服务器，再上传到OSS，网络传送比直传到OSS多了一倍。如果直传到OSS，不通过应用服务器，速度将大大提升，而且OSS采用BGP带宽，能保证各地各运营商的速度。</li>
+<li><strong>扩展性差。</strong>如果后续用户多了，应用服务器会成为瓶颈。</li>
+<li><strong>费用高。</strong>需要准备多台应用服务器。由于<strong>OSS上传流量是免费的</strong>，如果数据直传到OSS，不通过应用服务器，那么将能省下几台应用服务器。</li>
+</ul>
+<p>在阿里官方的最佳实践中，推荐了更好的做法：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552311136676.png" alt="1552311136676"> </p>
+<p>阿里官方文档中，对于web前端直传又给出了3种不同方案：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31925.html?spm=a2c4g.11186623.2.10.6c5762121wgIAS#concept-frd-4gy-5db">JavaScript客户端签名直传</a>：客户端通过JavaScript代码完成签名，然后通过表单直传数据到OSS。</li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31926.html?spm=a2c4g.11186623.2.11.6c5762121wgIAS#concept-en4-sjy-5db">服务端签名后直传</a>：客户端上传之前，由服务端完成签名，前端获取签名，然后通过表单直传数据到OSS。</li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31927.html?spm=a2c4g.11186623.2.12.6c5762121wgIAS#concept-qp2-g4y-5db">服务端签名直传并设置上传回调</a>：服务端完成签名，并且服务端设置了上传后回调，然后通过表单直传数据到OSS。OSS回调完成后，再将应用服务器响应结果返回给客户端。</li>
+</ul>
+<p>各自有一些优缺点。</p>
+<h3 id="2-3-1-web前端签名后直传"><a href="#2-3-1-web前端签名后直传" class="headerlink" title="2.3.1.web前端签名后直传"></a>2.3.1.web前端签名后直传</h3><p>客户端通过JavaScript代码完成签名，然后通过表单直传数据到OSS。无需访问应用服务器，对应用服务器压力较低。</p>
+<p>流程图如下：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200127125730699.png" alt="image-20200127125730699"></p>
+<ul>
+<li>JavaScript客户端签名直传：<ul>
+<li>优点：在客户端通过JavaScript代码完成签名，无需过多配置，即可实现直传，非常方便。</li>
+<li>问题：客户端通过JavaScript把AccesssKeyID 和AccessKeySecret写在代码里面<strong>有泄露的风险</strong></li>
+</ul>
+</li>
+<li></li>
+</ul>
+<p><strong>这里我们选择第二种</strong>，因为我们并不需要了解用户上传的文件的情况。</p>
+<h3 id="2-3-2-服务端签名后直传流程"><a href="#2-3-2-服务端签名后直传流程" class="headerlink" title="2.3.2.服务端签名后直传流程"></a>2.3.2.服务端签名后直传流程</h3><p>服务端签名后直传的原理如下：</p>
+<ol>
+<li>用户发送上传Policy请求到应用服务器（我们的微服务）。</li>
+<li>应用服务器返回上传Policy和签名给用户。</li>
+<li>用户直接上传数据到OSS。</li>
+</ol>
+<p>流程图：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/1552311833528.png" alt="1552311833528"></p>
+<ul>
+<li>服务端签名，JavaScript客户端直传：<ul>
+<li>优点：Web端向服务端请求签名，然后直接上传，不会对服务端产生压力，而且安全可靠</li>
+<li>问题：服务端无法实时了解用户上传了多少文件，上传了什么文件</li>
+</ul>
+</li>
+</ul>
+<p>在页面点击上传的按钮，可以看到请求已经发出：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200127132348077.png" alt="image-20200127132348077"> </p>
+<p>这正是在<strong>向服务端申请签名</strong>，接下来我们需要在服务端接收请求，生成签名并返回。</p>
+<p><strong>我们要做的事情包括：</strong></p>
+<ul>
+<li><strong>搭建微服务</strong></li>
+<li><strong>在微服务中，提供一个接口，生成文件上传需要的签名</strong><ul>
+<li>分析接口声明，分析请求方式、请求路径、请求参数、返回值类型</li>
+<li>实现业务，生成签名<ul>
+<li>把一些常量配置到yml文件</li>
+<li>编写类，读取这些属性</li>
+<li>把OSS客户端注入到spring容器</li>
+<li>编写业务，实现签名的生成</li>
+<li>解决跨域问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>前端，调用我们的接口，获取签名（已完成）</li>
+<li>前端，携带签名，完成上传（已完成）</li>
+</ul>
+<h2 id="2-4-搭建授权签名微服务"><a href="#2-4-搭建授权签名微服务" class="headerlink" title="2.4.搭建授权签名微服务"></a>2.4.搭建授权签名微服务</h2><p>文件上传并不是商品微服务独有的业务，以后的其它业务也可能用到。而且阿里的AccessKey授权也会在多个地方用到。因此我们<strong>把签名授权功能封装到一个独立的微服务中</strong>，专门做各种授权功能。</p>
+<p>为了方便其它微服务调用，我们依然搭建成聚合工程。</p>
+<h3 id="2-4-1-创建父工程"><a href="#2-4-1-创建父工程" class="headerlink" title="2.4.1.创建父工程"></a>2.4.1.创建父工程</h3><h4 id="项目坐标"><a href="#项目坐标" class="headerlink" title="项目坐标"></a>项目坐标</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206191636648.png" alt="image-20200206191636648"></p>
+<h4 id="存放目录"><a href="#存放目录" class="headerlink" title="存放目录"></a>存放目录</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206191651927.png" alt="image-20200206191651927"></p>
+<h4 id="pom文件"><a href="#pom文件" class="headerlink" title="pom文件"></a>pom文件</h4><p>修改打包方式为POM即可:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>leyou<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-4-2-实体类模块"><a href="#2-4-2-实体类模块" class="headerlink" title="2.4.2.实体类模块"></a>2.4.2.实体类模块</h3><h4 id="项目坐标-1"><a href="#项目坐标-1" class="headerlink" title="项目坐标"></a>项目坐标</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206191824371.png" alt="image-20200206191824371"></p>
+<h4 id="存放位置"><a href="#存放位置" class="headerlink" title="存放位置"></a>存放位置</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206191831294.png" alt="image-20200206191831294"></p>
+<h4 id="pom文件-1"><a href="#pom文件-1" class="headerlink" title="pom文件"></a>pom文件</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth-pojo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-4-3-API模块"><a href="#2-4-3-API模块" class="headerlink" title="2.4.3.API模块"></a>2.4.3.API模块</h3><p>坐标：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200418161726186.png" alt="image-20200418161726186"></p>
+<p>存储位置：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200418161751265.png" alt="image-20200418161751265"></p>
+<p>pom文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth-pojo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-4-4-业务模块"><a href="#2-4-4-业务模块" class="headerlink" title="2.4.4.业务模块"></a>2.4.4.业务模块</h3><h4 id="项目坐标-2"><a href="#项目坐标-2" class="headerlink" title="项目坐标"></a>项目坐标</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206192039899.png" alt="image-20200206192039899"></p>
+<h4 id="存放位置-1"><a href="#存放位置-1" class="headerlink" title="存放位置"></a>存放位置</h4><p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206192044367.png" alt="image-20200206192044367"></p>
+<h4 id="pom文件-2"><a href="#pom文件-2" class="headerlink" title="pom文件"></a>pom文件</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth-service<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--eureka起步依赖--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--web起步依赖--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--阿里云OSS的SDK--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.aliyun.oss<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aliyun-sdk-oss<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--auth-pojo--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-auth-pojo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--通用工具--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.leyou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ly-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="启动类"><a href="#启动类" class="headerlink" title="启动类"></a>启动类</h4><p>在<code>ly-auth-service</code>的<code>com.leyou.auth</code>包下，新建一个启动类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication(scanBasePackages = &#123;&quot;com.leyou.auth&quot;, &quot;com.leyou.common.advice&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LyAuthApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(LyAuthApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><p>在<code>ly-auth-service</code>的<code>resources</code>目录下，新建一个<code>application.yml</code>文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8082</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">auth-service</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">service-url:</span></span><br><span class="line">      <span class="attr">defaultZone:</span> <span class="string">http://ly-registry:10086/eureka</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">com.leyou:</span> <span class="string">debug</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="网关路由"><a href="#网关路由" class="headerlink" title="网关路由"></a>网关路由</h4><p>在<code>ly-gateway</code>的<code>application.yml</code>中，添加对<code>auth-service</code>的路由：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># ...</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="comment"># ...</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">auth-service</span> <span class="comment"># 授权服务</span></span><br><span class="line">        <span class="attr">uri:</span> <span class="string">lb://auth-service</span></span><br><span class="line">        <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">Path=/auth/**</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-5-前端请求签名"><a href="#2-5-前端请求签名" class="headerlink" title="2.5.前端请求签名"></a>2.5.前端请求签名</h2><p>在品牌新增的表单中，点击图片上传：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206201955511.png" alt="image-20200206201955511"> </p>
+<p>发现请求已经发出：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206201830638.png" alt="image-20200206201830638"> </p>
+<h3 id="2-5-1-请求分析"><a href="#2-5-1-请求分析" class="headerlink" title="2.5.1.请求分析"></a>2.5.1.请求分析</h3><p>请求分析：</p>
+<ul>
+<li>请求方式：Get</li>
+<li>请求路径：/auth/ali/oss/signature</li>
+<li>请求参数：无（如果有登录用户，会携带登录用户信息）</li>
+<li>返回值：这个需要参考阿里云的<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31927.html?spm=a2c4g.11186623.2.13.34f16e285th61w#concept-qp2-g4y-5db">文档</a>介绍</li>
+</ul>
+<h3 id="2-5-2-签名返回值"><a href="#2-5-2-签名返回值" class="headerlink" title="2.5.2.签名返回值"></a>2.5.2.签名返回值</h3><p>有关签名直传的文档部分：<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31927.html?spm=a2c4g.11186623.2.13.34f16e285th61w#concept-qp2-g4y-5db">https://help.aliyun.com/document_detail/31927.html?spm=a2c4g.11186623.2.13.34f16e285th61w#concept-qp2-g4y-5db</a></p>
+<p>其中，服务端签名返回给服务端的内容如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="attr">&quot;accessId&quot;</span>:<span class="string">&quot;6MKO******4AUk44&quot;</span>,</span><br><span class="line"><span class="attr">&quot;host&quot;</span>:<span class="string">&quot;http://post-test.oss-cn-hangzhou.aliyuncs.com&quot;</span>,</span><br><span class="line"><span class="attr">&quot;policy&quot;</span>:<span class="string">&quot;eyJleHBpcmF0aW9uIjoiMjAxNS0xMS0wNVQyMDo1Mjoy******Jjdb25kaXRpb25zIjpbWyJjdb250ZW50LWxlbmd0aC1yYW5nZSIsMCwxMDQ4NTc2MDAwXSxbInN0YXJ0cy13aXRoIiwiJGtleSIsInVzZXItZGlyXC8iXV19&quot;</span>,</span><br><span class="line"><span class="attr">&quot;signature&quot;</span>:<span class="string">&quot;VsxOcOudx******z93CLaXPz+4s=&quot;</span>,</span><br><span class="line"><span class="attr">&quot;expire&quot;</span>:<span class="number">1446727949</span>,</span><br><span class="line"><span class="attr">&quot;dir&quot;</span>:<span class="string">&quot;user-dirs/&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>详细解释：</p>
+<ul>
+<li><code>accessId</code>：用户的AccessKeyId</li>
+<li><code>host</code>：申请的阿里OSS的bucket访问地址</li>
+<li><code>policy</code>：文件上传的策略，主要包含对上传文件的要求，利用Base64加密后返回，<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/31988.html?spm=a2c4g.11186623.2.22.58cd7eaer5eXWw#section-d5z-1ww-wdb">说明文档</a></li>
+<li><code>signature</code>：生成的签名</li>
+<li><code>expire</code>：本次签名的过期时间，客户端可以换成签名，在有效期内无需再次签名</li>
+<li><code>dir</code>：要上传到bucket中的哪个目录</li>
+</ul>
+<p>我们在项目中定义个DTO用来封装这些结果属性：</p>
+<p>在<code>ly-auth-pojo</code>的<code>com.leyou.auth.dto</code>中，添加新的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.AllArgsConstructor;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.NoArgsConstructor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor(staticName = &quot;of&quot;)</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AliOssSignatureDTO</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String accessId;</span><br><span class="line">    <span class="keyword">private</span> String host;</span><br><span class="line">    <span class="keyword">private</span> String policy;</span><br><span class="line">    <span class="keyword">private</span> String signature;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> expire;</span><br><span class="line">    <span class="keyword">private</span> String dir;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-5-3-服务端接口声明"><a href="#2-5-3-服务端接口声明" class="headerlink" title="2.5.3.服务端接口声明"></a>2.5.3.服务端接口声明</h3><p>根据上面的请求分析，我们可以定义出一个web接口了：</p>
+<p>首先是controller，在<code>ly-auth-service</code>的<code>com.leyou.auth.web</code>包中，新增一个类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.dto.AliOssSignatureDTO;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 阿里的相关授权接口</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;ali&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AliAuthController</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 申请oss签名</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 包含签名、图片验证策略等信息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/oss/signature&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;AliOssSignatureDTO&gt; <span class="title">getAliSignature</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-6-服务端生成签名"><a href="#2-6-服务端生成签名" class="headerlink" title="2.6.服务端生成签名"></a>2.6.服务端生成签名</h2><p>根据之前的分析，我们来编写服务端代码，接收前端请求，返回签名结果。这个要参考官方文档中的Demo。</p>
+<p>文档地址：<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/91868.html?spm=a2c4g.11186623.2.16.58cd7eaer5eXWw#concept-ahk-rfz-2fb">https://help.aliyun.com/document_detail/91868.html?spm=a2c4g.11186623.2.16.58cd7eaer5eXWw#concept-ahk-rfz-2fb</a></p>
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">	<span class="comment">// 基本属性</span></span><br><span class="line">    String accessId = <span class="string">&quot;&lt;yourAccessKeyId&gt;&quot;</span>; <span class="comment">// 请填写您的AccessKeyId。</span></span><br><span class="line">    String accessKey = <span class="string">&quot;&lt;yourAccessKeySecret&gt;&quot;</span>; <span class="comment">// 请填写您的AccessKeySecret。</span></span><br><span class="line">    String endpoint = <span class="string">&quot;oss-cn-hangzhou.aliyuncs.com&quot;</span>; <span class="comment">// 请填写您的 endpoint。</span></span><br><span class="line">    String bucket = <span class="string">&quot;bucket-name&quot;</span>; <span class="comment">// 请填写您的 bucketname 。</span></span><br><span class="line">    String host = <span class="string">&quot;https://&quot;</span> + bucket + <span class="string">&quot;.&quot;</span> + endpoint; <span class="comment">// host的格式为 bucketname.endpoint</span></span><br><span class="line">   </span><br><span class="line">    String dir = <span class="string">&quot;user-dir-prefix/&quot;</span>; <span class="comment">// 用户上传文件时指定的前缀。</span></span><br><span class="line">	<span class="comment">// OSS客户端</span></span><br><span class="line">    OSS client = <span class="keyword">new</span> OSSClient(endpoint, accessId, accessKey);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 过期时间</span></span><br><span class="line">        <span class="keyword">long</span> expireTime = <span class="number">30</span>;</span><br><span class="line">        <span class="keyword">long</span> expireEndTime = System.currentTimeMillis() + expireTime * <span class="number">1000</span>;</span><br><span class="line">        Date expiration = <span class="keyword">new</span> Date(expireEndTime);</span><br><span class="line">        <span class="comment">// 上传策略条件</span></span><br><span class="line">        PolicyConditions policyConds = <span class="keyword">new</span> PolicyConditions();</span><br><span class="line">        <span class="comment">// 文件大小限制</span></span><br><span class="line">        policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, <span class="number">0</span>, <span class="number">1048576000</span>);</span><br><span class="line">        <span class="comment">// 文件目录限制</span></span><br><span class="line">        policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);</span><br><span class="line">		<span class="comment">// 对策略加密</span></span><br><span class="line">        String postPolicy = client.generatePostPolicy(expiration, policyConds);</span><br><span class="line">        <span class="keyword">byte</span>[] binaryData = postPolicy.getBytes(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">        String encodedPolicy = BinaryUtil.toBase64String(binaryData);</span><br><span class="line">		<span class="comment">// 生成签名</span></span><br><span class="line">        String postSignature = client.calculatePostSignature(postPolicy);</span><br><span class="line">		<span class="comment">// 准备响应结果</span></span><br><span class="line">        Map&lt;String, String&gt; respMap = <span class="keyword">new</span> LinkedHashMap&lt;String, String&gt;();</span><br><span class="line">        respMap.put(<span class="string">&quot;accessid&quot;</span>, accessId);</span><br><span class="line">        respMap.put(<span class="string">&quot;policy&quot;</span>, encodedPolicy);</span><br><span class="line">        respMap.put(<span class="string">&quot;signature&quot;</span>, postSignature);</span><br><span class="line">        respMap.put(<span class="string">&quot;dir&quot;</span>, dir);</span><br><span class="line">        respMap.put(<span class="string">&quot;host&quot;</span>, host);</span><br><span class="line">        respMap.put(<span class="string">&quot;expire&quot;</span>, String.valueOf(expireEndTime / <span class="number">1000</span>));</span><br><span class="line">		<span class="comment">// 把结果转JSON</span></span><br><span class="line">        JSONObject ja1 = JSONObject.fromObject(respMap);</span><br><span class="line">		<span class="comment">// 写入response</span></span><br><span class="line">        response(request, response, ja1.toString());</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        System.out.println(e.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-6-1-配置属性"><a href="#2-6-1-配置属性" class="headerlink" title="2.6.1.配置属性"></a>2.6.1.配置属性</h3><p>在刚刚的Demo中，有许多是值或者与服务器环境有关，需要定义到配置文件中，在<code>application.yaml</code>中添加下面的属性：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ly:</span></span><br><span class="line">  <span class="attr">oss:</span></span><br><span class="line">    <span class="attr">accessKeyId:</span> <span class="string">LTAI4FhtSrGpB2mq4N36XbGb</span></span><br><span class="line">    <span class="attr">accessKeySecret:</span> <span class="string">OEavFEiAyGm7OsGYff5TClHx88KJ28</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">http://ly-images.oss-cn-shanghai.aliyuncs.com</span> <span class="comment"># 访问oss的bucket的域名</span></span><br><span class="line">    <span class="attr">endpoint:</span> <span class="string">oss-cn-shanghai.aliyuncs.com</span> <span class="comment"># 你选择的oss服务器的地址</span></span><br><span class="line">    <span class="attr">dir:</span> <span class="string">&quot;heima01&quot;</span> <span class="comment"># 保存到bucket的某个子目录</span></span><br><span class="line">    <span class="attr">expireTime:</span> <span class="number">1200000</span> <span class="comment"># 过期时间，单位是ms</span></span><br><span class="line">    <span class="attr">maxFileSize:</span> <span class="number">5242880</span> <span class="comment">#文件大小限制，这里是5M</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，通过一个类来加载这些属性，在<code>ly-auth-service</code>的<code>com.leyou.auth.config</code>中定义类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(&quot;ly.oss&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OSSProperties</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String accessKeyId;</span><br><span class="line">    <span class="keyword">private</span> String accessKeySecret;</span><br><span class="line">    <span class="keyword">private</span> String host;</span><br><span class="line">    <span class="keyword">private</span> String endpoint;</span><br><span class="line">    <span class="keyword">private</span> String dir;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> expireTime;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> maxFileSize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-6-2-配置OSS客户端"><a href="#2-6-2-配置OSS客户端" class="headerlink" title="2.6.2.配置OSS客户端"></a>2.6.2.配置OSS客户端</h3><p>OSS上传需要使用阿里提供的客户端API，其中核心是一个名为OSS的接口：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206224145079.png" alt="image-20200206224145079"></p>
+<p>我们在<code>ly-auth-service</code>的<code>com.leyou.auth.config</code>定义一个配置类，将OSS注入到Spring容器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.OSS;</span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.OSSClientBuilder;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OSSConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> OSS <span class="title">ossClient</span><span class="params">(OSSProperties prop)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> OSSClientBuilder()</span><br><span class="line">                .build(prop.getEndpoint(), prop.getAccessKeyId(), prop.getAccessKeySecret());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-6-3-service"><a href="#2-6-3-service" class="headerlink" title="2.6.3.service"></a>2.6.3.service</h3><p>定义业务代码，改造阿里提供的Demo，将结果封装为DTO返回.</p>
+<p>在<code>ly-auth-service</code>的<code>com.leyou.auth.service</code>中定义Service接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.dto.AliOssSignatureDTO;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AliAuthService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成OSS的文件签名</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">AliOssSignatureDTO <span class="title">getSignature</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-auth-service</code>的<code>com.leyou.auth.service.impl</code>中定义Service的实现类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.OSS;</span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.common.utils.BinaryUtil;</span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.model.MatchMode;</span><br><span class="line"><span class="keyword">import</span> com.aliyun.oss.model.PolicyConditions;</span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.config.OSSProperties;</span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.dto.AliOssSignatureDTO;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AliAuthServiceImpl</span> <span class="keyword">implements</span> <span class="title">AliAuthService</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> OSSProperties prop;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> OSS client;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AliAuthServiceImpl</span><span class="params">(OSSProperties ossProperties, OSS client)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.prop = ossProperties;</span><br><span class="line">        <span class="keyword">this</span>.client = client;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AliOssSignatureDTO <span class="title">getSignature</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 1.计算过期时间</span></span><br><span class="line">            <span class="keyword">long</span> expireTime = prop.getExpireTime();</span><br><span class="line">            <span class="keyword">long</span> expireEndTime = System.currentTimeMillis() + expireTime;</span><br><span class="line">            Date expiration = <span class="keyword">new</span> Date(expireEndTime);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2.设置上传策略</span></span><br><span class="line">            PolicyConditions policyConds = <span class="keyword">new</span> PolicyConditions();</span><br><span class="line">            <span class="comment">// 2.1.文件大小限制</span></span><br><span class="line">            policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, <span class="number">0</span>, prop.getMaxFileSize());</span><br><span class="line">            <span class="comment">// 2.2.上传目录</span></span><br><span class="line">            policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, prop.getDir());</span><br><span class="line">            <span class="comment">// 2.3.生成策略</span></span><br><span class="line">            String postPolicy = client.generatePostPolicy(expiration, policyConds);</span><br><span class="line">            <span class="comment">// 2.4.编码</span></span><br><span class="line">            <span class="keyword">byte</span>[] binaryData = postPolicy.getBytes(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">            String encodedPolicy = BinaryUtil.toBase64String(binaryData);</span><br><span class="line">            <span class="comment">// 3.生成签名</span></span><br><span class="line">            String postSignature = client.calculatePostSignature(postPolicy);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 4.封装要返回的结果</span></span><br><span class="line">            <span class="keyword">return</span> AliOssSignatureDTO.of(prop.getAccessKeyId(), prop.getHost(), encodedPolicy, postSignature, expireEndTime, prop.getDir());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;上传文件失败，原因：&#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;文件上传失败！&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-6-4-补全controller"><a href="#2-6-4-补全controller" class="headerlink" title="2.6.4.补全controller"></a>2.6.4.补全controller</h3><p>我们给<code>ly-auth-service</code>的<code>com.leyou.auth.web</code>包中的<code>AliAuthController</code>补全业务，调用<code>AliAuthService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.auth.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.dto.AliOssSignatureDTO;</span><br><span class="line"><span class="keyword">import</span> com.leyou.auth.service.AliAuthService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 阿里的相关授权接口</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;ali&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AliAuthController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> AliAuthService aliAuthService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AliAuthController</span><span class="params">(AliAuthService aliAuthService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.aliAuthService = aliAuthService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 申请oss签名</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 包含签名、图片验证策略等信息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/oss/signature&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;AliOssSignatureDTO&gt; <span class="title">getAliSignature</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok(aliAuthService.getSignature());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-7-启动测试"><a href="#2-7-启动测试" class="headerlink" title="2.7.启动测试"></a>2.7.启动测试</h2><p>启动<code>ly-auth-service</code>，并重启<code>ly-auth-gateway</code>，然后测试上传功能。</p>
+<p>发现<strong>签名正确返回</strong>了：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233442420.png" alt="image-20200206233442420"> </p>
+<p>结果：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233516457.png" alt="image-20200206233516457"> </p>
+<p>但是<strong>上传失败</strong>了，返回了403的状态码：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233554422.png" alt="image-20200206233554422"> </p>
+<p>浏览器的控制台也报错了：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233646040.png" alt="image-20200206233646040"></p>
+<p>这是<strong>跨域问题</strong>。</p>
+<h2 id="2-8-解决跨域问题"><a href="#2-8-解决跨域问题" class="headerlink" title="2.8.解决跨域问题"></a>2.8.解决跨域问题</h2><p>我们在<code>manage.leyou.com</code>访问<code>aliyuncs.com</code>是跨域访问，需要设置跨域许可。</p>
+<p>在阿里OSS的控制台看到这样的信息：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233916516.png" alt="image-20200206233916516"></p>
+<p>我们点击设置，进入设置页面：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206233947861.png" alt="image-20200206233947861"></p>
+<p>点击创建规则，进入跨域请求填写表单：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206234147957.png" alt="image-20200206234147957"> </p>
+<p>填写完成后，再次测试：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206234225867.png" alt="image-20200206234225867"> </p>
+<p>回显：</p>
+<p><img src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/image-20200206234253715.png" alt="image-20200206234253715"> </p>
+<p>上传成功！</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/">http://example.com/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></div><div class="post_share"><div class="social-share" data-image="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/06/17/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/"><img class="next-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/2%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">乐优商城项目-分类管理</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/06/15/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/" title="乐优商城项目-项目搭建"><img class="cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-15</div><div class="title">乐优商城项目-项目搭建</div></div></a></div><div><a href="/2022/06/17/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/" title="乐优商城项目-分类管理"><img class="cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/2%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-17</div><div class="title">乐优商城项目-分类管理</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">乐优商城项目-品牌管理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-number">2.</span> <span class="toc-text">0.学习目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86%E4%B8%9A%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">1.品牌管理业务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">1.1.表结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E5%9F%BA%E7%A1%80%E4%BB%A3%E7%A0%81"><span class="toc-number">3.2.</span> <span class="toc-text">1.2.基础代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-1-%E5%AE%9E%E4%BD%93%E7%B1%BB"><span class="toc-number">3.2.1.</span> <span class="toc-text">1.2.1.实体类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-2-mapper"><span class="toc-number">3.2.2.</span> <span class="toc-text">1.2.2.mapper</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-3-service"><span class="toc-number">3.2.3.</span> <span class="toc-text">1.2.3.service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-4-controller"><span class="toc-number">3.2.4.</span> <span class="toc-text">1.2.4.controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-5-DTO"><span class="toc-number">3.2.5.</span> <span class="toc-text">1.2.5.DTO</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E6%A0%B9%E6%8D%AE%E5%93%81%E7%89%8Cid%E6%9F%A5%E8%AF%A2%E5%93%81%E7%89%8C"><span class="toc-number">3.3.</span> <span class="toc-text">1.3.根据品牌id查询品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-%E6%A0%B9%E6%8D%AE%E5%93%81%E7%89%8Cid%E9%9B%86%E5%90%88%E6%9F%A5%E8%AF%A2%E5%93%81%E7%89%8C%E9%9B%86%E5%90%88"><span class="toc-number">3.4.</span> <span class="toc-text">1.4.根据品牌id集合查询品牌集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2%E5%93%81%E7%89%8C"><span class="toc-number">3.5.</span> <span class="toc-text">1.5.分页查询品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-%E6%A0%B9%E6%8D%AE%E5%88%86%E7%B1%BBid%E6%9F%A5%E8%AF%A2%E5%93%81%E7%89%8C"><span class="toc-number">3.6.</span> <span class="toc-text">1.6.根据分类id查询品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7-%E6%96%B0%E5%A2%9E%E5%93%81%E7%89%8C"><span class="toc-number">3.7.</span> <span class="toc-text">1.7.新增品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8-%E6%9B%B4%E6%96%B0%E5%93%81%E7%89%8C"><span class="toc-number">3.8.</span> <span class="toc-text">1.8.更新品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-9-%E6%A0%B9%E6%8D%AEID%E5%88%A0%E9%99%A4%E5%93%81%E7%89%8C"><span class="toc-number">3.9.</span> <span class="toc-text">1.9.根据ID删除品牌</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-10-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86%E9%A1%B5%E9%9D%A2"><span class="toc-number">3.10.</span> <span class="toc-text">1.10.品牌管理页面</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0"><span class="toc-number">4.</span> <span class="toc-text">2.图片上传</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8"><span class="toc-number">4.1.</span> <span class="toc-text">2.1.分布式文件存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E9%98%BF%E9%87%8C%E4%BA%91OSS"><span class="toc-number">4.2.</span> <span class="toc-text">2.2.阿里云OSS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E5%BC%80%E9%80%9Aoss%E8%AE%BF%E9%97%AE"><span class="toc-number">4.2.1.</span> <span class="toc-text">2.2.1 开通oss访问</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">4.2.2.</span> <span class="toc-text">2.2.2.基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAbucket"><span class="toc-number">4.2.3.</span> <span class="toc-text">2.2.3.创建一个bucket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-%E5%88%9B%E5%BB%BAAccessKey"><span class="toc-number">4.2.4.</span> <span class="toc-text">2.2.4.创建AccessKey</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">4.3.</span> <span class="toc-text">2.3.上传文件最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-web%E5%89%8D%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%90%8E%E7%9B%B4%E4%BC%A0"><span class="toc-number">4.3.1.</span> <span class="toc-text">2.3.1.web前端签名后直传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%AD%BE%E5%90%8D%E5%90%8E%E7%9B%B4%E4%BC%A0%E6%B5%81%E7%A8%8B"><span class="toc-number">4.3.2.</span> <span class="toc-text">2.3.2.服务端签名后直传流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E6%90%AD%E5%BB%BA%E6%8E%88%E6%9D%83%E7%AD%BE%E5%90%8D%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-number">4.4.</span> <span class="toc-text">2.4.搭建授权签名微服务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-1-%E5%88%9B%E5%BB%BA%E7%88%B6%E5%B7%A5%E7%A8%8B"><span class="toc-number">4.4.1.</span> <span class="toc-text">2.4.1.创建父工程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%9D%90%E6%A0%87"><span class="toc-number">4.4.1.1.</span> <span class="toc-text">项目坐标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%98%E6%94%BE%E7%9B%AE%E5%BD%95"><span class="toc-number">4.4.1.2.</span> <span class="toc-text">存放目录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pom%E6%96%87%E4%BB%B6"><span class="toc-number">4.4.1.3.</span> <span class="toc-text">pom文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-2-%E5%AE%9E%E4%BD%93%E7%B1%BB%E6%A8%A1%E5%9D%97"><span class="toc-number">4.4.2.</span> <span class="toc-text">2.4.2.实体类模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%9D%90%E6%A0%87-1"><span class="toc-number">4.4.2.1.</span> <span class="toc-text">项目坐标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%98%E6%94%BE%E4%BD%8D%E7%BD%AE"><span class="toc-number">4.4.2.2.</span> <span class="toc-text">存放位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pom%E6%96%87%E4%BB%B6-1"><span class="toc-number">4.4.2.3.</span> <span class="toc-text">pom文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-3-API%E6%A8%A1%E5%9D%97"><span class="toc-number">4.4.3.</span> <span class="toc-text">2.4.3.API模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-4-%E4%B8%9A%E5%8A%A1%E6%A8%A1%E5%9D%97"><span class="toc-number">4.4.4.</span> <span class="toc-text">2.4.4.业务模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%9D%90%E6%A0%87-2"><span class="toc-number">4.4.4.1.</span> <span class="toc-text">项目坐标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%98%E6%94%BE%E4%BD%8D%E7%BD%AE-1"><span class="toc-number">4.4.4.2.</span> <span class="toc-text">存放位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pom%E6%96%87%E4%BB%B6-2"><span class="toc-number">4.4.4.3.</span> <span class="toc-text">pom文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E7%B1%BB"><span class="toc-number">4.4.4.4.</span> <span class="toc-text">启动类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.4.4.5.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E5%85%B3%E8%B7%AF%E7%94%B1"><span class="toc-number">4.4.4.6.</span> <span class="toc-text">网关路由</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82%E7%AD%BE%E5%90%8D"><span class="toc-number">4.5.</span> <span class="toc-text">2.5.前端请求签名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-1-%E8%AF%B7%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">4.5.1.</span> <span class="toc-text">2.5.1.请求分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-2-%E7%AD%BE%E5%90%8D%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-number">4.5.2.</span> <span class="toc-text">2.5.2.签名返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-3-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A5%E5%8F%A3%E5%A3%B0%E6%98%8E"><span class="toc-number">4.5.3.</span> <span class="toc-text">2.5.3.服务端接口声明</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%94%9F%E6%88%90%E7%AD%BE%E5%90%8D"><span class="toc-number">4.6.</span> <span class="toc-text">2.6.服务端生成签名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-1-%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">4.6.1.</span> <span class="toc-text">2.6.1.配置属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-2-%E9%85%8D%E7%BD%AEOSS%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">4.6.2.</span> <span class="toc-text">2.6.2.配置OSS客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-3-service"><span class="toc-number">4.6.3.</span> <span class="toc-text">2.6.3.service</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-4-%E8%A1%A5%E5%85%A8controller"><span class="toc-number">4.6.4.</span> <span class="toc-text">2.6.4.补全controller</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-%E5%90%AF%E5%8A%A8%E6%B5%8B%E8%AF%95"><span class="toc-number">4.7.</span> <span class="toc-text">2.7.启动测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-number">4.8.</span> <span class="toc-text">2.8.解决跨域问题</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
