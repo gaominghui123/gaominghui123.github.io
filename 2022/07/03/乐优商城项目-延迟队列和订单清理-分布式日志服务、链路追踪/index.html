@@ -1,0 +1,630 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪 | Jason</title><meta name="keywords" content="延迟队列"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0.学习目标 了解Java的DelayQueue原理 理解Redis实现延迟队列原理 理解RabbitMQ死信队列原理 能实现清理订单业务  1.业务需求之前我们讨论过扣减库存的问题，下单减库存和支付减库存各自有一定的优势和缺陷，我们选择了下单减库存的方案。 订单创建之后，就会扣减库存，并且生成了支付的二维码，但是如果用户一直不支付，就会导致商品库存被占用，而不能形成有效交易，会损害商家的利益，流">
+<meta property="og:type" content="article">
+<meta property="og:title" content="乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪">
+<meta property="og:url" content="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86-%E5%88%86%E5%B8%83%E5%BC%8F%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1%E3%80%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="0.学习目标 了解Java的DelayQueue原理 理解Redis实现延迟队列原理 理解RabbitMQ死信队列原理 能实现清理订单业务  1.业务需求之前我们讨论过扣减库存的问题，下单减库存和支付减库存各自有一定的优势和缺陷，我们选择了下单减库存的方案。 订单创建之后，就会扣减库存，并且生成了支付的二维码，但是如果用户一直不支付，就会导致商品库存被占用，而不能形成有效交易，会损害商家的利益，流">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/16%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86/%E5%B0%81%E9%9D%A2.png">
+<meta property="article:published_time" content="2022-07-03T01:53:21.000Z">
+<meta property="article:modified_time" content="2022-07-03T02:35:10.175Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="延迟队列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/16%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86/%E5%B0%81%E9%9D%A2.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86-%E5%88%86%E5%B8%83%E5%BC%8F%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1%E3%80%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-03 10:35:10'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">169</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">204</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/16%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86/%E5%B0%81%E9%9D%A2.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-03T01:53:21.000Z" title="发表于 2022-07-03 09:53:21">2022-07-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-03T02:35:10.175Z" title="更新于 2022-07-03 10:35:10">2022-07-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="0-学习目标"><a href="#0-学习目标" class="headerlink" title="0.学习目标"></a>0.学习目标</h1><ul>
+<li>了解Java的DelayQueue原理</li>
+<li>理解Redis实现延迟队列原理</li>
+<li>理解RabbitMQ死信队列原理</li>
+<li>能实现清理订单业务</li>
+</ul>
+<h1 id="1-业务需求"><a href="#1-业务需求" class="headerlink" title="1.业务需求"></a>1.业务需求</h1><p>之前我们讨论过扣减库存的问题，下单减库存和支付减库存各自有一定的优势和缺陷，我们选择了下单减库存的方案。</p>
+<p>订单创建之后，就会扣减库存，并且生成了支付的二维码，但是如果用户一直不支付，就会导致商品库存被占用，而不能形成有效交易，会损害商家的利益，流失真正的具有购买意向的客户。</p>
+<p>因此，如果有客户下单超过一定的时间没有付款，我们必须关闭订单，释放库存。</p>
+<p>那么问题来了，我们如何得知哪些订单时超时未支付的订单呢？</p>
+<p>订单下单后，需要等待一段时间后再判断是否支付，到底是关闭还是继续。这样的延时执行的业务，称为<strong>延时任务</strong>。</p>
+<h1 id="2-延迟队列"><a href="#2-延迟队列" class="headerlink" title="2.延迟队列"></a>2.延迟队列</h1><p>与延时关闭订单这样的业务类似，还有很多需要延时执行的任务，例如：</p>
+<ul>
+<li>订餐通知:下单成功后60s之后给用户发送短信通知。</li>
+<li>当订单一直处于未支付状态时，如何及时的关闭订单，并退还库存？</li>
+<li>如何定期检查处于退款状态的订单是否已经退款成功？</li>
+<li>新创建店铺，N天内没有上传商品，系统如何知道该信息，并发送激活短信？</li>
+</ul>
+<p>而解决这一类<strong>延时任务</strong>问题，一般都会通过<strong>延迟队列</strong>来解决</p>
+<h2 id="2-1-什么是延迟队列"><a href="#2-1-什么是延迟队列" class="headerlink" title="2.1.什么是延迟队列"></a>2.1.什么是延迟队列</h2><p>延迟队列，首先是队列，例如我们学习的MQ，是消息队列，也就是一个存放消息的容器。延迟队列就是延迟消费的消息队列。队列中存储的是<strong>延时消息</strong>，所谓“<strong>延时消息</strong>”是指当消息被发送以后，并不想让消费者立即拿到消息，而是等待指定时间后，消费者才拿到这个消息进行消费,**(延迟送达)**。</p>
+<p>流程如图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200329190127824.png" alt="image-20200329190127824"></p>
+<p>延迟队列不仅仅要实现消息的延迟消费，最好还要满足下面的几点要求：</p>
+<ul>
+<li><p>可靠性：消息进入到延迟队列后， 保证至少被消费⼀一次。</p>
+</li>
+<li><p>高可用性：至少得支持多实例部署。挂掉一 个实例后，还有后备实例继续提供服务。</p>
+</li>
+<li><p>实时性：允许存在一定的时间误差，希望在秒级。</p>
+</li>
+<li><p>支持消息删除：业务使用方，可以随时删除指定消息。</p>
+</li>
+</ul>
+<p>目前比较常见的方案包括：</p>
+<ul>
+<li><strong>定期轮询数据库</strong></li>
+<li><strong>DelayQueue</strong></li>
+<li><strong>定时任务（Quartz）</strong></li>
+<li><strong>Redis键过期通知</strong></li>
+<li><strong>Redis(sorted_set)</strong> </li>
+<li><strong>时间轮</strong></li>
+<li><strong>RabbitMQ 死信队列</strong></li>
+</ul>
+<p>我们以<strong>清理超时未支付订单</strong>为例，来看看这几种实现方案，我们假设需要清理超过半小时未支付的订单。</p>
+<h2 id="2-2-定期轮询数据库"><a href="#2-2-定期轮询数据库" class="headerlink" title="2.2.定期轮询数据库"></a>2.2.定期轮询数据库</h2><p>基本思路：开启一个定时任务，每隔一段时间扫描数据库，找到需要清理的订单，然后执行清理订单，恢复库存业务。</p>
+<ul>
+<li>优点：实现简单，定时任务所在服务可以集群，保证了可靠性，高可用性。 </li>
+<li>缺点：<ul>
+<li>定时扫描频率过高<code>数据库</code>压力比较大，频率过低则实时性不能保证。</li>
+<li>高可用集群时需要保证多个扫描任务的线程安全，避免重复执行任务，可以利用分布式锁、乐观锁、保证接口幂等等各种方式来解决。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-3-DelayQueue"><a href="#2-3-DelayQueue" class="headerlink" title="2.3.DelayQueue"></a>2.3.DelayQueue</h2><p>JDK中的java.util.concurrent包中的DelayQueue可以作为单JVM的延迟队列。</p>
+<p>要了解DelayQueue的原理，你需要先知道几个接口：</p>
+<ul>
+<li>Comparable：标记一种可比较大小的对象类型</li>
+<li>Delayed：标记在给定延迟之后应该执行的对象</li>
+</ul>
+<h3 id="2-3-1-Comparable"><a href="#2-3-1-Comparable" class="headerlink" title="2.3.1.Comparable"></a>2.3.1.Comparable</h3><p>该接口的实现类必须实现compareTo方法来定义比较大小的规则，并按照规则完成对象的排序。这种顺序称为类的自然顺序，类的compareTo方法称为类的自然比较方法。</p>
+<p>例如：Integer类就实现了Comparable：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Integer</span> <span class="keyword">extends</span> <span class="title">Number</span> <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Integer anotherInteger)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> compare(<span class="keyword">this</span>.value, anotherInteger.value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (x &lt; y) ? -<span class="number">1</span> : ((x == y) ? <span class="number">0</span> : <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此Integer的对象可以根据compareTo方法排序，从而实现集合排序这样的功能。</p>
+<h3 id="2-3-2-Delayed"><a href="#2-3-2-Delayed" class="headerlink" title="2.3.2.Delayed"></a>2.3.2.Delayed</h3><p>Delayed一种混合接口，Delayed继承了Comparable，用来标记那些应该在给定延迟时间之后执行的对象。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> java.util.concurrent;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Delayed</span> <span class="keyword">extends</span> <span class="title">Comparable</span>&lt;<span class="title">Delayed</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Returns the remaining delay associated with this object, in the</span></span><br><span class="line"><span class="comment">     * given time unit.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> unit the time unit</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the remaining delay; zero or negative values indicate</span></span><br><span class="line"><span class="comment">     * that the delay has already elapsed</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getDelay()方法返回与此对象相关的剩余延迟时间，以给定的时间单位表示，当时间为0时该对象就会被执行。</p>
+<p>另外，Delayed继承了Comparable，所以其实现类还要实现compareTo方法，用来对延迟对象排序，一般排序规则就是剩余延时时间</p>
+<p>例如我定义一个类型：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.demo.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Delayed;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 延时执行的任务， D是任务相关数据</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelayTask</span>&lt;<span class="title">D</span>&gt; <span class="keyword">implements</span> <span class="title">Delayed</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 任务执行时间，标准时间1970开始的毫秒值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> executeTime;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 任务中需要的数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> D data;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DelayTask</span><span class="params">(<span class="keyword">long</span> executeTime, D data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.executeTime = executeTime;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 用执行时间减去当前时间，得到剩余时间</span></span><br><span class="line">        <span class="keyword">return</span> unit.convert(executeTime - System.currentTimeMillis(), TimeUnit.MICROSECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Delayed o)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 比较剩余时间的大小</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">int</span>) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们定义的DelayTask对象包含两个属性：</p>
+<ul>
+<li>executeTime：延迟任务的执行时间，毫秒值</li>
+<li>data：任务中可能需要的数据，也可以是一个Runnable</li>
+</ul>
+<p>并且实现了getDelay方法，方便知道这个任务还有多久执行。</p>
+<p>实现了compareTo方法，用于根据剩余时间比较大小</p>
+<h3 id="2-3-3-DelayQueue"><a href="#2-3-3-DelayQueue" class="headerlink" title="2.3.3.DelayQueue"></a>2.3.3.DelayQueue</h3><p>DelayQueue就是延迟队列，底层是一个有序的无界队列（PriorityQueue），元素类型必须是Delayed类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelayQueue</span>&lt;<span class="title">E</span> <span class="keyword">extends</span> <span class="title">Delayed</span>&gt; <span class="keyword">extends</span> <span class="title">AbstractQueue</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">BlockingQueue</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> PriorityQueue&lt;E&gt; q = <span class="keyword">new</span> PriorityQueue&lt;E&gt;();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>存储在DelayQueue的元素会排序，一般根据getDelay()的结果排序，队首是延迟期（getDelay）最短的元素。</p>
+<p>当调用DelayQueue的take()方法获取元素时，会拿到已经到期的元素（getDelay返回0），不过如果没有到期元素，则会阻塞等待（线程休眠）或者返回null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 检索并删除此队列的头，如有必要，将一直等待，直到此队列上有一个具有过期延迟的元素可用为止。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ReentrantLock lock = <span class="keyword">this</span>.lock;</span><br><span class="line">    <span class="comment">// 获取锁，当线程被休眠时释放锁</span></span><br><span class="line">    lock.lockInterruptibly();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="comment">// 尝试从队首获取一个元素</span></span><br><span class="line">            E first = q.peek();</span><br><span class="line">            <span class="keyword">if</span> (first == <span class="keyword">null</span>)</span><br><span class="line">                <span class="comment">// 如果没有，说明队列为空，则等待，释放锁</span></span><br><span class="line">                available.await();</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 有元素，则获取元素的到期时间</span></span><br><span class="line">                <span class="keyword">long</span> delay = first.getDelay(NANOSECONDS);</span><br><span class="line">                <span class="keyword">if</span> (delay &lt;= <span class="number">0</span>)</span><br><span class="line">                    <span class="comment">// 已经到期，则取出并返回</span></span><br><span class="line">                    <span class="keyword">return</span> q.poll();</span><br><span class="line">                <span class="comment">// 未到期，置空避免等待时依然持有元素</span></span><br><span class="line">                first = <span class="keyword">null</span>; <span class="comment">// don&#x27;t retain ref while waiting</span></span><br><span class="line">                <span class="keyword">if</span> (leader != <span class="keyword">null</span>)</span><br><span class="line">                    <span class="comment">// 判断目前是否有其它线程在操作，有则等待</span></span><br><span class="line">                    available.await();</span><br><span class="line">                <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 没有，则获取当前线程</span></span><br><span class="line">                    Thread thisThread = Thread.currentThread();</span><br><span class="line">                    leader = thisThread;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="comment">// 让当前线程休眠至delay到期，避免CPU无用轮询</span></span><br><span class="line">                        available.awaitNanos(delay);</span><br><span class="line">                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                        <span class="keyword">if</span> (leader == thisThread)</span><br><span class="line">                            leader = <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (leader == <span class="keyword">null</span> &amp;&amp; q.peek() != <span class="keyword">null</span>)</span><br><span class="line">            <span class="comment">// 如果有元素了，唤醒其它等待中的线程</span></span><br><span class="line">            available.signal();</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.itcast.demo.pojo.DelayTask;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.DelayQueue;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelayQueueDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ExecutorService es = Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelayQueue</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建一个延迟队列</span></span><br><span class="line">        DelayQueue&lt;DelayTask&lt;String&gt;&gt; queue = <span class="keyword">new</span> DelayQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 开始执行任务</span></span><br><span class="line">        es.submit(() -&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    log.info(<span class="string">&quot;尝试获取任务。。。&quot;</span>);</span><br><span class="line">                    DelayTask&lt;String&gt; task = queue.take();</span><br><span class="line">                    log.warn(<span class="string">&quot;获取到任务&#123;&#125;&quot;</span>, task.getData());</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 开始向队列中添加任务</span></span><br><span class="line">        es.submit(() -&gt; &#123;</span><br><span class="line">            log.error(<span class="string">&quot;开始添加任务。。。&quot;</span>);</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">1000</span>; i++) &#123;</span><br><span class="line">                queue.add(<span class="keyword">new</span> DelayTask&lt;String&gt;(System.currentTimeMillis() + <span class="number">1000</span> * i, <span class="string">&quot;task_&quot;</span> + i ));</span><br><span class="line">            &#125;</span><br><span class="line">            log.error(<span class="string">&quot;任务添加结束。。。&quot;</span>);</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 等待任务执行完毕</span></span><br><span class="line">        log.info(<span class="string">&quot;主函数任务结束。。。&quot;</span>);</span><br><span class="line">        Thread.sleep(<span class="number">1000000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个线程任务，一个向队列中添加任务，任务之间时差是1秒，另一个从队列中取任务，结果：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200331202231874.png" alt="image-20200331202231874"></p>
+<h3 id="2-3-4-优缺点"><a href="#2-3-4-优缺点" class="headerlink" title="2.3.4.优缺点"></a>2.3.4.优缺点</h3><p>优点: </p>
+<ul>
+<li>不引入其他服务依赖，wait-notify机制，不做polling，不会浪费cpu。</li>
+<li>时效性好</li>
+</ul>
+<p> 缺点: </p>
+<ul>
+<li>数据保存在JVM内存中，当应用重启会造成数据丢失，或者数据量大时造成DelayQueue过大</li>
+<li>当前JVM内有效，应用与单进程场景</li>
+</ul>
+<h2 id="2-4-定时任务（Quartz）"><a href="#2-4-定时任务（Quartz）" class="headerlink" title="2.4.定时任务（Quartz）"></a>2.4.定时任务（Quartz）</h2><p><strong>基本思路</strong>：</p>
+<p>在每次下单后，都开启一个延期30分钟的定时任务，任务会检查订单是否支付，如果未支付则关闭订单，恢复库存。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>实现简单</li>
+<li>实时性好，时差在可以接受的范围内</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>需要开启较多的定时任务，当业务并发量大时会带来CPU的额外负担</li>
+</ul>
+<h2 id="2-5-Redis键过期通知"><a href="#2-5-Redis键过期通知" class="headerlink" title="2.5.Redis键过期通知"></a>2.5.Redis键过期通知</h2><h3 id="2-5-1-基本原理"><a href="#2-5-1-基本原理" class="headerlink" title="2.5.1.基本原理"></a>2.5.1.基本原理</h3><p>利用redis的key过期机制，下单时将订单id写入redis，过期时间30分钟，30分钟后数据过期，我们的代码会收到redis的过期通知，从而得知订单ID，然后检查该订单状态，如果未支付，则进行处理</p>
+<p>那么问题来了：如何才能订阅redis的key过期事件，如何得到Redis通知呢？</p>
+<p><strong>1）开启redis的key事件通知</strong></p>
+<p>首先，需要修改redis的配置文件：redis.conf，在其中添加一行配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">notify-keyspace-events Ex</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>Ex</code>是开启redis的key过期相关事件，可选的事件列表包括：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>发送通知</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K</td>
+<td>键空间通知，keyspace事件，事件以<code>__keyspace@&lt;db&gt;__</code>为前缀进行发布；</td>
+</tr>
+<tr>
+<td>E</td>
+<td>键事件通知，keyevent事件，事件以<code>__keyevent@&lt;db&gt;__</code>为前缀进行发布；</td>
+</tr>
+<tr>
+<td><em>g</em></td>
+<td>DEL 、 EXPIRE 、 RENAME 等数据类型无关的通用命令的通知</td>
+</tr>
+<tr>
+<td><strong>$</strong></td>
+<td>字符串命令的通知</td>
+</tr>
+<tr>
+<td><strong>l</strong></td>
+<td>列表命令的通知</td>
+</tr>
+<tr>
+<td><strong>s</strong></td>
+<td>集合命令的通知</td>
+</tr>
+<tr>
+<td><strong>h</strong></td>
+<td>哈希命令的通知</td>
+</tr>
+<tr>
+<td><strong>z</strong></td>
+<td>有序集合命令的通知</td>
+</tr>
+<tr>
+<td><em>x</em></td>
+<td><em>过期事件：每当有过期键被删除时发送</em></td>
+</tr>
+<tr>
+<td><em>e</em></td>
+<td><em>驱逐(evict)事件：每当有键因为 maxmemory 政策而被删除时发送</em></td>
+</tr>
+<tr>
+<td>A</td>
+<td>参数 g$lshzxe 的别名，相当于是All</td>
+</tr>
+</tbody></table>
+<p><strong>2）监听redis事件</strong></p>
+<p>打开一个redis的控制台，然后输入下面命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PSUBSCRIBE __keyevent@0__:expired</span><br></pre></td></tr></table></figure>
+
+<p>然后会得到反馈信息，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; PSUBSCRIBE __keyevent@0__:expired</span><br><span class="line">Reading messages... (press Ctrl-C to quit)</span><br><span class="line">1) <span class="string">&quot;psubscribe&quot;</span></span><br><span class="line">2) <span class="string">&quot;__keyevent@0__:expired&quot;</span></span><br><span class="line">3) (<span class="built_in">integer</span>) 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>此时，打开另一个Redis控制台，然后添加一个带有过期时间的key：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> heima109 123 EX 5</span><br></pre></td></tr></table></figure>
+
+<p>这里设置num值为123，并在5秒后过期</p>
+<p>稍等5秒后，会在第一个控制台中看到如下信息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>) <span class="string">&quot;pmessage&quot;</span></span><br><span class="line"><span class="number">2</span>) <span class="string">&quot;__keyevent@0__:expired&quot;</span></span><br><span class="line"><span class="number">3</span>) <span class="string">&quot;__keyevent@0__:expired&quot;</span></span><br><span class="line"><span class="number">4</span>) <span class="string">&quot;num&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们得到了过期的<code>key</code>的名称</p>
+<h3 id="2-5-2-Java代码监听通知"><a href="#2-5-2-Java代码监听通知" class="headerlink" title="2.5.2.Java代码监听通知"></a>2.5.2.Java代码监听通知</h3><p>我们演示如何通过SpringDataRedis来监听过期的Key</p>
+<p><strong>1）引入依赖</strong></p>
+<p>创建一个SpringBoot的Demo工程，引入Redis依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>2）配置Redis地址</strong></p>
+<p>在<code>application.properties</code>中添加redis地址：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.redis.host</span>=<span class="string">ly-redis</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>3）配置消息监听器</strong></p>
+<p>编写一个配置类，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.demo.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.Message;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnectionFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.listener.KeyExpirationEventMessageListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.listener.RedisMessageListenerContainer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 配置Redis消息监听器的容器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisMessageListenerContainer <span class="title">container</span><span class="params">(RedisConnectionFactory connectionFactory)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        RedisMessageListenerContainer container = <span class="keyword">new</span> RedisMessageListenerContainer();</span><br><span class="line">        container.setConnectionFactory(connectionFactory);</span><br><span class="line">        <span class="keyword">return</span> container;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 配置一个过期key的消息监听器</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> KeyExpirationEventMessageListener <span class="title">redisKeyExpirationListener</span><span class="params">(RedisMessageListenerContainer container)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 创建监听器，覆盖监听器默认的doHandleMessage方法</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> KeyExpirationEventMessageListener(container)&#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doHandleMessage</span><span class="params">(Message message)</span> </span>&#123;</span><br><span class="line">                <span class="comment">// 获取消息体</span></span><br><span class="line">                <span class="keyword">byte</span>[] body = message.getBody();</span><br><span class="line">                <span class="comment">// 获取消息类型</span></span><br><span class="line">                <span class="keyword">byte</span>[] channel = message.getChannel();</span><br><span class="line">                <span class="comment">// 输出</span></span><br><span class="line">                System.out.println(<span class="string">&quot;body = &quot;</span> + <span class="keyword">new</span> String(body));</span><br><span class="line">                System.out.println(<span class="string">&quot;channel = &quot;</span> + <span class="keyword">new</span> String(channel));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动项目，然后在redis中添加一个过期key：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> num 123 EX 5</span><br></pre></td></tr></table></figure>
+
+<p>这里设置num值为123，并在5秒后过期。</p>
+<p>一段时间后，即可在控制台看到打印的信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">body = num</span><br><span class="line">channel = __keyevent@0__:expired</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-5-3-优缺点"><a href="#2-5-3-优缺点" class="headerlink" title="2.5.3.优缺点"></a>2.5.3.优缺点</h3><p><strong>优点</strong>：</p>
+<ul>
+<li>高可用，redis集群具备高并发、高可用的特性</li>
+<li>实时性，监听事件通知几乎是瞬时的</li>
+<li>支持消息删除</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>大量键同一时间过期，对redis来说负载大</li>
+<li>消息只会发送一次，没有确认机制，不能保证可靠性</li>
+<li>持久性受限于Redis</li>
+<li>需要注意消息广播后的并发安全问题</li>
+</ul>
+<h2 id="2-7-Redis-sorted-set"><a href="#2-7-Redis-sorted-set" class="headerlink" title="2.7.Redis(sorted_set)"></a>2.7.Redis(sorted_set)</h2><p>基本原理：基于redis的sorted_set结构来维护一个延迟任务的列表（待执行队列），并按照执行时间排序。开启独立的线程不停尝试获取sorted_set中的第一个元素，判断执行时间是否小于等于当前时间，如果是则将任务迁移到另外一个队列（准备执行队列），可以用list结构。其它线程可以不断从这个队列中获取任务并执行。</p>
+<p>order_id delay_time</p>
+<h3 id="2-7-1-开源实现"><a href="#2-7-1-开源实现" class="headerlink" title="2.7.1.开源实现"></a>2.7.1.开源实现</h3><p>目前又不少公司已经基于上述原理实现并开源了自己的代码，例如：</p>
+<p>美图的LMSTFY，参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/94082947%E3%80%82">https://zhuanlan.zhihu.com/p/94082947。</a></p>
+<p>有赞团队开源实现，参考：<a target="_blank" rel="noopener" href="https://tech.youzan.com/queuing_delay/">https://tech.youzan.com/queuing_delay/</a></p>
+<p>这里以有赞的设计为例来看。</p>
+<p>这个设计中包含四个角色：</p>
+<ul>
+<li><code>Job Pool</code>：用来存放所有Job的元信息。</li>
+<li><code>Delay Bucket</code>：是一组以时间为维度的有序队列，用来存放所有需要延迟的或已经被拒绝的Job（这里只存放Job Id，需要到Job Pool获取任务信息）。</li>
+<li><code>Ready Queue</code>：存放处于Ready状态的Job（这里只存放Job Id），以供消费程序消费。</li>
+<li><code>Timer</code>：负责实时扫描各个Bucket，并将delay时间大于等于当前时间的Job放入到对应的<code>Ready Queue</code>。</li>
+</ul>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200331224340286.png" alt="image-20200331224340286"> </p>
+<p>再来看看一个任务（Job）的状态转换：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200331224925929.png" alt="image-20200331224925929"> </p>
+<p>其中包括的状态：</p>
+<ul>
+<li>ready：可执行状态，等待消费。</li>
+<li>delay：不可执行状态，等待时钟周期。</li>
+<li>reserved：已被消费者读取，但超过一定时间还未得到消费者的响应（delete、finish），重新放入Read队列。</li>
+<li>deleted：已被消费完成或者已被删除。</li>
+</ul>
+<h3 id="2-7-2-优缺点"><a href="#2-7-2-优缺点" class="headerlink" title="2.7.2.优缺点"></a>2.7.2.优缺点</h3><p><strong>优点</strong>：</p>
+<ul>
+<li>高可用性</li>
+<li>实时性</li>
+<li>持久性</li>
+<li>支持消息删除</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>独立线程的无限循环，CPU的浪费，可以改成类似于DelayQueue的wait和notify机制</li>
+<li>消费端在reserve job的时候，采用的是http短轮询的方式，IO开销较大，可以改进为基于长连接方式</li>
+<li>数据存储使用的redis，消息在持久化上，受限于redis的特性，可能导致数据丢失</li>
+</ul>
+<h2 id="2-8-时间轮算法"><a href="#2-8-时间轮算法" class="headerlink" title="2.8.时间轮算法"></a>2.8.时间轮算法</h2><p>基于时间轮算法多用在定时任务框架，或者分布式任务调度中，并直接没有可用的延迟队列框架，不过，前面已经说过，我们可以基于定时任务来实现延迟队列，殊途同归。</p>
+<p>我们可以看看原理：<a target="_blank" rel="noopener" href="https://www.veaxen.com/%E7%AE%97%E6%B3%95-%E6%97%B6%E9%97%B4%E8%BD%AE.html">参考时间轮算法</a></p>
+<h2 id="2-9-RabbitMQ-延迟队列"><a href="#2-9-RabbitMQ-延迟队列" class="headerlink" title="2.9.RabbitMQ 延迟队列"></a>2.9.RabbitMQ 延迟队列</h2><p>RabbitMQ本身并不支持延迟队列，不过我们可以利用其中的<code>Dead Letter Exchanges</code>功能来实现延迟队列。</p>
+<p>Dead Letter Exchanges 通常被人们叫做<strong>死信队列</strong>，我更喜欢称为<strong>死信交换机</strong>。那么问题来了，什么是死信？</p>
+<h3 id="2-9-1-死信Dead-Letter"><a href="#2-9-1-死信Dead-Letter" class="headerlink" title="2.9.1.死信Dead Letter"></a>2.9.1.死信Dead Letter</h3><p>参考官方网站：<a target="_blank" rel="noopener" href="https://www.rabbitmq.com/dlx.html">https://www.rabbitmq.com/dlx.html</a></p>
+<p>首先来看死信的概念。</p>
+<p><strong>死信</strong>的英文是（Dead Letter），满足下列条件的消息被称为死信：</p>
+<ul>
+<li>消费者使用basic.reject或 basic.nack声明消费失败，并且消息的requeue参数设置为false。意思就是这个消息没有消费者需要了。</li>
+<li>消息是一个过期消息（TTL到期），到期可以是<strong>消息本身超时或者队列的TTL超时</strong>。</li>
+<li>消息的长度超过了其被投递的队列最大限制</li>
+</ul>
+<p>要实现延迟队列，我们肯定需要人为控制一个消息变为死信，因此我们一般采用上述的第二种方式：<strong>让一个消息在一段时间后过期</strong>，这种过期可以通过两种策略实现：</p>
+<ul>
+<li>队列TTL：通过<code>x-message-ttl</code>属性给<code>消息所在队列</code>设置TTL（Time To Live），当队列中的消息存在时间超过TTL后就自动成为死信</li>
+<li>消息TTL：消息的发送者在发送消息时，设置消息TTL属性。消息到达队列，TTL到期后成为死信、</li>
+<li>如果一个消息具有TTL，同时所在队列也具备TTL，时间长度较小的会生效</li>
+</ul>
+<p>由上面的概念可以知道，一个消息是不是死信，最终是由<strong>消息所在的队列</strong>来判断和处理的。当一个消息被判定为死信，它所在的队列会做怎样的处理呢？</p>
+<p>队列会把<strong>死信</strong>交给提前指定的<strong>死信交换机（Dead Letter Exchange）</strong>。</p>
+<p>如图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402175452447.png" alt="image-20200402175452447"></p>
+<h3 id="2-9-2-死信交换机Dead-Letter-Exchanges"><a href="#2-9-2-死信交换机Dead-Letter-Exchanges" class="headerlink" title="2.9.2.死信交换机Dead Letter Exchanges"></a>2.9.2.死信交换机Dead Letter Exchanges</h3><p><strong>死信交换机（Dead Letter Exchange）</strong>其实就是一个普通交换机，也具备以前学习的交换机的所有特征，例如可以设置交换机类型为：topic、direct等。它负责把消息根据routing key转发给绑定的队列。</p>
+<p>那什么样的交换机才可以叫死信交换机？需要队列在声明的时候，通过<code>x-dead-letter-exchange</code>属性指定一个交换机，被指定的交换机就是<strong>死信交换机（Dead Letter Exchange）</strong>。同时队列还可以指定一个<code>x-dead-letter-routing-key</code>（死信路由）作为死信的<code>routing_key</code>，死信交换机转发消息时会根据这个<code>routing_key</code>来转发消息。</p>
+<p>死信交换机接收到消息以后，会根据消息的<code>routing_key</code>再次转发消息到绑定的队列，如果队列绑定到死信交换机时，会根据队列指定的<code>x-dead-letter-routing-key</code>来转发，如果队列没有绑定，则会根据消息来源时指定的<code>routing_key</code>来转发。</p>
+<p>例如：现在publisher发送消息时指定<code>routing_key</code>为<code>foo</code>，队列绑定死信交换机时指定了<strong>死信路由</strong>为：<code>bar</code>，则死信交换机转发时，会使用<code>bar</code>作为<code>routing_key</code>，如图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402194221688.png" alt="image-20200402194221688"></p>
+<p>现在publisher发送消息时指定<code>routing_key</code>为<code>foo</code>，队列绑定死信交换机时没有指定**死信路由，则死信交换机转发时，会使用<code>foo</code>作为<code>routing_key</code>，如图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402194419573.png" alt="image-20200402194419573"></p>
+<p>现在，如果我们发送一个routingKey为foo的消息到达设置了过期时间为30秒的队列（图中的MessageQueue），30秒后消息过期，就会转发到死信交换机，然后就会发送到Queue1这个队列，我们的任务执行者监听Queue1，即可实现延迟队列了。</p>
+<h3 id="2-9-3-示例"><a href="#2-9-3-示例" class="headerlink" title="2.9.3.示例"></a>2.9.3.示例</h3><p>接下来，我们通过示例来展示下死信队列，如图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402205530191.png" alt="image-20200402205530191"></p>
+<h4 id="1）创建交换机"><a href="#1）创建交换机" class="headerlink" title="1）创建交换机"></a><strong>1）创建交换机</strong></h4><p>打开RabbitMQ的管理界面，然后先创建两个交换机：</p>
+<ul>
+<li><code>normal.topic</code>：一个普通的topic类型的交换机</li>
+<li><code>dead.topic</code>：一个普通topic类型的交换机，但是作为死信交换机来用</li>
+</ul>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402202738791.png" alt="image-20200402202738791"></p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402202805976.png" alt="image-20200402202805976"></p>
+<h4 id="2）创建队列"><a href="#2）创建队列" class="headerlink" title="2）创建队列"></a><strong>2）创建队列</strong></h4><p>然后创建两个队列：</p>
+<ul>
+<li><code>dead.order.queue</code>：死信队列，设置过期时间为20秒，<ul>
+<li>与<code>normal.topic</code>交换机绑定，接收消息，routing_key为 <code>order.evict</code></li>
+<li>指定<code>x-dead-letter-exchange</code>为<code>dead.topic</code>这个死信交换机</li>
+<li>指定<code>x-message-ttl</code>设置消息过期时间</li>
+</ul>
+</li>
+<li><code>evict.order.queue</code>：普通任务队列，接收死信交换机转发过来的消息，将来推送给消费者<ul>
+<li>与<code>dead.topic</code>交换机绑定，接收消息，routing_key为 <code>order.evict</code></li>
+</ul>
+</li>
+</ul>
+<p>死信队列：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402204423258.png" alt="image-20200402204423258"></p>
+<p>普通任务队列：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402204550095.png" alt="image-20200402204550095"></p>
+<p>最终：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402204656254.png" alt="image-20200402204656254"></p>
+<h4 id="3）绑定普通队列与交换机"><a href="#3）绑定普通队列与交换机" class="headerlink" title="3）绑定普通队列与交换机"></a><strong>3）绑定普通队列与交换机</strong></h4><p>进入交换机界面，点击要绑定的交换机，例如：<code>normal.topic</code>：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402212630086.png" alt="image-20200402212630086"></p>
+<p>在点开的界面填写要绑定的队列及routing_key：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402212552504.png" alt="image-20200402212552504"></p>
+<p>然后还要绑定<code>evict.order.queue</code>到<code>dead.topic</code>这个交换机：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402212733973.png" alt="image-20200402212733973"></p>
+<h4 id="4）测试发送消息"><a href="#4）测试发送消息" class="headerlink" title="4）测试发送消息"></a>4）测试发送消息</h4><p>现在，向<code>normal.topic</code>交换机发送消息，指定<code>routing_key</code>为：<code>order.evict</code></p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402212837967.png" alt="image-20200402212837967"></p>
+<p>可以看到<code>dead.order.queue</code>中已经有消息了：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402212919397.png" alt="image-20200402212919397"></p>
+<p>然后等待20秒后，看到消息到了<code>evict.order.queue</code>：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402213215684.png" alt="image-20200402213215684"></p>
+<h3 id="2-9-4-优缺点"><a href="#2-9-4-优缺点" class="headerlink" title="2.9.4.优缺点"></a>2.9.4.优缺点</h3><p>RabbitMQ实现延迟队列的优缺点：</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>实现简单</li>
+<li>可持久化</li>
+<li>高可用集群</li>
+<li>性能强</li>
+<li>实时性好</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>无法删除消息</li>
+<li>如果是时间跨度非常大并且频率高的任务，不太适合</li>
+</ul>
+<h1 id="3-清理订单"><a href="#3-清理订单" class="headerlink" title="3.清理订单"></a>3.清理订单</h1><p>学完了各种延迟队列的实现，不知道大家最喜欢哪一种？</p>
+<p>本例中我们会选择RabbitMQ来作为延迟队列，综合起来比较有优势。</p>
+<h2 id="3-1-业务分析"><a href="#3-1-业务分析" class="headerlink" title="3.1.业务分析"></a>3.1.业务分析</h2><p>首先，我们需要在项目中声明队列和交换机，与上面demo类似：</p>
+<p>两个交换机：</p>
+<ul>
+<li><code>ly.order.exchange</code>：一个普通的topic类型的交换机</li>
+<li><code>ly.dead.exchange</code>：一个普通topic类型的交换机，但是作为死信交换机来用</li>
+</ul>
+<p>两个队列：</p>
+<ul>
+<li><code>ly.dead.order.queue</code>：死信队列，设置过期时间为30分钟（测试可以用20S），<ul>
+<li>与<code>ly.order.exchange</code>交换机绑定，接收消息，<code>routing_key</code>为 <code>order.evict</code></li>
+<li>指定<code>x-dead-letter-exchange</code>为<code>ly.dead.exchange</code>这个死信交换机</li>
+<li>设置<code>x-message-ttl</code>为30分钟</li>
+</ul>
+</li>
+<li><code>ly.evict.order.queue</code>：普通任务队列，接收死信交换机转发过来的消息<ul>
+<li>与<code>ly.dead.exchange</code>交换机绑定，接收消息，<code>routing_key</code>为 <code>order.evict</code></li>
+</ul>
+</li>
+</ul>
+<p>来看下业务流程：</p>
+<p>首先修改下单业务：</p>
+<ul>
+<li>下单业务的最后，向<code>ly.order.exchange</code>这个交换机发送消息，携带订单id</li>
+</ul>
+<p>然后一个独立的消费者，需要监听<code>ly.evict.order.queue</code>这个队列，业务：</p>
+<ul>
+<li><p>接收到订单id信息</p>
+</li>
+<li><p>根据id查询订单状态，判断是否是未支付</p>
+<ul>
+<li>如果未支付则需要关闭订单，设置状态为5（已关闭），注意<strong>幂等处理</strong></li>
+<li>如果已支付，则无需处理</li>
+</ul>
+</li>
+<li><p>如果关闭订单了，还要查询对应OrderDetail，得到其中的商品和数量信息</p>
+</li>
+<li><p>调用商品微服务，恢复库存，注意分布式事务问题</p>
+</li>
+</ul>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200512154146605.png" alt="image-20200512154146605"></p>
+<h2 id="3-2-配置死信队列"><a href="#3-2-配置死信队列" class="headerlink" title="3.2.配置死信队列"></a>3.2.配置死信队列</h2><p>我们先在<code>ly-trade</code>服务中利用java代码来配置之前约定的交换机和队列。</p>
+<h3 id="3-2-1-引入依赖和配置"><a href="#3-2-1-引入依赖和配置" class="headerlink" title="3.2.1.引入依赖和配置"></a>3.2.1.引入依赖和配置</h3><p>在<code>ly-trade</code>的<code>pom.xml</code>中添加MQ的依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--mq--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-trade</code>的<code>application.yml</code>中添加MQ地址：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">rabbitmq:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">ly-mq</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">heima129</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">heima129</span></span><br><span class="line">    <span class="attr">virtual-host:</span> <span class="string">/haha</span></span><br><span class="line">    <span class="attr">template:</span></span><br><span class="line">      <span class="attr">retry:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">        <span class="attr">initial-interval:</span> <span class="string">10000ms</span></span><br><span class="line">        <span class="attr">max-interval:</span> <span class="string">80000ms</span></span><br><span class="line">        <span class="attr">multiplier:</span> <span class="number">2</span></span><br><span class="line">    <span class="attr">publisher-confirms:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-2-配置队列和交换机"><a href="#3-2-2-配置队列和交换机" class="headerlink" title="3.2.2.配置队列和交换机"></a>3.2.2.配置队列和交换机</h3><p>在<code>ly-trade</code>的<code>com.leyou.trade.config</code>中定义一个配置类，配置队列和交换机：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.core.*;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.ExchangeConstants.DEAD_EXCHANGE_NAME;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.ExchangeConstants.ORDER_EXCHANGE_NAME;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.QueueConstants.DEAD_ORDER_QUEUE;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.QueueConstants.EVICT_ORDER_QUEUE;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.RoutingKeyConstants.EVICT_ORDER_KEY;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MqConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 订单超时未支付的时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> ORDER_QUEUE_DELAY_TIME = <span class="number">30000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 订单业务交换机</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TopicExchange <span class="title">orderTopicExchange</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> TopicExchange(ORDER_EXCHANGE_NAME, <span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 死信交换机</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TopicExchange <span class="title">deadTopicExchange</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> TopicExchange(DEAD_EXCHANGE_NAME, <span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 死信队列</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Queue <span class="title">deadOrderQueue</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; args = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">// x-message-ttl 声明队列TTL值</span></span><br><span class="line">        args.put(<span class="string">&quot;x-message-ttl&quot;</span>, ORDER_QUEUE_DELAY_TIME);</span><br><span class="line">        <span class="comment">// x-dead-letter-exchange 声明当前队列绑定的死信交换机</span></span><br><span class="line">        args.put(<span class="string">&quot;x-dead-letter-exchange&quot;</span>, DEAD_EXCHANGE_NAME);</span><br><span class="line">        <span class="keyword">return</span> QueueBuilder.durable(DEAD_ORDER_QUEUE).withArguments(args).build();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 清理订单业务队列</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Queue <span class="title">evictOrderQueue</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Queue(EVICT_ORDER_QUEUE, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将死信队列与ly.order.exchange交换机绑定</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Binding <span class="title">bindingDeadQueue</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> BindingBuilder.bind(deadOrderQueue()).to(orderTopicExchange()).with(EVICT_ORDER_KEY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将清理订单业务队列与死信交换机绑定</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Binding <span class="title">bindingEvictQueue</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> BindingBuilder.bind(evictOrderQueue()).to(deadTopicExchange()).with(EVICT_ORDER_KEY);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Jackson2JsonMessageConverter <span class="title">messageConverter</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Jackson2JsonMessageConverter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-4-测试"><a href="#3-2-4-测试" class="headerlink" title="3.2.4.测试"></a>3.2.4.测试</h3><p>重启项目，可以再MQ的控制台看到队列和交换机信息：</p>
+<p>交换机：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402225040329.png" alt="image-20200402225040329"></p>
+<p>队列：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402225015386.png" alt="image-20200402225015386"></p>
+<p>绑定：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402225135064.png" alt="image-20200402225135064"></p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402225202917.png" alt="image-20200402225202917"></p>
+<h2 id="3-3-改造下单业务"><a href="#3-3-改造下单业务" class="headerlink" title="3.3.改造下单业务"></a>3.3.改造下单业务</h2><p>下单业务的最后，向<code>ly.order.topic</code>这个交换机发送消息，携带订单id</p>
+<p>修改<code>ly-trade</code>的<code>com.leyou.trade.service.impl</code>包中的<code>OrderServiceImpl</code>类中的<code>createOrder</code>方法：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day16_延迟队列和订单清理_分布式日志服务、链路追踪\笔记\assets\image-20200402224230434.png" alt="image-20200402224230434"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">amqpTemplate.convertAndSend(ORDER_EXCHANGE_NAME, EVICT_ORDER_KEY, order.getOrderId());</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-4-商品服务恢复库存"><a href="#3-4-商品服务恢复库存" class="headerlink" title="3.4.商品服务恢复库存"></a>3.4.商品服务恢复库存</h2><p>我们在商品服务中添加一个恢复库存接口，方便在监听到MQ消息后调用：</p>
+<p>在<code>ly-item-api</code>的<code>ItemClient</code>中添加接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加库存</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> cartMap 商品id及数量的map</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@PutMapping(&quot;/goods/stock/plus&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addStock</span><span class="params">(<span class="meta">@RequestBody</span> Map&lt;Long, Integer&gt; cartMap)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>的<code>GoodsController</code>中编写业务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 加库存</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> cartMap 商品id及数量的map</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@PutMapping(&quot;/stock/plus&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Void&gt; <span class="title">addStock</span><span class="params">(<span class="meta">@RequestBody</span> Map&lt;Long, Integer&gt; cartMap)</span></span>&#123;</span><br><span class="line">    skuService.addStock(cartMap);</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.status(HttpStatus.NO_CONTENT).build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>ly-item-service</code>的<code>SkuService</code>中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">addStock</span><span class="params">(Map&lt;Long, Integer&gt; cartMap)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>减库存的同时还要对商品的销量做+的操作，这个sql我们通过手写完成，定义在mapper中。</p>
+<p>在<code>ly-item-service</code>的<code>com.leyou.item.mapper</code>的<code>SkuMapper</code>中定义方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Update(&quot;UPDATE tb_sku SET stock = stock + #&#123;num&#125; , sold = sold - #&#123;num&#125; WHERE id = #&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">addStock</span><span class="params">(Map&lt;String,Object&gt; sku)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在<code>ly-item-service</code>的<code>SkuServiceImpl</code>中实现业务：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ADD_STOCK_STATEMENT = <span class="string">&quot;com.leyou.item.mapper.SkuMapper.addStock&quot;</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addStock</span><span class="params">(Map&lt;Long, Integer&gt; cartMap)</span> </span>&#123;</span><br><span class="line">    executeBatch(sqlSession -&gt; &#123;</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Long, Integer&gt; entry : cartMap.entrySet()) &#123;</span><br><span class="line">            Map&lt;String,Object&gt; param = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">            param.put(<span class="string">&quot;id&quot;</span>, entry.getKey());</span><br><span class="line">            param.put(<span class="string">&quot;num&quot;</span>, entry.getValue());</span><br><span class="line">            sqlSession.update(ADD_STOCK_STATEMENT, param);</span><br><span class="line">            sqlSession.flushStatements();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-5-监听MQ消息"><a href="#3-5-监听MQ消息" class="headerlink" title="3.5.监听MQ消息"></a>3.5.监听MQ消息</h2><p>在<code>ly-trade</code>的<code>com.leyou.trade.mq</code>包中添加一个类，监听MQ消息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.mq;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.trade.service.OrderService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.amqp.rabbit.annotation.RabbitListener;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> com.leyou.common.constants.MQConstants.QueueConstants.EVICT_ORDER_QUEUE;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderListener</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OrderService orderService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">OrderListener</span><span class="params">(OrderService orderService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.orderService = orderService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 监听清理订单的消息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> orderId 订单id</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RabbitListener(queues = EVICT_ORDER_QUEUE)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">listenOrderMessage</span><span class="params">(Long orderId)</span> <span class="keyword">throws</span> InterruptedException 	 </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(orderId != <span class="keyword">null</span>)&#123;</span><br><span class="line">            log.info(<span class="string">&quot;接收到订单任务，订单id：&#123;&#125;&quot;</span>, orderId);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                orderService.evictOrderIfNecessary(orderId);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里监听到订单信息后，说明订单已经超过30分钟了，我们可以去清理了，调用OrderService的清理订单功能。</p>
+<h2 id="3-6-清理订单"><a href="#3-6-清理订单" class="headerlink" title="3.6.清理订单"></a>3.6.清理订单</h2><p>在<code>ly-trade</code>的<code>com.leyou.trade.service</code>的OrderService接口中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">evictOrderIfNecessary</span><span class="params">(Long orderId)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后，在<code>ly-trade</code>的<code>com.leyou.trade.service.impl</code>的OrderServiceImpl中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">evictOrderIfNecessary</span><span class="params">(Long orderId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1.查询订单</span></span><br><span class="line">    Order order = getById(orderId);</span><br><span class="line">    <span class="keyword">if</span>(order == <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="comment">// 订单不存在，无需处理</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2.判断订单是否支付</span></span><br><span class="line">    <span class="keyword">if</span>(order.getStatus() != OrderStatus.INIT)&#123;</span><br><span class="line">        <span class="comment">// 订单已处理，无需重复处理</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 3.如果未支付，需要关闭订单</span></span><br><span class="line">    <span class="keyword">boolean</span> boo = update().set(<span class="string">&quot;status&quot;</span>, OrderStatus.CLOSED.getValue())</span><br><span class="line">        .set(<span class="string">&quot;close_time&quot;</span>, <span class="keyword">new</span> Date())</span><br><span class="line">        .eq(<span class="string">&quot;order_id&quot;</span>, orderId)</span><br><span class="line">        <span class="comment">// 通过乐观锁进一步保证幂等效果</span></span><br><span class="line">        .eq(<span class="string">&quot;status&quot;</span>, OrderStatus.INIT.getValue())</span><br><span class="line">        <span class="comment">// 执行update</span></span><br><span class="line">        .update();</span><br><span class="line">    <span class="keyword">if</span>(!boo)&#123;</span><br><span class="line">        <span class="comment">// 更新失败，订单状态已经改变，无需处理</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    log.info(<span class="string">&quot;已关闭超时未支付订单：&#123;&#125;&quot;</span>, orderId);</span><br><span class="line">    <span class="comment">// 4.查询OrderDetail</span></span><br><span class="line">    List&lt;OrderDetail&gt; details = detailService.query().eq(<span class="string">&quot;order_id&quot;</span>, orderId).list();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5.获取商品及商品数量信息</span></span><br><span class="line">    Map&lt;Long, Integer&gt; skuMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="comment">// 得到其中的商品和数量信息</span></span><br><span class="line">        <span class="keyword">for</span> (OrderDetail detail : details) &#123;</span><br><span class="line">            skuMap.put(detail.getSkuId(), detail.getNum());</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">/*Map&lt;Long, Integer&gt; map = details.stream()</span></span><br><span class="line"><span class="comment">        .collect(Collectors.toMap(OrderDetail::getSkuId, OrderDetail::getNum));*/</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6.恢复库存</span></span><br><span class="line">    itemClient.addStock(skuMap);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86-%E5%88%86%E5%B8%83%E5%BC%8F%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1%E3%80%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/">http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86-%E5%88%86%E5%B8%83%E5%BC%8F%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1%E3%80%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97/">延迟队列</a></div><div class="post_share"><div class="social-share" data-image="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/16%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86/%E5%B0%81%E9%9D%A2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/07/03/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><img class="prev-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式事务</div></div></a></div><div class="next-post pull-right"><a href="/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><img class="next-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/15%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">乐优商城项目-微信支付-分布式事务</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">0.学习目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%B8%9A%E5%8A%A1%E9%9C%80%E6%B1%82"><span class="toc-number">2.</span> <span class="toc-text">1.业务需求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97"><span class="toc-number">3.</span> <span class="toc-text">2.延迟队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97"><span class="toc-number">3.1.</span> <span class="toc-text">2.1.什么是延迟队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E5%AE%9A%E6%9C%9F%E8%BD%AE%E8%AF%A2%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">3.2.</span> <span class="toc-text">2.2.定期轮询数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-DelayQueue"><span class="toc-number">3.3.</span> <span class="toc-text">2.3.DelayQueue</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-Comparable"><span class="toc-number">3.3.1.</span> <span class="toc-text">2.3.1.Comparable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-Delayed"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.3.2.Delayed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-3-DelayQueue"><span class="toc-number">3.3.3.</span> <span class="toc-text">2.3.3.DelayQueue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-4-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">3.3.4.</span> <span class="toc-text">2.3.4.优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%88Quartz%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">2.4.定时任务（Quartz）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-Redis%E9%94%AE%E8%BF%87%E6%9C%9F%E9%80%9A%E7%9F%A5"><span class="toc-number">3.5.</span> <span class="toc-text">2.5.Redis键过期通知</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-1-%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">3.5.1.</span> <span class="toc-text">2.5.1.基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-2-Java%E4%BB%A3%E7%A0%81%E7%9B%91%E5%90%AC%E9%80%9A%E7%9F%A5"><span class="toc-number">3.5.2.</span> <span class="toc-text">2.5.2.Java代码监听通知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-3-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">3.5.3.</span> <span class="toc-text">2.5.3.优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-Redis-sorted-set"><span class="toc-number">3.6.</span> <span class="toc-text">2.7.Redis(sorted_set)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-1-%E5%BC%80%E6%BA%90%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.6.1.</span> <span class="toc-text">2.7.1.开源实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-2-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">3.6.2.</span> <span class="toc-text">2.7.2.优缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-%E6%97%B6%E9%97%B4%E8%BD%AE%E7%AE%97%E6%B3%95"><span class="toc-number">3.7.</span> <span class="toc-text">2.8.时间轮算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-9-RabbitMQ-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97"><span class="toc-number">3.8.</span> <span class="toc-text">2.9.RabbitMQ 延迟队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-1-%E6%AD%BB%E4%BF%A1Dead-Letter"><span class="toc-number">3.8.1.</span> <span class="toc-text">2.9.1.死信Dead Letter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-2-%E6%AD%BB%E4%BF%A1%E4%BA%A4%E6%8D%A2%E6%9C%BADead-Letter-Exchanges"><span class="toc-number">3.8.2.</span> <span class="toc-text">2.9.2.死信交换机Dead Letter Exchanges</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-3-%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.8.3.</span> <span class="toc-text">2.9.3.示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%EF%BC%89%E5%88%9B%E5%BB%BA%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="toc-number">3.8.3.1.</span> <span class="toc-text">1）创建交换机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%EF%BC%89%E5%88%9B%E5%BB%BA%E9%98%9F%E5%88%97"><span class="toc-number">3.8.3.2.</span> <span class="toc-text">2）创建队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%EF%BC%89%E7%BB%91%E5%AE%9A%E6%99%AE%E9%80%9A%E9%98%9F%E5%88%97%E4%B8%8E%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="toc-number">3.8.3.3.</span> <span class="toc-text">3）绑定普通队列与交换机</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%EF%BC%89%E6%B5%8B%E8%AF%95%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="toc-number">3.8.3.4.</span> <span class="toc-text">4）测试发送消息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-4-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">3.8.4.</span> <span class="toc-text">2.9.4.优缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%B8%85%E7%90%86%E8%AE%A2%E5%8D%95"><span class="toc-number">4.</span> <span class="toc-text">3.清理订单</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E4%B8%9A%E5%8A%A1%E5%88%86%E6%9E%90"><span class="toc-number">4.1.</span> <span class="toc-text">3.1.业务分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E9%85%8D%E7%BD%AE%E6%AD%BB%E4%BF%A1%E9%98%9F%E5%88%97"><span class="toc-number">4.2.</span> <span class="toc-text">3.2.配置死信队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96%E5%92%8C%E9%85%8D%E7%BD%AE"><span class="toc-number">4.2.1.</span> <span class="toc-text">3.2.1.引入依赖和配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-2-%E9%85%8D%E7%BD%AE%E9%98%9F%E5%88%97%E5%92%8C%E4%BA%A4%E6%8D%A2%E6%9C%BA"><span class="toc-number">4.2.2.</span> <span class="toc-text">3.2.2.配置队列和交换机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-4-%E6%B5%8B%E8%AF%95"><span class="toc-number">4.2.3.</span> <span class="toc-text">3.2.4.测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E6%94%B9%E9%80%A0%E4%B8%8B%E5%8D%95%E4%B8%9A%E5%8A%A1"><span class="toc-number">4.3.</span> <span class="toc-text">3.3.改造下单业务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4-%E5%95%86%E5%93%81%E6%9C%8D%E5%8A%A1%E6%81%A2%E5%A4%8D%E5%BA%93%E5%AD%98"><span class="toc-number">4.4.</span> <span class="toc-text">3.4.商品服务恢复库存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-5-%E7%9B%91%E5%90%ACMQ%E6%B6%88%E6%81%AF"><span class="toc-number">4.5.</span> <span class="toc-text">3.5.监听MQ消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-6-%E6%B8%85%E7%90%86%E8%AE%A2%E5%8D%95"><span class="toc-number">4.6.</span> <span class="toc-text">3.6.清理订单</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

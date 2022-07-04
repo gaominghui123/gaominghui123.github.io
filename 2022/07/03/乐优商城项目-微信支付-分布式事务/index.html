@@ -1,0 +1,849 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>乐优商城项目-微信支付-分布式事务 | Jason</title><meta name="keywords" content="微信支付"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="0.学习目标 微信支付下单 生成二维码 实现支付回调 实现支付状态查询  1.微信支付简介1.1.介绍微信支付官方文档：https:&#x2F;&#x2F;pay.weixin.qq.com&#x2F;index.php&#x2F;core&#x2F;home&#x2F;login?return_url&#x3D;%2F  我们选择开发文档，而后进入选择页面：  选择native支付，就是扫码支付：  此处我们使用模式二来开发： 1.2.开发流程模式二与模式一相比，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="乐优商城项目-微信支付-分布式事务">
+<meta property="og:url" content="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="0.学习目标 微信支付下单 生成二维码 实现支付回调 实现支付状态查询  1.微信支付简介1.1.介绍微信支付官方文档：https:&#x2F;&#x2F;pay.weixin.qq.com&#x2F;index.php&#x2F;core&#x2F;home&#x2F;login?return_url&#x3D;%2F  我们选择开发文档，而后进入选择页面：  选择native支付，就是扫码支付：  此处我们使用模式二来开发： 1.2.开发流程模式二与模式一相比，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/15%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png">
+<meta property="article:published_time" content="2022-07-03T01:52:54.000Z">
+<meta property="article:modified_time" content="2022-07-03T02:36:59.109Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="微信支付">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/15%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '乐优商城项目-微信支付-分布式事务',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-03 10:36:59'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">169</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">204</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/15%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">乐优商城项目-微信支付-分布式事务</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-03T01:52:54.000Z" title="发表于 2022-07-03 09:52:54">2022-07-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-03T02:36:59.109Z" title="更新于 2022-07-03 10:36:59">2022-07-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="乐优商城项目-微信支付-分布式事务"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="0-学习目标"><a href="#0-学习目标" class="headerlink" title="0.学习目标"></a>0.学习目标</h1><ul>
+<li>微信支付下单</li>
+<li>生成二维码</li>
+<li>实现支付回调</li>
+<li>实现支付状态查询</li>
+</ul>
+<h1 id="1-微信支付简介"><a href="#1-微信支付简介" class="headerlink" title="1.微信支付简介"></a>1.微信支付简介</h1><h2 id="1-1-介绍"><a href="#1-1-介绍" class="headerlink" title="1.1.介绍"></a>1.1.介绍</h2><p>微信支付官方文档：<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/index.php/core/home/login?return_url=/">https://pay.weixin.qq.com/index.php/core/home/login?return_url=%2F</a></p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555642281129.png" alt="1555642281129"></p>
+<p>我们选择开发文档，而后进入选择页面：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555642332763.png" alt="1555642332763"></p>
+<p>选择native支付，就是扫码支付：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1527848368179.png" alt="1527848368179"></p>
+<p>此处我们使用模式二来开发：</p>
+<h2 id="1-2-开发流程"><a href="#1-2-开发流程" class="headerlink" title="1.2.开发流程"></a>1.2.开发流程</h2><p>模式二与模式一相比，流程更为简单，不依赖设置的回调支付URL。</p>
+<p>商户后台系统先调用微信支付的统一下单接口，微信后台系统返回链接参数code_url；</p>
+<p>商户后台系统将code_url值生成二维码图片，用户使用微信客户端扫码后发起支付。</p>
+<p>注意：code_url有效期为2小时，过期后扫码不能再发起支付。 </p>
+<p>流程图：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\chapter6_5_1.png" alt="2wa23131"></p>
+<p>这里我们把商户（我们）要做的事情总结一下：</p>
+<ul>
+<li>1、商户生成订单</li>
+<li>2、商户调用微信下单接口，获取预交易的链接</li>
+<li>3、商户将链接生成二维码图片，展示给用户；</li>
+<li>4、支付结果通知：<ul>
+<li>微信异步通知商户支付结果，商户告知微信支付接收情况</li>
+<li>商户如果没有收到通知，可以调用接口，查询支付状态</li>
+</ul>
+</li>
+<li>5、如果支付成功，发货，修改订单状态</li>
+</ul>
+<p>在前面的业务中，我们已经完成了：</p>
+<ul>
+<li>1、生成订单</li>
+</ul>
+<p>接下来，我们需要做的是：</p>
+<ul>
+<li>2、调用微信下单接口，生成支付交易链接。</li>
+<li>3、根据链接生成二维码图片</li>
+<li>4、接收到支付成功通知后，修改订单状态，如果没收到通知，也可以主动查询</li>
+</ul>
+<h1 id="2-统一下单（生成支付链接）"><a href="#2-统一下单（生成支付链接）" class="headerlink" title="2.统一下单（生成支付链接）"></a>2.统一下单（生成支付链接）</h1><p>按照上面的步骤分析，第一步是要生成支付链接。我们查看下微信官方文档</p>
+<h2 id="2-1-API说明"><a href="#2-1-API说明" class="headerlink" title="2.1.API说明"></a>2.1.API说明</h2><p>在微信支付文档中，可以查询到下面的信息：</p>
+<blockquote>
+<p>请求路径</p>
+</blockquote>
+<p>POST，URL地址：<a target="_blank" rel="noopener" href="https://api.mch.weixin.qq.com/pay/unifiedorder">https://api.mch.weixin.qq.com/pay/unifiedorder</a></p>
+<blockquote>
+<p>请求参数</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="left">字段名</th>
+<th>变量名</th>
+<th>必填</th>
+<th>类型</th>
+<th>示例值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">公众账号ID</td>
+<td>appid</td>
+<td>是</td>
+<td>String(32)</td>
+<td>wxd678efh56</td>
+<td>微信支付分配的公众账号ID</td>
+</tr>
+<tr>
+<td align="left">商户号</td>
+<td>mch_id</td>
+<td>是</td>
+<td>String(32)</td>
+<td>1230000109</td>
+<td>微信支付分配的商户号</td>
+</tr>
+<tr>
+<td align="left">随机字符串</td>
+<td>nonce_str</td>
+<td>是</td>
+<td>String(32)</td>
+<td>5K8264ILT</td>
+<td>随机字符串，长度要求在32位以内。推荐<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_3">随机数生成算法</a></td>
+</tr>
+<tr>
+<td align="left">签名</td>
+<td>sign</td>
+<td>是</td>
+<td>String(32)</td>
+<td>C380BEC2B</td>
+<td>通过签名算法计算得出的签名值，详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_3">签名生成算法</a></td>
+</tr>
+<tr>
+<td align="left">商品描述</td>
+<td>body</td>
+<td>是</td>
+<td>String(128)</td>
+<td>乐优手机</td>
+<td>商品简单描述，该字段请按照规范传递，具体请见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_2">参数规定</a></td>
+</tr>
+<tr>
+<td align="left">商户订单号</td>
+<td>out_trade_no</td>
+<td>是</td>
+<td>String(32)</td>
+<td>20150806125</td>
+<td>商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|* 且在同一个商户号下唯一。详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_2">商户订单号</a></td>
+</tr>
+<tr>
+<td align="left">标价金额</td>
+<td>total_fee</td>
+<td>是</td>
+<td>Int</td>
+<td>88</td>
+<td>订单总金额，单位为分，详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_2">支付金额</a></td>
+</tr>
+<tr>
+<td align="left">终端IP</td>
+<td>spbill_create_ip</td>
+<td>是</td>
+<td>String(16)</td>
+<td>123.12.12.123</td>
+<td>APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP。</td>
+</tr>
+<tr>
+<td align="left">通知地址</td>
+<td>notify_url</td>
+<td>是</td>
+<td>String(256)</td>
+<td><a target="_blank" rel="noopener" href="http://www.weixin.qq.com/wxpay/pay.php">http://www.weixin.qq.com/wxpay/pay.php</a></td>
+<td>异步接收微信支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。</td>
+</tr>
+<tr>
+<td align="left">交易类型</td>
+<td>trade_type</td>
+<td>是</td>
+<td>String(16)</td>
+<td>NATIVE</td>
+<td>JSAPI 公众号支付；NATIVE 扫码支付；APP APP支付说明详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_2">参数规定</a></td>
+</tr>
+</tbody></table>
+<p>这些参数大致分成3类：</p>
+<ul>
+<li><p>appid、mch_id、spbill_create_ip、notify_url、trade_type：是商家自己的信息或固定数据，可以提前配置，因此无需每次请求单独配置，而是统一设置好即可，</p>
+</li>
+<li><p>nonce_str、sign：是为了保证数据安全而添加的验证数据，根据算法去生成，每次请求自动生成即可。</p>
+</li>
+<li><p>body、out_trade_no、total_fee：订单相关信息，需要我们自己填写。</p>
+</li>
+</ul>
+<h2 id="2-2-微信SDK"><a href="#2-2-微信SDK" class="headerlink" title="2.2.微信SDK"></a>2.2.微信SDK</h2><h3 id="2-2-1-下载"><a href="#2-2-1-下载" class="headerlink" title="2.2.1.下载"></a>2.2.1.下载</h3><p>虽然请求参数比较复杂，但官方已经提供了SDK，供我们使用：<img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535979973318.png" alt="1535979973318"></p>
+<p>我也已经在课前资料提供：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535980012593.png" alt="1535980012593"></p>
+<p>微信没有提供maven仓库坐标，因此我们必须下载使用，建议使用课前资料中，我提供给大家的SDK，其中做了一些必要的设置：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555646853775.png" alt="1555646853775"> </p>
+<h3 id="2-2-2-WXPay工具"><a href="#2-2-2-WXPay工具" class="headerlink" title="2.2.2.WXPay工具"></a>2.2.2.WXPay工具</h3><p>微信SDK提供了一个统一的微信支付工具类：WXPay：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555646424254.png" alt="1555646424254"></p>
+<p>其中包含这样一些方法：</p>
+<p>com.github.wxpay.sdk.WXPay类下提供了对应的方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>microPay</td>
+<td>刷卡支付</td>
+</tr>
+<tr>
+<td><code>unifiedOrder</code></td>
+<td><strong>统一下单</strong></td>
+</tr>
+<tr>
+<td>orderQuery</td>
+<td>查询订单</td>
+</tr>
+<tr>
+<td>reverse</td>
+<td>撤销订单</td>
+</tr>
+<tr>
+<td>closeOrder</td>
+<td>关闭订单</td>
+</tr>
+<tr>
+<td>refund</td>
+<td>申请退款</td>
+</tr>
+<tr>
+<td>refundQuery</td>
+<td>查询退款</td>
+</tr>
+<tr>
+<td>downloadBill</td>
+<td>下载对账单</td>
+</tr>
+<tr>
+<td>report</td>
+<td>交易保障</td>
+</tr>
+<tr>
+<td>shortUrl</td>
+<td>转换短链接</td>
+</tr>
+<tr>
+<td>authCodeToOpenid</td>
+<td>授权码查询openid</td>
+</tr>
+</tbody></table>
+<ul>
+<li>注意:<ul>
+<li>参数为<code>Map&lt;String, String&gt;</code>对象，返回类型也是<code>Map&lt;String, String&gt;</code></li>
+<li>方法内部会将参数转换成含有<code>appid</code>、<code>mch_id</code>、<code>nonce_str</code>、<code>sign_type</code>和<code>sign</code>的XML</li>
+<li>通过HTTPS请求得到返回数据后会对其做必要的处理（例如验证签名，签名错误则抛出异常）</li>
+</ul>
+</li>
+</ul>
+<p>我们主要关注其中的unifiedOrder方法，统一下单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 作用：统一下单&lt;br&gt;</span></span><br><span class="line"><span class="comment">     * 场景：公共号支付、扫码支付、APP支付</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> reqData 向wxpay post的请求数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> API返回数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Map&lt;String, String&gt; <span class="title">unifiedOrder</span><span class="params">(Map&lt;String, String&gt; reqData)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.unifiedOrder(reqData, config.getHttpConnectTimeoutMs(), <span class="keyword">this</span>.config.getHttpReadTimeoutMs());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的请求参数是：Map&lt;String, String&gt; reqData，就是官方API说明中的请求参数了，不过并不需要我们填写所有参数，而只需要下面的：</p>
+<ul>
+<li>body：商品描述</li>
+<li>out_trade_no：订单编号</li>
+<li>total_fee：订单应支付金额</li>
+<li>spbill_create_ip：设备IP</li>
+<li>notify_url：回调地址</li>
+<li>trade_type：交易类型</li>
+</ul>
+<p>剩下的：<code>appid</code>、<code>mch_id</code>、<code>nonce_str</code>、<code>sign_type</code>和<code>sign</code>参数都有WXPay对象帮我们设置，那么问题来了：这些参数数据WXPay是怎么拿到的呢？</p>
+<p>其中，</p>
+<ul>
+<li>nonce_str：是随机字符串，因此由WXPay随机生成，</li>
+<li>sign_type：是签名算法，由WXPay指定，默认是HMACSHA256；</li>
+<li>sign：是签名，有签名算法结合密钥加密而来，因此这里的关键是密钥：key</li>
+<li>appid、mch_id是商家信息，需要配置</li>
+</ul>
+<p>也就是说，这例需要配置的包括：appid、mch_id、密钥key。这些从哪里来呢？</p>
+<p>看下WXPay的构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">WXPay</span><span class="params">(<span class="keyword">final</span> WXPayConfig config)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(config, <span class="keyword">null</span>, <span class="keyword">true</span>, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要一个WXPayConfig对象，显然是配置对象。</p>
+<h3 id="2-2-3-WXPayConfig配置"><a href="#2-2-3-WXPayConfig配置" class="headerlink" title="2.2.3..WXPayConfig配置"></a>2.2.3..WXPayConfig配置</h3><p>WXPay依赖于WXPayConfig进行配置，那么WXPayConfig是什么呢？</p>
+<p>看下源码中的关键部分：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">WXPayConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取 App ID</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> App ID</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> String <span class="title">getAppID</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取 Mch ID</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Mch ID</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> String <span class="title">getMchID</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取 API 密钥</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> API密钥</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> String <span class="title">getKey</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 。。。省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这不就是WXPay中需要配置的3个属性嘛，当我们实现这个类，并且给出其中的值，把WXPayConfig传递给WXPay时，WXPay就会获取到这些数据:</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555647829543.png" alt="1555647829543"> </p>
+<p>当我们利用WXPay发送请求时，WXPay就会帮我们封装到请求参数中：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555647879979.png" alt="1555647879979"></p>
+<p>而在我提供给大家的SDK中，就编写了一个WXPayConfig的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.github.wxpay.sdk;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WXPayConfigImpl</span> <span class="keyword">extends</span> <span class="title">WXPayConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 公众账号ID</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String appID;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 商户号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String mchID;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成签名的密钥</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String key;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 支付回调地址</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String notifyUrl;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 终端IP，当前微服务IP</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String spbillCreateIp;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> InputStream <span class="title">getCertStream</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IWXPayDomain <span class="title">getWXPayDomain</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> WXPayDomainSimpleImpl.instance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个WxPayConfig的实现类中，不仅有刚才看到的3个参数，而且还把请求参数中的：notifyUrl、spbillCreateIp都配置进去了，因为这几个值也都是需要配置到配置文件中的。</p>
+<h2 id="2-3-整合到项目中"><a href="#2-3-整合到项目中" class="headerlink" title="2.3.整合到项目中"></a>2.3.整合到项目中</h2><h3 id="2-3-1-打包SDK"><a href="#2-3-1-打包SDK" class="headerlink" title="2.3.1.打包SDK"></a>2.3.1.打包SDK</h3><p>首先，把我提供的SDK打包并安装到本地的maven仓库，方便在项目中使用。</p>
+<p>进入我提供的SDK的项目目录，然后打开黑窗口，输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn source:jar install -Dmaven.test.skip=true</span><br></pre></td></tr></table></figure>
+
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555648127151.png" alt="1555648127151"></p>
+<p>然后进入本地仓库查看：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555648204589.png" alt="1555648204589"> </p>
+<h3 id="2-3-2-配置WXPay"><a href="#2-3-2-配置WXPay" class="headerlink" title="2.3.2.配置WXPay"></a>2.3.2.配置WXPay</h3><p>在在<code>ly-trade</code>的中的pom.xml中引入坐标：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.wxpay<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>wxpay-sdk<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们将这些WXPayConfig中的属性定义到<code>ly-trade</code>的application.yml中</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ly:</span></span><br><span class="line">  <span class="attr">pay:</span></span><br><span class="line">    <span class="attr">wx:</span></span><br><span class="line">      <span class="attr">appID:</span> <span class="string">wx8397f8696b538317</span></span><br><span class="line">      <span class="attr">mchID:</span> <span class="number">1473426802</span></span><br><span class="line">      <span class="attr">key:</span> <span class="string">T6m9iK73b0kn9g5v426MKfHQH7X8rKwb</span></span><br><span class="line">      <span class="attr">notifyUrl:</span> <span class="string">http://api.leyou.com/trade/pay/wx/notify</span></span><br><span class="line">      <span class="attr">spbillCreateIp:</span> <span class="number">123.12</span><span class="number">.12</span><span class="number">.123</span></span><br></pre></td></tr></table></figure>
+
+<p>将这些属性注入到<code>WXPayConfigImpl</code>中，在<code>ly-trade</code>的<code>com.leyou.trade.config</code>包中添加一个配置类<code>PayConfiguration</code>，将<code>WXPayConfigImpl</code>配置为一个Bean，并注入相关属性：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.wxpay.sdk.WXPayConfigImpl;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PayConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConfigurationProperties(prefix = &quot;ly.pay.wx&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> WXPayConfigImpl <span class="title">payConfig</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> WXPayConfigImpl();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-3-4-支付工具类"><a href="#2-3-4-支付工具类" class="headerlink" title="2.3.4.支付工具类"></a>2.3.4.支付工具类</h3><p>我们先初始化WXPay对象，并注入到Spring容器中.</p>
+<p>在<code>ly-trade</code>的<code>com.leyou.trade.config</code>包中的配置类<code>PayConfiguration</code>中添加一个@Bean，注册<code>WXPay</code>对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.wxpay.sdk.WXPay;</span><br><span class="line"><span class="keyword">import</span> com.github.wxpay.sdk.WXPayConfigImpl;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.context.properties.ConfigurationProperties;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PayConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConfigurationProperties(prefix = &quot;ly.pay.wx&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> WXPayConfigImpl <span class="title">payConfig</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> WXPayConfigImpl();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 注册WXPay对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> payConfig 支付相关配置</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> WXPay对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception 连结WX失败时用到</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> WXPay <span class="title">wxPay</span><span class="params">(WXPayConfigImpl payConfig)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> WXPay(payConfig, payConfig.getNotifyUrl());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们要把统一下单的代码封装为一个工具类，不过其中又很多字符串常量，需要定义出来，我们在<code>ly-trade</code>的<code>com.leyou.trade.constants</code>包中，添加一个常量类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.constants;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">PayConstants</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 统一的商品描述</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_DESC = <span class="string">&quot;乐优商城商品&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 统一下单支付的支付类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String UNIFIED_ORDER_TRADE_TYPE = <span class="string">&quot;NATIVE&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 失败的CODE</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String FAIL = <span class="string">&quot;FAIL&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通信标示的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String RETURN_CODE_KEY = <span class="string">&quot;return_code&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 业务标示的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String RESULT_CODE_KEY = <span class="string">&quot;result_code&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 异常消息的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ERROR_CODE_KEY = <span class="string">&quot;err_code_des&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 订单编号的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_NO_KEY = <span class="string">&quot;out_trade_no&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 支付金额的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TOTAL_FEE_KEY = <span class="string">&quot;total_fee&quot;</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 支付链接的KEY</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String PAY_URL_KEY = <span class="string">&quot;code_url&quot;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后在<code>ly-trade</code>的<code>com.leyou.trade.utils</code>包中添加一个工具类<code>PayHelper</code>，</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.wxpay.sdk.WXPay;</span><br><span class="line"><span class="keyword">import</span> com.github.wxpay.sdk.WXPayConfigImpl;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.lang3.StringUtils;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PayHelper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WXPay wxPay;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WXPayConfigImpl payConfig;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PayHelper</span><span class="params">(WXPay wxPay, WXPayConfigImpl payConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.wxPay = wxPay;</span><br><span class="line">        <span class="keyword">this</span>.payConfig = payConfig;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getPayUrl</span><span class="params">(Long orderId, Long totalFee, String desc)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 1.准备请求参数：</span></span><br><span class="line">        Map&lt;String, String&gt; data = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">        data.put(<span class="string">&quot;body&quot;</span>, desc);</span><br><span class="line">        data.put(<span class="string">&quot;out_trade_no&quot;</span>, orderId.toString());</span><br><span class="line">        data.put(<span class="string">&quot;total_fee&quot;</span>, totalFee.toString());</span><br><span class="line">        data.put(<span class="string">&quot;spbill_create_ip&quot;</span>, payConfig.getSpbillCreateIp());</span><br><span class="line">        data.put(<span class="string">&quot;trade_type&quot;</span>, payConfig.getTradeType());  <span class="comment">// 此处指定为扫码支付</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 2.下单</span></span><br><span class="line">            Map&lt;String, String&gt; resp = wxPay.unifiedOrder(data);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 3.通信校验</span></span><br><span class="line">            checkReturnCode(resp);</span><br><span class="line">            <span class="comment">// 4.业务校验</span></span><br><span class="line">            checkResultCode(resp);</span><br><span class="line">            <span class="comment">// 5.签名校验</span></span><br><span class="line">            checkResponseSignature(resp);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 6.获取支付链接</span></span><br><span class="line">            String url = resp.get(<span class="string">&quot;code_url&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span>(StringUtils.isBlank(url))&#123;</span><br><span class="line">                <span class="comment">// url为空</span></span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;支付链接为空！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> url;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;微信支付统一下单失败，原因：&quot;</span>, e.getMessage());</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkResponseSignature</span><span class="params">(Map&lt;String, String&gt; resp)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">boolean</span> isValid = wxPay.isResponseSignatureValid(resp);</span><br><span class="line">            <span class="keyword">if</span>(!isValid)&#123;</span><br><span class="line">                <span class="comment">// 签名无效</span></span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;签名错误！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;签名错误！&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkResultCode</span><span class="params">(Map&lt;String, String&gt; resp)</span> </span>&#123;</span><br><span class="line">        String resultCode = resp.get(<span class="string">&quot;result_code&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;FAIL&quot;</span>.equals(resultCode))&#123;</span><br><span class="line">            <span class="comment">// 失败</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(resp.get(<span class="string">&quot;err_code_des&quot;</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkReturnCode</span><span class="params">(Map&lt;String, String&gt; resp)</span> </span>&#123;</span><br><span class="line">        String returnCode = resp.get(<span class="string">&quot;return_code&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;FAIL&quot;</span>.equals(returnCode))&#123;</span><br><span class="line">            <span class="comment">// 失败</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;通信失败！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-4-下单并生成支付链接"><a href="#2-4-下单并生成支付链接" class="headerlink" title="2.4.下单并生成支付链接"></a>2.4.下单并生成支付链接</h2><p>在订单支付页面，会向后台发起请求，查询支付的URL地址：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\image-20200328211750014.png" alt="image-20200328211750014"> </p>
+<p>我们需要编写controller，来实现这个功能：</p>
+<ul>
+<li>请求方式：GET</li>
+<li>请求路径：/pay/url/{id}</li>
+<li>请求参数：id，订单的编号</li>
+<li>返回结果：url地址</li>
+</ul>
+<p>我们在<code>ly-trade</code>的<code>com.leyou.trade.web</code>包中创建一个<code>PayController</code>接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.leyou.trade.service.OrderService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.ResponseEntity;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;pay&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PayController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OrderService orderService;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PayController</span><span class="params">(OrderService orderService)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.orderService = orderService;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据订单编号创建支付链接</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> orderId 订单编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 支付链接</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/url/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title">getPayUrl</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long orderId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok(orderService.getPayUrl(orderId));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们在ly-trade的<code>com.leyou.trade.service</code>包的<code>OrderService</code>中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">getPayUrl</span><span class="params">(Long orderId)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们在ly-trade的<code>com.leyou.trade.service.impl</code>包的<code>OrderServiceImpl</code>中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">getPayUrl</span><span class="params">(Long orderId)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 根据id查询订单</span></span><br><span class="line">       Order order = getById(orderId);</span><br><span class="line">       <span class="comment">// 判断是否存在</span></span><br><span class="line">       <span class="keyword">if</span> (order == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> LyException(<span class="number">400</span>, <span class="string">&quot;订单编号错误，订单不存在！&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">// 判断订单状态是否是未付款</span></span><br><span class="line">       <span class="keyword">if</span> (order.getStatus() != OrderStatus.INIT) &#123;</span><br><span class="line">           <span class="comment">// 订单已经关闭或者已经支付，无需再次获取支付链接</span></span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> LyException(<span class="number">400</span>, <span class="string">&quot;订单已经支付或者关闭！&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">// TODO 尝试读取redis中的支付url</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">// 获取订单金额</span></span><br><span class="line">       Long actualFee = order.getActualFee();</span><br><span class="line">       <span class="comment">// 统一下单，获取支付链接</span></span><br><span class="line">       String url = payHelper.getPayUrl(orderId, <span class="number">1L</span><span class="comment">/*actualFee*/</span>, PayConstants.ORDER_DESC);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       <span class="comment">// TODO 把支付的url缓存在redis中，2小时有效期</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">// 返回支付链接</span></span><br><span class="line">       <span class="keyword">return</span> url;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>页面响应结果：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1536017643922.png" alt="1536017643922"></p>
+<h1 id="3-生成支付二维码（了解）"><a href="#3-生成支付二维码（了解）" class="headerlink" title="3.生成支付二维码（了解）"></a>3.生成支付二维码（了解）</h1><h2 id="3-1-什么是二维码"><a href="#3-1-什么是二维码" class="headerlink" title="3.1.什么是二维码"></a>3.1.什么是二维码</h2><p>二维码又称QR Code，QR全称Quick Response，是一个近几年来移动设备上超流行的一种编码方式，它比传统的Bar Code条形码能存更多的信息，也能表示更多的数据类型。</p>
+<p>二维条码/二维码（2-dimensional bar code）是用某种特定的几何图形按一定规律在平面（二维方向上）分布的黑白相间的图形记录数据符号信息的；在代码编制上巧妙地利用构成计算机内部逻辑基础的“0”、“1”比特流的概念，使用若干个与二进制相对应的几何形体来表示文字数值信息，通过图象输入设备或光电扫描设备自动识读以实现信息自动处理：它具有条码技术的一些共性：每种码制有其特定的字符集；每个字符占有一定的宽度；具有一定的校验功能等。同时还具有对不同行的信息自动识别功能、及处理图形旋转变化点。</p>
+<h2 id="3-2-二维码优势"><a href="#3-2-二维码优势" class="headerlink" title="3.2.二维码优势"></a>3.2.二维码优势</h2><ul>
+<li><p>信息容量大, 可以容纳多达1850个大写字母或2710个数字或500多个汉字</p>
+</li>
+<li><p>应用范围广, 支持文字,声音,图片,指纹等等…</p>
+</li>
+<li><p>容错能力强, 即使图片出现部分破损也能使用</p>
+</li>
+<li><p>成本低, 容易制作</p>
+</li>
+</ul>
+<h2 id="3-3-二维码容错级别"><a href="#3-3-二维码容错级别" class="headerlink" title="3.3.二维码容错级别"></a>3.3.二维码容错级别</h2><ul>
+<li><p>L级（低） 7％的码字可以被恢复。</p>
+</li>
+<li><p>M级（中） 15％的码字可以被恢复。</p>
+</li>
+<li><p>Q级（四分）25％的码字可以被恢复。</p>
+</li>
+<li><p>H级（高）30％ 的码字可以被恢复。</p>
+</li>
+</ul>
+<h2 id="3-4-二维码生成插件qrious"><a href="#3-4-二维码生成插件qrious" class="headerlink" title="3.4.二维码生成插件qrious"></a>3.4.二维码生成插件qrious</h2><p>qrious是一款基于HTML5 Canvas的纯JS二维码生成插件。通过qrious.js可以快速生成各种二维码，你可以控制二维码的尺寸颜色，还可以将生成的二维码进行Base64编码。<a target="_blank" rel="noopener" href="https://github.com/davidshimjs/qrcodejs">官网</a></p>
+<p>qrious.js二维码插件的可用配置参数如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>background</td>
+<td>String</td>
+<td>“white”</td>
+<td>二维码的背景颜色。</td>
+</tr>
+<tr>
+<td>foreground</td>
+<td>String</td>
+<td>“black”</td>
+<td>二维码的前景颜色。</td>
+</tr>
+<tr>
+<td>level</td>
+<td>String</td>
+<td>“L”</td>
+<td>二维码的误差校正级别(L, M, Q, H)。</td>
+</tr>
+<tr>
+<td>mime</td>
+<td>String</td>
+<td>“image/png”</td>
+<td>二维码输出为图片时的MIME类型。</td>
+</tr>
+<tr>
+<td>size</td>
+<td>Number</td>
+<td>100</td>
+<td>二维码的尺寸，单位像素。</td>
+</tr>
+<tr>
+<td>value</td>
+<td>String</td>
+<td>“”</td>
+<td>需要编码为二维码的值</td>
+</tr>
+</tbody></table>
+<p>课前资料中给出的案例可以直接生成二维码：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535987680862.png" alt="1535987680862"></p>
+<p>点击打开：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1528797240423.png"> </p>
+<h2 id="3-5-生成二维码"><a href="#3-5-生成二维码" class="headerlink" title="3.5.生成二维码"></a>3.5.生成二维码</h2><p>我们的前端页面已经引用了这个JS组件：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1528362377494.png" alt="1528362377494"></p>
+<p>页面定义一个div，用于展示二维码：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1528362023061.png" alt="1528362023061"></p>
+<p>然后获取到付款链接后，根据链接生成二维码：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1528362420151.png" alt="1528362420151"></p>
+<p>刷新页面，查看效果：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1528362464276.png" alt="1528362464276"></p>
+<p>此时，客户用手机扫描二维码，可以看到付款页面。</p>
+<h1 id="4-支付结果通知"><a href="#4-支付结果通知" class="headerlink" title="4.支付结果通知"></a>4.支付结果通知</h1><p>支付以后，我们后台需要修改订单状态。我们怎么得知有没有支付成功呢？</p>
+<p>在我们的请求参数中，有一个notify_url的参数，是支付的回调地址。当用户支付成功后，微信会主动访问这个地址，并携带支付结果信息。</p>
+<p>那么，这个notify_url该怎么用呢？</p>
+<h2 id="4-1-notify-url"><a href="#4-1-notify-url" class="headerlink" title="4.1.notify_url"></a>4.1.notify_url</h2><h3 id="1）什么是notify-url"><a href="#1）什么是notify-url" class="headerlink" title="1）什么是notify_url"></a>1）什么是notify_url</h3><p>参数中有一个非常重要的，叫做notify_url的：</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535981510532.png" alt="1535981510532"></p>
+<p>基于上文的介绍我们知道，这个地址是在支付成功后的异步结果通知。官网介绍如下：</p>
+<p>支付完成后，微信会把相关支付结果和用户信息发送给商户，商户需要接收处理，并返回应答。</p>
+<p>所以，此处的地址必须是一个外网可访问地址，而且我们要定义好回调的处理接口。</p>
+<p><a target="_blank" rel="noopener" href="http://api.leyou.com/trade/pay/wx/notify">http://api.leyou.com/trade/pay/wx/notify</a></p>
+<h3 id="2）内网穿透"><a href="#2）内网穿透" class="headerlink" title="2）内网穿透"></a>2）内网穿透</h3><p>此处我们肯定不能写：<a href="http://api.leyou.com，这个域名未经备案，是不被识别的。如何才能获取一个能够外网访问的域名呢？">http://api.leyou.com，这个域名未经备案，是不被识别的。如何才能获取一个能够外网访问的域名呢？</a></p>
+<p>我们可以通过内网穿透来实现，那么什么是内网穿透呢？</p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535984453478.png" alt="1535984453478"></p>
+<p><strong>简单来说内网穿透的目的是：让外网能访问你本地的应用，例如在外网打开你本地<a target="_blank" rel="noopener" href="http://127.0.0.1指向的web站点./">http://127.0.0.1指向的Web站点。</a></strong></p>
+<p>这里我们使用一个免费的内网穿透工具：Natapp：<a target="_blank" rel="noopener" href="https://natapp.cn/">NATAPP官网</a></p>
+<p><img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1535984650173.png" alt="1535984650173"></p>
+<p>详细教程在这里：<a target="_blank" rel="noopener" href="https://natapp.cn/article/natapp_newbie">一分钟的natapp快速新手教程</a></p>
+<p>启动后的样子：</p>
+<p> <img src="F:\java\01-重要部分：2021基础就业\06阶段：樂樂项目\day15_分布式事务_微信支付\day16_微信支付\笔记\assets\1555650481104.png" alt="1555650481104"></p>
+<p>比如此处，我使用的natapp得到的域名是：<a href="http://ff7hgc.natappfree.cc，并且我设置指向到`127.0.0.1:10010`位置，也就是我的网关服务。">http://ff7hgc.natappfree.cc，并且我设置指向到`127.0.0.1:10010`位置，也就是我的网关服务。</a></p>
+<h3 id="3）配置回调地址"><a href="#3）配置回调地址" class="headerlink" title="3）配置回调地址"></a>3）配置回调地址</h3><p>设置内网穿透地址到配置文件application.yml：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ly:</span></span><br><span class="line">  <span class="attr">pay:</span></span><br><span class="line">    <span class="attr">wx:</span></span><br><span class="line">      <span class="attr">notifyUrl:</span> <span class="string">http://vjxbjy.natappfree.cc</span> <span class="string">/trade/pay/wx/notify</span></span><br></pre></td></tr></table></figure>
+
+<p>WxPayConfigImpl中本来就有notifyURL属性，因此会被自动注入。</p>
+<h3 id="4）用户拦截器放行"><a href="#4）用户拦截器放行" class="headerlink" title="4）用户拦截器放行"></a>4）用户拦截器放行</h3><p>请求进入ly-trade以后，会有一个用户拦截器，尝试获取登录用户，但是微信回调肯定是未登录的，需要放行。</p>
+<p>修改application.yml，加入一个放行路径即可：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ly:</span></span><br><span class="line">  <span class="attr">auth:</span></span><br><span class="line">    <span class="attr">clientId:</span> <span class="string">trade-service</span></span><br><span class="line">    <span class="attr">secret:</span> <span class="number">1234</span>	</span><br><span class="line">    <span class="attr">excludeFilterPaths:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/pay/wx/notify</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="4-2-支付结果通知API"><a href="#4-2-支付结果通知API" class="headerlink" title="4.2.支付结果通知API"></a>4.2.支付结果通知API</h2><p>来看官网关于结果通知的介绍：<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_7&amp;index=8">https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=9_7&amp;index=8</a></p>
+<blockquote>
+<p>应用场景</p>
+</blockquote>
+<p>支付完成后，微信会把相关支付结果和用户信息发送给商户，商户需要接收处理，并返回应答。</p>
+<p>对后台通知交互时，如果微信收到商户的应答不是成功或超时，微信认为通知失败，微信会通过一定的策略定期重新发起通知，尽可能提高通知的成功率，但微信不保证通知最终能成功。 （通知频率为15/15/30/180/1800/1800/1800/1800/3600，单位：秒）</p>
+<p><strong>注意：同样的通知可能会多次发送给商户系统。商户系统必须能够正确处理重复的通知。</strong></p>
+<p>推荐的做法是，当收到通知进行处理时，首先检查对应业务数据的状态，判断该通知是否已经处理过，如果没有处理过再进行处理，如果处理过直接返回结果成功。在对业务数据进行状态检查和处理之前，要采用数据锁进行并发控制，以避免函数重入造成的数据混乱。</p>
+<p><strong>特别提醒：商户系统对于支付结果通知的内容一定要做<code>签名验证,并校验返回的订单金额是否与商户侧的订单金额一致</code>，防止数据泄漏导致出现“假通知”，造成资金损失。</strong></p>
+<p>支付完成后，微信服务会自动向<code>notify_url</code>地址发起POST请求，请求参数是xml格式：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>变量名</th>
+<th>必填</th>
+<th>类型</th>
+<th>示例值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>返回状态码</td>
+<td>return_code</td>
+<td>是</td>
+<td>String(16)</td>
+<td>SUCCESS</td>
+<td>SUCCESS/FAIL此字段是通信标识，非交易标识，交易是否成功需要查看trade_state来判断</td>
+</tr>
+<tr>
+<td>返回信息</td>
+<td>return_msg</td>
+<td>是</td>
+<td>String(128)</td>
+<td>OK</td>
+<td>当return_code为FAIL时返回信息为错误原因 ，例如签名失败参数格式校验错误</td>
+</tr>
+</tbody></table>
+<p>通信成功，会返回下面信息：</p>
+<table>
+<thead>
+<tr>
+<th>签名</th>
+<th>sign</th>
+<th>是</th>
+<th>String(32)</th>
+<th>C380BEC2BFD..</th>
+<th>名，详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_3">签名算法</a></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>签名类型</td>
+<td>sign_type</td>
+<td>否</td>
+<td>String(32)</td>
+<td>HMAC-SHA256</td>
+<td>签名类型，目前支持HMAC-SHA256和MD5，默认为MD5</td>
+</tr>
+<tr>
+<td>业务结果</td>
+<td>result_code</td>
+<td>是</td>
+<td>String(16)</td>
+<td>SUCCESS</td>
+<td>SUCCESS/FAIL</td>
+</tr>
+<tr>
+<td>错误代码</td>
+<td>err_code</td>
+<td>否</td>
+<td>String(32)</td>
+<td>SYSTEMERROR</td>
+<td>错误返回的信息描述</td>
+</tr>
+<tr>
+<td>错误代码描述</td>
+<td>err_code_des</td>
+<td>否</td>
+<td>String(128)</td>
+<td>系统错误</td>
+<td>错误返回的信息描述</td>
+</tr>
+<tr>
+<td>用户标识</td>
+<td>openid</td>
+<td>是</td>
+<td>String(128)</td>
+<td>wxd930ea54f</td>
+<td>用户在商户appid下的唯一标识</td>
+</tr>
+<tr>
+<td>交易类型</td>
+<td>trade_type</td>
+<td>是</td>
+<td>String(16)</td>
+<td>JSAPI</td>
+<td>JSAPI、NATIVE、APP</td>
+</tr>
+<tr>
+<td>订单金额</td>
+<td>total_fee</td>
+<td>是</td>
+<td>Int</td>
+<td>100</td>
+<td>订单总金额，单位为分</td>
+</tr>
+<tr>
+<td>现金支付金额</td>
+<td>cash_fee</td>
+<td>是</td>
+<td>Int</td>
+<td>100</td>
+<td>现金支付金额订单现金支付金额，详见<a target="_blank" rel="noopener" href="https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_2">支付金额</a></td>
+</tr>
+<tr>
+<td>微信支付订单号</td>
+<td>transaction_id</td>
+<td>是</td>
+<td>String(32)</td>
+<td>121775250120</td>
+<td>微信支付订单号</td>
+</tr>
+<tr>
+<td>商户订单号</td>
+<td>out_trade_no</td>
+<td>是</td>
+<td>String(32)</td>
+<td>12123212112</td>
+<td>商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。</td>
+</tr>
+</tbody></table>
+<p>我们需要返回给微信的结果：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xml</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">return_code</span>&gt;</span>&lt;![CDATA[SUCCESS]]&gt;<span class="tag">&lt;/<span class="name">return_code</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">return_msg</span>&gt;</span>&lt;![CDATA[OK]]&gt;<span class="tag">&lt;/<span class="name">return_msg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xml</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-3-编写回调接口"><a href="#4-3-编写回调接口" class="headerlink" title="4.3.编写回调接口"></a>4.3.编写回调接口</h2><h3 id="4-3-1-回调接口分析"><a href="#4-3-1-回调接口分析" class="headerlink" title="4.3.1.回调接口分析"></a>4.3.1.回调接口分析</h3><p>先分析接口需要的四个数据：</p>
+<ul>
+<li><p>请求方式：官方文档虽然没有明说，但是测试得出是POST请求</p>
+</li>
+<li><p>请求路径：我们之前指定的notify_url的路径是：/pay/wx/notify</p>
+</li>
+<li><p>请求参数：是xml格式数据，包括支付的结果和状态</p>
+</li>
+<li><p>返回结果：也是xml，表明是否成功，格式如下：</p>
+<ul>
+<li>```xml<xml>
+  <return_code>SUCCESS></return_code>
+  <return_msg>OK</return_msg>
+</xml>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 4.3.2.返回值类型</span><br><span class="line"></span><br><span class="line">返回结果需要定义一个DTO表示，我们在`com.leyou.trade.dto`包中定义：</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">package com.leyou.trade.dto;</span><br><span class="line"></span><br><span class="line">import lombok.Data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Data</span><br><span class="line">public class PayResultDTO &#123;</span><br><span class="line">    private String returnCode = &quot;SUCCESS&quot;;</span><br><span class="line">    private String returnMsg = &quot;OK&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<p>因为要接收xml格式数据，因此我们需要引入解析xml的依赖，在<code>ly-trade</code>的pom.xml中添加依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.dataformat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-dataformat-xml<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>不过，DTO在转换为xml时，标签名需要通过注解方式来指定，因此实体类需要修改：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.leyou.trade.dto;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@JacksonXmlRootElement(localName = &quot;xml&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PayResultDTO</span> </span>&#123;</span><br><span class="line">    <span class="meta">@JacksonXmlProperty(localName = &quot;return_code&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String returnCode = <span class="string">&quot;SUCCESS&quot;</span>;</span><br><span class="line">    <span class="meta">@JacksonXmlProperty(localName = &quot;return_msg&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String returnMsg = <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注解说明：</p>
+<ul>
+<li><code>@JacksonXmlRootElement(localName = &quot;xml&quot;)</code>：指定生成xml的根标签</li>
+<li><code>@JacksonXmlProperty(localName = &quot;return_code&quot;)</code>：指定某个字段对应的标签</li>
+</ul>
+<h3 id="4-3-3-业务代码"><a href="#4-3-3-业务代码" class="headerlink" title="4.3.3.业务代码"></a>4.3.3.业务代码</h3><p>然后在<code>ly-trade</code>的<code>com.leyou.trade.web</code>包中的<code>PayController</code>中编写回调接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理微信的异步通知</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> data 通知内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 处理结果</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@PostMapping(value = &quot;/wx/notify&quot;, produces = MediaType.APPLICATION_XML_VALUE)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;PayResultDTO&gt; <span class="title">handleWxNotify</span><span class="params">(<span class="meta">@RequestBody</span> Map&lt;String,String&gt; data)</span></span>&#123;</span><br><span class="line">    orderService.handleNotify(data);</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(<span class="keyword">new</span> PayResultDTO());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>我们在ly-trade的<code>com.leyou.trade.service</code>包的<code>OrderService</code>中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">handleNotify</span><span class="params">(Map&lt;String, String&gt; data)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们在ly-trade的<code>com.leyou.trade.service.impl</code>包的<code>OrderServiceImpl</code>中添加方法：</p>
+<p>service中需要完成下列代码；</p>
+<ul>
+<li><p>业务标示判断</p>
+</li>
+<li><p>签名校验</p>
+</li>
+<li><p>数据校验</p>
+<ul>
+<li>订单号码校验</li>
+<li>订单金额校验</li>
+</ul>
+</li>
+<li><p>更新订单状态（需要保证幂等）</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleNotify</span><span class="params">(Map&lt;String, String&gt; data)</span> </span>&#123;</span><br><span class="line">       <span class="comment">// 1.业务标示校验</span></span><br><span class="line">       payHelper.checkResultCode(data);</span><br><span class="line">       <span class="comment">// 2.签名校验</span></span><br><span class="line">       payHelper.checkResponseSignature(data);</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 3.订单状态校验（保证幂等，防止重复通知）</span></span><br><span class="line">       String outTradeNo = data.get(ORDER_NO_KEY);</span><br><span class="line">       String totalFee = data.get(TOTAL_FEE_KEY);</span><br><span class="line">       <span class="keyword">if</span> (StringUtils.isBlank(outTradeNo) || StringUtils.isBlank(totalFee)) &#123;</span><br><span class="line">           <span class="comment">// 数据有误</span></span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;响应数据有误，订单金额或编号为空！&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       Long orderId = Long.valueOf(outTradeNo);</span><br><span class="line">       Order order = getById(orderId);</span><br><span class="line">       <span class="keyword">if</span> (!order.getStatus().equals(OrderStatus.INIT)) &#123;</span><br><span class="line">           <span class="comment">// 说明订单已经支付过了，属于重复通知，直接返回</span></span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 4.订单金额校验</span></span><br><span class="line">       Long total = Long.valueOf(totalFee);</span><br><span class="line">       <span class="keyword">if</span> (!total.equals(<span class="number">1L</span><span class="comment">/*order.getActualFee()*/</span>)) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;订单金额有误，我要报警了！&quot;</span>);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 5.修改订单状态，更新状态和支付时间两个字段</span></span><br><span class="line">       update().set(<span class="string">&quot;status&quot;</span>, OrderStatus.PAY_UP.getValue()).set(<span class="string">&quot;pay_time&quot;</span>, <span class="keyword">new</span> Date())</span><br><span class="line">               <span class="comment">// 条件包括订单id和订单状态必须为1，乐观锁保证幂等</span></span><br><span class="line">               .eq(<span class="string">&quot;order_id&quot;</span>, orderId).eq(<span class="string">&quot;status&quot;</span>, OrderStatus.INIT.getValue()).update();</span><br><span class="line">       log.info(<span class="string">&quot;处理微信支付通知成功！&#123;&#125;&quot;</span>, data);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-支付状态查询"><a href="#5-支付状态查询" class="headerlink" title="5.支付状态查询"></a>5.支付状态查询</h1><p>当用户扫码支付成功，会自动调用回调接口，从而修改订单状态，完成订单支付。</p>
+<p>但是，页面上并不知道支付是否成功。怎么办？</p>
+<ul>
+<li>浏览器端主动查询支付状态<ul>
+<li>短轮询</li>
+</ul>
+</li>
+<li>服务端通知浏览器端<ul>
+<li>SeverSentEvent</li>
+<li>WebSocket</li>
+</ul>
+</li>
+</ul>
+<h2 id="5-1-页面查询支付状态"><a href="#5-1-页面查询支付状态" class="headerlink" title="5.1.页面查询支付状态"></a>5.1.页面查询支付状态</h2><p>因为不知道用户什么时候会支付，也不知道支付有没有成功，因此页面会采用定时任务，不断查询订单支付的状态：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开启定时任务，查询付款状态</span></span><br><span class="line"><span class="keyword">const</span> taskId = <span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    ly.http.get(<span class="string">&quot;/trade/order/status/&quot;</span> + id)</span><br><span class="line">        .then(<span class="function"><span class="params">resp</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> i = resp.data;</span><br><span class="line">        <span class="keyword">if</span> (i !== <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">// 付款成功</span></span><br><span class="line">            <span class="built_in">clearInterval</span>(taskId);</span><br><span class="line">            <span class="comment">// 跳转到付款成功页</span></span><br><span class="line">            location.href = <span class="string">&quot;/paysuccess.html?orderId=&quot;</span> + id;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).catch(<span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        alert(<span class="string">&quot;支付状态查询失败，请刷新页面重试。&quot;</span>);</span><br><span class="line">        <span class="built_in">clearInterval</span>(taskId);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;, <span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+
+<p>每隔3秒就会查询一次支付状态。</p>
+<h2 id="5-2-支付状态查询接口"><a href="#5-2-支付状态查询接口" class="headerlink" title="5.2.支付状态查询接口"></a>5.2.支付状态查询接口</h2><p>上面的查询请求 分析：</p>
+<ul>
+<li>请求方式：Get</li>
+<li>请求路径 ：/order/status/{id}</li>
+<li>请求参数：订单id</li>
+<li>返回结果：1或者其它，1代表未支付，其它是已经支付</li>
+</ul>
+<p>在<code>ly-trade</code>的<code>com.leyou.trade.web</code>包中的<code>OrderController</code>中添加一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询订单支付状态</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> orderId 订单id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 状态值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/status/&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ResponseEntity&lt;Integer&gt; <span class="title">queryOrderState</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long orderId)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ResponseEntity.ok(orderService.queryOrderState(orderId));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在ly-trade的<code>com.leyou.trade.service</code>包的<code>OrderService</code>中添加方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Integer <span class="title">queryOrderState</span><span class="params">(Long orderId)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我们在ly-trade的<code>com.leyou.trade.service.impl</code>包的<code>OrderServiceImpl</code>中添加方法：</p>
+<p>service中需要完成下列代码；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Integer <span class="title">queryOrderState</span><span class="params">(Long orderId)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 查询订单</span></span><br><span class="line">    Order order = getById(orderId);</span><br><span class="line">    <span class="comment">// 判断是否存在</span></span><br><span class="line">    <span class="keyword">if</span> (order == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> LyException(<span class="number">400</span>, <span class="string">&quot;订单不存在！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> order.getStatus().getValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="5-3-主动查询订单支付状态（作业）"><a href="#5-3-主动查询订单支付状态（作业）" class="headerlink" title="5.3.主动查询订单支付状态（作业）"></a>5.3.主动查询订单支付状态（作业）</h2><p>如果用户一直未支付，一直等待和查询不太合适。因此我们又添加了一个定时任务：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 同时设置一个定时任务，5分钟后，去微信主动查询支付结果，如果依然失败，终止查询，认为付款失败</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 清除之前的定时任务</span></span><br><span class="line">    <span class="built_in">clearInterval</span>(taskId);</span><br><span class="line">    <span class="comment">// 主动查询订单状态</span></span><br><span class="line">    ly.http.get(<span class="string">&quot;/trade/pay/status/&quot;</span> + id)</span><br><span class="line">        .then(<span class="function"><span class="params">resp</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> i = resp.data;</span><br><span class="line">        <span class="comment">// i是返回的状态，1代表未支付、2代表已支付、3代表支付失败</span></span><br><span class="line">        <span class="keyword">if</span>(i !== <span class="number">2</span>)&#123;</span><br><span class="line">            <span class="comment">// 未支付或者支付失败，跳转到失败页</span></span><br><span class="line">            location.href = <span class="string">&quot;/payfail.html?orderId=&quot;</span> + id;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 已经支付，跳转到支付成功页面</span></span><br><span class="line">        location.href = <span class="string">&quot;/paysuccess.html?orderId=&quot;</span> + id;</span><br><span class="line">    &#125;)</span><br><span class="line">        .catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">        location.href = <span class="string">&quot;/payfail.html?orderId=&quot;</span> + id;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;, <span class="number">300000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这个定时任务会在5分钟后执行，如果5分钟后用户依然未支付，则主动发请求查询订单状态，这次的查询需要到微信服务端查询，大家可以尝试自己完成。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/">http://example.com/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98/">微信支付</a></div><div class="post_share"><div class="social-share" data-image="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/15%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/%E5%B0%81%E9%9D%A2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86-%E5%88%86%E5%B8%83%E5%BC%8F%E6%97%A5%E5%BF%97%E6%9C%8D%E5%8A%A1%E3%80%81%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/"><img class="prev-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/16%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97%E5%92%8C%E8%AE%A2%E5%8D%95%E6%B8%85%E7%90%86/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">乐优商城项目-延迟队列和订单清理_分布式日志服务、链路追踪</div></div></a></div><div class="next-post pull-right"><a href="/2022/07/03/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E4%B8%8B%E5%8D%95%E5%8A%9F%E8%83%BD/"><img class="next-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/14%E4%B8%8B%E5%8D%95%E5%8A%9F%E8%83%BD/%E5%B0%81%E9%9D%A2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">乐优商城项目-下单功能</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">0.学习目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">1.微信支付简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.1.</span> <span class="toc-text">1.1.介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B"><span class="toc-number">2.2.</span> <span class="toc-text">1.2.开发流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E7%BB%9F%E4%B8%80%E4%B8%8B%E5%8D%95%EF%BC%88%E7%94%9F%E6%88%90%E6%94%AF%E4%BB%98%E9%93%BE%E6%8E%A5%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">2.统一下单（生成支付链接）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-API%E8%AF%B4%E6%98%8E"><span class="toc-number">3.1.</span> <span class="toc-text">2.1.API说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E5%BE%AE%E4%BF%A1SDK"><span class="toc-number">3.2.</span> <span class="toc-text">2.2.微信SDK</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E4%B8%8B%E8%BD%BD"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.2.1.下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-WXPay%E5%B7%A5%E5%85%B7"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.2.2.WXPay工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-WXPayConfig%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.3.</span> <span class="toc-text">2.2.3..WXPayConfig配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E6%95%B4%E5%90%88%E5%88%B0%E9%A1%B9%E7%9B%AE%E4%B8%AD"><span class="toc-number">3.3.</span> <span class="toc-text">2.3.整合到项目中</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-%E6%89%93%E5%8C%85SDK"><span class="toc-number">3.3.1.</span> <span class="toc-text">2.3.1.打包SDK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-%E9%85%8D%E7%BD%AEWXPay"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.3.2.配置WXPay</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-4-%E6%94%AF%E4%BB%98%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="toc-number">3.3.3.</span> <span class="toc-text">2.3.4.支付工具类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E4%B8%8B%E5%8D%95%E5%B9%B6%E7%94%9F%E6%88%90%E6%94%AF%E4%BB%98%E9%93%BE%E6%8E%A5"><span class="toc-number">3.4.</span> <span class="toc-text">2.4.下单并生成支付链接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E7%94%9F%E6%88%90%E6%94%AF%E4%BB%98%E4%BA%8C%E7%BB%B4%E7%A0%81%EF%BC%88%E4%BA%86%E8%A7%A3%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">3.生成支付二维码（了解）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="toc-number">4.1.</span> <span class="toc-text">3.1.什么是二维码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E4%BA%8C%E7%BB%B4%E7%A0%81%E4%BC%98%E5%8A%BF"><span class="toc-number">4.2.</span> <span class="toc-text">3.2.二维码优势</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E4%BA%8C%E7%BB%B4%E7%A0%81%E5%AE%B9%E9%94%99%E7%BA%A7%E5%88%AB"><span class="toc-number">4.3.</span> <span class="toc-text">3.3.二维码容错级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4-%E4%BA%8C%E7%BB%B4%E7%A0%81%E7%94%9F%E6%88%90%E6%8F%92%E4%BB%B6qrious"><span class="toc-number">4.4.</span> <span class="toc-text">3.4.二维码生成插件qrious</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-5-%E7%94%9F%E6%88%90%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="toc-number">4.5.</span> <span class="toc-text">3.5.生成二维码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%94%AF%E4%BB%98%E7%BB%93%E6%9E%9C%E9%80%9A%E7%9F%A5"><span class="toc-number">5.</span> <span class="toc-text">4.支付结果通知</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-notify-url"><span class="toc-number">5.1.</span> <span class="toc-text">4.1.notify_url</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E4%BB%80%E4%B9%88%E6%98%AFnotify-url"><span class="toc-number">5.1.1.</span> <span class="toc-text">1）什么是notify_url</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">5.1.2.</span> <span class="toc-text">2）内网穿透</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E9%85%8D%E7%BD%AE%E5%9B%9E%E8%B0%83%E5%9C%B0%E5%9D%80"><span class="toc-number">5.1.3.</span> <span class="toc-text">3）配置回调地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E7%94%A8%E6%88%B7%E6%8B%A6%E6%88%AA%E5%99%A8%E6%94%BE%E8%A1%8C"><span class="toc-number">5.1.4.</span> <span class="toc-text">4）用户拦截器放行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E6%94%AF%E4%BB%98%E7%BB%93%E6%9E%9C%E9%80%9A%E7%9F%A5API"><span class="toc-number">5.2.</span> <span class="toc-text">4.2.支付结果通知API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-%E7%BC%96%E5%86%99%E5%9B%9E%E8%B0%83%E6%8E%A5%E5%8F%A3"><span class="toc-number">5.3.</span> <span class="toc-text">4.3.编写回调接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-1-%E5%9B%9E%E8%B0%83%E6%8E%A5%E5%8F%A3%E5%88%86%E6%9E%90"><span class="toc-number">5.3.1.</span> <span class="toc-text">4.3.1.回调接口分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-3-%E4%B8%9A%E5%8A%A1%E4%BB%A3%E7%A0%81"><span class="toc-number">5.3.2.</span> <span class="toc-text">4.3.3.业务代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E6%94%AF%E4%BB%98%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2"><span class="toc-number">6.</span> <span class="toc-text">5.支付状态查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-%E9%A1%B5%E9%9D%A2%E6%9F%A5%E8%AF%A2%E6%94%AF%E4%BB%98%E7%8A%B6%E6%80%81"><span class="toc-number">6.1.</span> <span class="toc-text">5.1.页面查询支付状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-%E6%94%AF%E4%BB%98%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2%E6%8E%A5%E5%8F%A3"><span class="toc-number">6.2.</span> <span class="toc-text">5.2.支付状态查询接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-%E4%B8%BB%E5%8A%A8%E6%9F%A5%E8%AF%A2%E8%AE%A2%E5%8D%95%E6%94%AF%E4%BB%98%E7%8A%B6%E6%80%81%EF%BC%88%E4%BD%9C%E4%B8%9A%EF%BC%89"><span class="toc-number">6.3.</span> <span class="toc-text">5.3.主动查询订单支付状态（作业）</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
