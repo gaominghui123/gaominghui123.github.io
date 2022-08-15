@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>i9电脑安装ubuntu18.04有线网图标没有显示且连接不上网络 | Jason</title><meta name="keywords" content="ubuntu"><meta name="author" content="高明辉"><meta name="copyright" content="高明辉"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="最近要搞无人机平台的堤坝识别，张老师买回来一台i9处理器的服务器，让我配置环境，谁知道安装了系统ubuntu18.04之后无法上网，刚开始ping不同百度，然后ifconfig，提示没有这个工具，再然后sudo apt-get install net-tools 没有对应的包，再然后是 sudo apt-get update 出现域名解析失败，再然后手动配置万能域名，再到更还源，都试了还是不行。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="i9电脑安装ubuntu18.04有线网图标没有显示且连接不上网络">
+<meta property="og:url" content="http://example.com/2022/08/15/i9%E7%94%B5%E8%84%91%E5%AE%89%E8%A3%85ubuntu18-04%E6%9C%89%E7%BA%BF%E7%BD%91%E5%9B%BE%E6%A0%87%E6%B2%A1%E6%9C%89%E6%98%BE%E7%A4%BA%E4%B8%94%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="Jason">
+<meta property="og:description" content="最近要搞无人机平台的堤坝识别，张老师买回来一台i9处理器的服务器，让我配置环境，谁知道安装了系统ubuntu18.04之后无法上网，刚开始ping不同百度，然后ifconfig，提示没有这个工具，再然后sudo apt-get install net-tools 没有对应的包，再然后是 sudo apt-get update 出现域名解析失败，再然后手动配置万能域名，再到更还源，都试了还是不行。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/ubuntu/%E5%B0%81%E9%9D%A2.png">
+<meta property="article:published_time" content="2022-08-15T08:28:17.000Z">
+<meta property="article:modified_time" content="2022-08-15T08:48:27.414Z">
+<meta property="article:author" content="高明辉">
+<meta property="article:tag" content="ubuntu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/ubuntu/%E5%B0%81%E9%9D%A2.png"><link rel="shortcut icon" href="/img/%E7%BD%91%E7%AB%99%E5%9B%BE%E6%A0%87.png"><link rel="canonical" href="http://example.com/2022/08/15/i9%E7%94%B5%E8%84%91%E5%AE%89%E8%A3%85ubuntu18-04%E6%9C%89%E7%BA%BF%E7%BD%91%E5%9B%BE%E6%A0%87%E6%B2%A1%E6%9C%89%E6%98%BE%E7%A4%BA%E4%B8%94%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A%E7%BD%91%E7%BB%9C/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'i9电脑安装ubuntu18.04有线网图标没有显示且连接不上网络',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-08-15 16:48:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="Jason" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">177</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">206</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">34</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/ubuntu/%E5%B0%81%E9%9D%A2.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Jason</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-bell"></i><span> 日志</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 菜单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/%E5%85%B3%E4%BA%8E"><i class="fa-fw /about/"></i><span> 0</span></a></li><li><a class="site-page child" href="/myself"><i class="fa-fw /myself/"></i><span> 1</span></a></li><li><a class="site-page child" href="/butterfly%E4%B8%BB%E9%A2%98"><i class="fa-fw https://github.com/jerryc127/hexo-theme-butterfly/"></i><span> 2</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">i9电脑安装ubuntu18.04有线网图标没有显示且连接不上网络</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-15T08:28:17.000Z" title="发表于 2022-08-15 16:28:17">2022-08-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-08-15T08:48:27.414Z" title="更新于 2022-08-15 16:48:27">2022-08-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/ubuntu/">ubuntu</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="i9电脑安装ubuntu18.04有线网图标没有显示且连接不上网络"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>最近要搞无人机平台的堤坝识别，张老师买回来一台i9处理器的服务器，让我配置环境，谁知道安装了系统ubuntu18.04之后无法上网，刚开始ping不同百度，然后ifconfig，提示没有这个工具，再然后sudo apt-get install net-tools 没有对应的包，再然后是 sudo apt-get update 出现域名解析失败，再然后手动配置万能域名，再到更还源，都试了还是不行。</p>
+<p>最后搜索到一下博客：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">https</span>:<span class="string">//blog.csdn.net/weixin_44359479/article/details/123019056</span></span><br></pre></td></tr></table></figure>
+
+<p>原来是没有对应的驱动，网卡驱动是有的，官网上的ubuntu镜像，怎么可能没有驱动，只是硬件版本不对，驱动不兼容，以前windows电脑重装都需要安装驱动精灵，扫描一下网卡，声卡这些驱动有没有安装成功，现在ubuntu系统重装我怎么就没想到呢，而且学arm的时候也是，一般是网卡驱动的问题。</p>
+<p>具体解决方法如下：</p>
+<h3 id="1-终端输入"><a href="#1-终端输入" class="headerlink" title="1.终端输入"></a>1.终端输入</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">lspci</span></span><br></pre></td></tr></table></figure>
+
+<p>查看网卡型号</p>
+<h3 id="2-通过另一台可以上网的电脑，在官网下载对应型号"><a href="#2-通过另一台可以上网的电脑，在官网下载对应型号" class="headerlink" title="2.通过另一台可以上网的电脑，在官网下载对应型号"></a>2.通过另一台可以上网的电脑，在官网下载对应型号</h3><p><img src="https://img-blog.csdnimg.cn/23e51a1e888d4a1f8b51c1b16cd77964.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5piO5b63emh1YW5n,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<h3 id="3-下载完之后，还需要下载build-essential文件包。下面给出链接，可打包下载至电脑中。"><a href="#3-下载完之后，还需要下载build-essential文件包。下面给出链接，可打包下载至电脑中。" class="headerlink" title="3.下载完之后，还需要下载build-essential文件包。下面给出链接，可打包下载至电脑中。"></a>3.下载完之后，还需要下载build-essential文件包。下面给出链接，可打包下载至电脑中。</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">链接：https</span>:<span class="string">//pan.baidu.com/s/1Zr1B-PO7O_htbWl4kbCfbw </span></span><br><span class="line"><span class="meta">提取码：6666</span> <span class="string"></span></span><br></pre></td></tr></table></figure>
+
+<p>4.将上述四个文件放在一个文件夹中，并且拷贝至U盘，再复制到Ubuntu18.04 lst系统的某一个文件夹下（小编将其复制到downloads文件夹下）。</p>
+<p><img src="https://img-blog.csdnimg.cn/70c8ba602c474a6395f76dd9b97a664b.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5piO5b63emh1YW5n,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"></p>
+<h3 id="5-进入该文件夹，然后鼠标右击选择“open-Ternimal”进入终端。"><a href="#5-进入该文件夹，然后鼠标右击选择“open-Ternimal”进入终端。" class="headerlink" title="5.进入该文件夹，然后鼠标右击选择“open Ternimal”进入终端。"></a>5.进入该文件夹，然后鼠标右击选择“open Ternimal”进入终端。</h3><p>（1）依次cd进入gcc、make、build-essential目录，执行</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sudo</span> <span class="string">dpkg -i *.deb</span></span><br></pre></td></tr></table></figure>
+
+<p>命令进行安装即可。（注意：不按gcc、make、build-essential的顺序安装可能导致失败。）<br>（2）上述安装完后，进入r8125-9.007.01文件夹，终端执行</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sudo</span> <span class="string">chmod +x autorun.sh</span></span><br><span class="line"><span class="attr">sudo</span> <span class="string">sh ./autorun.sh</span></span><br><span class="line"><span class="attr">完成安装！！！</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-再执行如下命令，可显示有线图标"><a href="#6-再执行如下命令，可显示有线图标" class="headerlink" title="6.再执行如下命令，可显示有线图标"></a>6.再执行如下命令，可显示有线图标</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sudo</span> <span class="string">service network-manager stop</span></span><br><span class="line"><span class="attr">sudo</span> <span class="string">rm /var/lib/NetworkManager/NetworkManager.state</span></span><br><span class="line"><span class="attr">sudo</span> <span class="string">service network-manager start</span></span><br><span class="line"><span class="attr">sudo</span> <span class="string">gedit /etc/NetworkManager/NetworkManager.conf</span></span><br><span class="line"><span class="attr">（把false改成true）</span></span><br><span class="line"><span class="attr">sudo</span> <span class="string">service network-manager restart</span></span><br></pre></td></tr></table></figure>
+
+
+<p>如下图：</p>
+<p><img src="https://img-blog.csdnimg.cn/92a33a5a0ca44c4e8e6ab27fdeafac69.png" alt="在这里插入图片描述"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">高明辉</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2022/08/15/i9%E7%94%B5%E8%84%91%E5%AE%89%E8%A3%85ubuntu18-04%E6%9C%89%E7%BA%BF%E7%BD%91%E5%9B%BE%E6%A0%87%E6%B2%A1%E6%9C%89%E6%98%BE%E7%A4%BA%E4%B8%94%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A%E7%BD%91%E7%BB%9C/">http://example.com/2022/08/15/i9%E7%94%B5%E8%84%91%E5%AE%89%E8%A3%85ubuntu18-04%E6%9C%89%E7%BA%BF%E7%BD%91%E5%9B%BE%E6%A0%87%E6%B2%A1%E6%9C%89%E6%98%BE%E7%A4%BA%E4%B8%94%E8%BF%9E%E6%8E%A5%E4%B8%8D%E4%B8%8A%E7%BD%91%E7%BB%9C/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Jason</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ubuntu/">ubuntu</a></div><div class="post_share"><div class="social-share" data-image="/img/ubuntu/%E5%B0%81%E9%9D%A2.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="添加微信"/></a><div class="post-qr-code-desc">添加微信</div></li><li class="reward-item"><a href="/img/pay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/pay.jpg" alt="付款码"/></a><div class="post-qr-code-desc">付款码</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/08/13/nginx%E5%90%AF%E5%8A%A8%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/"><img class="next-cover" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/2%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/nginx.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">nginx启动遇到的一些问题</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/04/14/ubuntu%E7%9A%84%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E5%AE%89%E8%A3%85%E5%90%8E%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AE%BE%E7%BD%AE/" title="ubuntu的安装以及安装后的基本设置"><img class="cover" src="/img/ubuntu/%E5%B0%81%E9%9D%A2.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-04-14</div><div class="title">ubuntu的安装以及安装后的基本设置</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BB%88%E7%AB%AF%E8%BE%93%E5%85%A5"><span class="toc-number">1.</span> <span class="toc-text">1.终端输入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%80%9A%E8%BF%87%E5%8F%A6%E4%B8%80%E5%8F%B0%E5%8F%AF%E4%BB%A5%E4%B8%8A%E7%BD%91%E7%9A%84%E7%94%B5%E8%84%91%EF%BC%8C%E5%9C%A8%E5%AE%98%E7%BD%91%E4%B8%8B%E8%BD%BD%E5%AF%B9%E5%BA%94%E5%9E%8B%E5%8F%B7"><span class="toc-number">2.</span> <span class="toc-text">2.通过另一台可以上网的电脑，在官网下载对应型号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%8B%E8%BD%BD%E5%AE%8C%E4%B9%8B%E5%90%8E%EF%BC%8C%E8%BF%98%E9%9C%80%E8%A6%81%E4%B8%8B%E8%BD%BDbuild-essential%E6%96%87%E4%BB%B6%E5%8C%85%E3%80%82%E4%B8%8B%E9%9D%A2%E7%BB%99%E5%87%BA%E9%93%BE%E6%8E%A5%EF%BC%8C%E5%8F%AF%E6%89%93%E5%8C%85%E4%B8%8B%E8%BD%BD%E8%87%B3%E7%94%B5%E8%84%91%E4%B8%AD%E3%80%82"><span class="toc-number">3.</span> <span class="toc-text">3.下载完之后，还需要下载build-essential文件包。下面给出链接，可打包下载至电脑中。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%BF%9B%E5%85%A5%E8%AF%A5%E6%96%87%E4%BB%B6%E5%A4%B9%EF%BC%8C%E7%84%B6%E5%90%8E%E9%BC%A0%E6%A0%87%E5%8F%B3%E5%87%BB%E9%80%89%E6%8B%A9%E2%80%9Copen-Ternimal%E2%80%9D%E8%BF%9B%E5%85%A5%E7%BB%88%E7%AB%AF%E3%80%82"><span class="toc-number">4.</span> <span class="toc-text">5.进入该文件夹，然后鼠标右击选择“open Ternimal”进入终端。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%86%8D%E6%89%A7%E8%A1%8C%E5%A6%82%E4%B8%8B%E5%91%BD%E4%BB%A4%EF%BC%8C%E5%8F%AF%E6%98%BE%E7%A4%BA%E6%9C%89%E7%BA%BF%E5%9B%BE%E6%A0%87"><span class="toc-number">5.</span> <span class="toc-text">6.再执行如下命令，可显示有线图标</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'Aaee0Vekhg5KbLhMOJQrEU6A-gzGzoHsz',
+      appKey: 'mmLHPEEtqvOSJhsqWra8Sq6K',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script type="text/javascript" src="/js/fairyDustCursor.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
