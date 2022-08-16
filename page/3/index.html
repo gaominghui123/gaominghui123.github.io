@@ -50,7 +50,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2022-08-15 16:49:33'
+  postUpdate: '2022-08-16 11:38:07'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -197,103 +197,15 @@ spring-boot-starter-xxx：管理spring-boot-xxx-autoconfigure及其它所需依�
 
 因此我们如果要自定义工具类，并且实现starter，项目结构也是如此，包含：
 
-leyou ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/06/23/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-ElasticSearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/" title="Elasticsearch进阶和WebFlux"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/6Elasticsearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch进阶和WebFlux"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/23/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-ElasticSearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/" title="Elasticsearch进阶和WebFlux">Elasticsearch进阶和WebFlux</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-23T07:18:06.000Z" title="发表于 2022-06-23 15:18:06">2022-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">Elasticsearch进阶和WebFlux0.学习目标
-学会拼音分词器的使用
-学会suggest查询
-知道nested结构的特点
-学会elasticsearch的异步API
-能搭建WebFlux项目
+leyou ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/06/23/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-ElasticSearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/" title="Elasticsearch进阶和WebFlux"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/6Elasticsearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Elasticsearch进阶和WebFlux"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/23/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-ElasticSearch%E8%BF%9B%E9%98%B6%E5%92%8CWebFlux/" title="Elasticsearch进阶和WebFlux">Elasticsearch进阶和WebFlux</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-23T07:18:06.000Z" title="发表于 2022-06-23 15:18:06">2022-06-23</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">Elasticsearch进阶和WebFlux0.学习目标12345- 学会拼音分词器的使用- 学会suggest查询- 知道nested结构的特点- 学会elasticsearch的异步API- 能搭建WebFlux项目
 
 1.Elasticsearch进阶虽然之前已经学习了ElasticSearch的使用，但是依然有一些elasticsearch的高级搜索功能等待大家探索。我们今天就会挑选几个比较常用的来学习。
 详细文档我们可以参考官方文档：
 https://www.elastic.co/guide/en/elasticsearch/reference/7.x/index.html
-1.0.安装Elasticsearch建议所有同学使用我提供的镜像从新安装elasticsearch，我的版本是7.4.2
-参考课前资料文档：
- 
-1.1.特殊数据类型在之前的学习中，我们了解了Elasticsearch的基本数据类型，今天我们来看看ES中提供的特殊数据类型：
- 
-1.1.1.Object类型相关文档：https://www.elastic.co/guide/en/elasticsearch/referen ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2022/06/20/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%95%86%E5%93%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1/" title="乐优商城项目-商品数据结构设计"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/4%E5%95%86%E5%93%81%E8%AE%BE%E8%AE%A1/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="乐优商城项目-商品数据结构设计"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/20/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%95%86%E5%93%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1/" title="乐优商城项目-商品数据结构设计">乐优商城项目-商品数据结构设计</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-20T07:37:39.000Z" title="发表于 2022-06-20 15:37:39">2022-06-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">乐优商城项目-商品数据结构设计0.学习目标1234- 理解商品规格参数数据结构- 理解商品SPU和SKU数据结构- 完成规格参数的业务接口- 完成商品的业务接口
+1.0.安装Elasticsearch（并配置ik中英文分词器，拼音分词器）请参考：
+1https://gaominghui123.github.io/2022/05/13/linux%E4%B8%AD%E4%BD%BF%E7%94%A8docker%E5%AE%89%E8%A3%85elasticsearch%E4%BB%A5%E5%8F%8A%E9%85%8D%E7%BD%AE%E4%B8%AD%E ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2022/06/20/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%95%86%E5%93%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1/" title="乐优商城项目-商品数据结构设计"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/4%E5%95%86%E5%93%81%E8%AE%BE%E8%AE%A1/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="乐优商城项目-商品数据结构设计"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/20/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%95%86%E5%93%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1/" title="乐优商城项目-商品数据结构设计">乐优商城项目-商品数据结构设计</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-20T07:37:39.000Z" title="发表于 2022-06-20 15:37:39">2022-06-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">乐优商城项目-商品数据结构设计0.学习目标1234- 理解商品规格参数数据结构- 理解商品SPU和SKU数据结构- 完成规格参数的业务接口- 完成商品的业务接口
 
-1.商品数据结构设计商品是电商的核心，而商品数据结构的设计也决定了一个电商网站的很多业务走向。
-1.1.商品数据分析我们先看一下我们乐优商城的商品页面结构：
-
-包括的数据：
-
-①：商品分类信息
-②：商品品牌信息
-③：商品名称
-④：商品图片
-⑤：商品标题
-⑥：商品价格
-⑦：商品库存
-⑧：商品属性
-颜色
-内存
-机身存储
-
-
-
-我们是不是可以这样设计商品表，把商品的内容都作为商品表的字段：
-
-
-
-id
-分类
-品牌
-名称
-图片
-价格
-库存
-颜色
-内存
-存储
-
-
-
-
-1
-手机
-小米
-红米5
-xx.jpg
-1099
-99
-玫瑰金
-3G
-32G
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-但是如果这个商品不是手机，而是一个空调呢？
-
-空调中会多出两个属性：
-
-匹数
-系列
-
-电视呢？可能会多出：尺寸、型号这样的属性
-衣服呢？可能会多出：尺码、颜色这样的属性
-水果呢？可能会多出：重量、品种这样的属性
-于是，商品表设计就会变成这样：
-
-
-
-id
-分类
-品牌 ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/" title="乐优商城项目-品牌管理"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="乐优商城项目-品牌管理"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/" title="乐优商城项目-品牌管理">乐优商城项目-品牌管理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-18T14:42:34.000Z" title="发表于 2022-06-18 22:42:34">2022-06-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">乐优商城项目-品牌管理0.学习目标123- 了解品牌表结构- 实现品牌相关业务- 实现图片上传的业务
+本篇博客总结写在前面：12345678910111213141516171819202122232425262728293031323334351 商品数据结构设计	一种商品类型有多个规格参数（规格参数表）	每一种规格参数都有一个组id，规格参数组（规格参数组表）	规格参数有四种类型：	1 是否是数值类型	2 是否是搜索字段	3 是否是通用属性	4 待选项	有了减少表格的冗余，因此将商品表格表格分为spu表和sku表，他们是一对多的关系。	sku有一个spuid字段，用来关联spu	1 spu  共性数据  抽象  有一个字段specification，表明属性有哪些可选值	2 sku  特有数据  具体  有一个字段special，表明属性具体的值2 商品的规格参数业务	根据分类查询规格组	查询规格参数集合	新增规格组	修改规格组	新增规格参数	修改规格参数	查询规格组及规格参数3 商品业务	商品分页查询	商品新增	商品上 ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/" title="乐优商城项目-品牌管理"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/3%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="乐优商城项目-品牌管理"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/18/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%93%81%E7%89%8C%E7%AE%A1%E7%90%86/" title="乐优商城项目-品牌管理">乐优商城项目-品牌管理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-18T14:42:34.000Z" title="发表于 2022-06-18 22:42:34">2022-06-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">乐优商城项目-品牌管理0.学习目标123- 了解品牌表结构- 实现品牌相关业务- 实现图片上传的业务
 
 本篇博客总结写在前面1234567891011121314151617181 品牌管理	跟分类管理差不多，他们都共同维护一张中间表（分类id，品牌id）    1 根据品牌id查询品牌    2 根据品牌id集合查询品牌集合    3 分页查询品牌，需要导入分页插件    4 根据分类id查询品牌（跟上一篇博客：根据品牌id查询分类 一样）		使用联合查询，或者子查询两种，		mybatis-plus 没有联合查询语句的接口封装，因此要自己写sql同时添加接口方法	5 新增品牌，修改品牌，根据品牌id删除品牌	上面接口的实现，除了4的联合查询，都可以直接使用mybatis-plus来完成！2 阿里云OSS实现文件的上传（分布式文件的使用）    品牌的商标图片，在mysql中存储的只是图片资源路径    我们上传图片时，其实是上传到阿里云的OSS中，然后将路径写入到mysql的brand的images字段    注意，oss的bucket中要开启跨域访问，添加规则：http://ma ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2022/06/17/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/" title="乐优商城项目-分类管理"><img class="post_bg" src="/img/java/06%E9%98%B6%E6%AE%B5%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/2%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/%E5%B0%81%E9%9D%A2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="乐优商城项目-分类管理"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/06/17/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE-%E5%88%86%E7%B1%BB%E7%AE%A1%E7%90%86/" title="乐优商城项目-分类管理">乐优商城项目-分类管理</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-06-17T12:24:29.000Z" title="发表于 2022-06-17 20:24:29">2022-06-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E4%B9%90%E4%BC%98%E5%95%86%E5%9F%8E%E9%A1%B9%E7%9B%AE/">乐优商城项目</a></span></div><div class="content">分类管理0.学习目标1234- 能利用Nginx实现反向代理- 能使用mybatis-plus完成数据库操作- 能实现商品分类查询业务- 能使用Gateway解决跨域问题
 
@@ -331,7 +243,7 @@ ps：配置vcat服务花费时间比较长，vcat这个工具不同于labelImg�
             <ul class="card-category-list" id="aside-cat-list">
             <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker/"><span class="card-category-list-name">Docker</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/ElasticSearch/"><span class="card-category-list-name">ElasticSearch</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/MongoDB/"><span class="card-category-list-name">MongoDB</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/RabbitMQ/"><span class="card-category-list-name">RabbitMQ</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/SpringCloud/"><span class="card-category-list-name">SpringCloud</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/c/"><span class="card-category-list-name">c++</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/git/"><span class="card-category-list-name">git</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/hexo/"><span class="card-category-list-name">hexo</span><span class="card-category-list-count">5</span></a></li>
             </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/voc%E6%95%B0%E6%8D%AE%E9%9B%86-yolov5/" style="font-size: 1.1em; color: #999">-voc数据集 -yolov5</a> <a href="/tags/ATM%E7%B3%BB%E7%BB%9F%E9%A1%B9%E7%9B%AE/" style="font-size: 1.1em; color: #999">ATM系统项目</a> <a href="/tags/Base64/" style="font-size: 1.1em; color: #999">Base64</a> <a href="/tags/Canal/" style="font-size: 1.1em; color: #999">Canal</a> <a href="/tags/CentOS/" style="font-size: 1.1em; color: #999">CentOS</a> <a href="/tags/Collection%E9%9B%86%E5%90%88/" style="font-size: 1.1em; color: #999">Collection集合</a> <a href="/tags/DCL/" style="font-size: 1.1em; color: #999">DCL</a> <a href="/tags/DDL/" style="font-size: 1.1em; color: #999">DDL</a> <a href="/tags/DML/" style="font-size: 1.1em; color: #999">DML</a> <a href="/tags/DQL/" style="font-size: 1.23em; color: #999ea6">DQL</a> <a href="/tags/Debug%E4%BB%A5%E5%8F%8A%E5%9F%BA%E7%A1%80%E7%BB%83%E4%B9%A0/" style="font-size: 1.1em; color: #999">Debug以及基础练习</a> <a href="/tags/Docker/" style="font-size: 1.23em; color: #999ea6">Docker</a> <a href="/tags/Docker-Compose/" style="font-size: 1.1em; color: #999">Docker Compose</a> <a href="/tags/Docker-Swarm/" style="font-size: 1.1em; color: #999">Docker Swarm</a> <a href="/tags/Dom4j/" style="font-size: 1.1em; color: #999">Dom4j</a> <a href="/tags/ES6/" style="font-size: 1.1em; color: #999">ES6</a> <a href="/tags/ElasticSearch/" style="font-size: 1.37em; color: #99a4b2">ElasticSearch</a> <a href="/tags/Eureka/" style="font-size: 1.1em; color: #999">Eureka</a> <a href="/tags/Feign/" style="font-size: 1.1em; color: #999">Feign</a> <a href="/tags/File%E7%B1%BB/" style="font-size: 1.1em; color: #999">File类</a> <a href="/tags/Gateway/" style="font-size: 1.1em; color: #999">Gateway</a> <a href="/tags/Hystrix/" style="font-size: 1.1em; color: #999">Hystrix</a> <a href="/tags/IOC-%E7%9B%B8%E5%85%B3%E6%B3%A8%E8%A7%A3/" style="font-size: 1.1em; color: #999">IOC 相关注解</a> <a href="/tags/JDBCTemplate/" style="font-size: 1.1em; color: #999">JDBCTemplate</a> <a href="/tags/JWT/" style="font-size: 1.23em; color: #999ea6">JWT</a> <a href="/tags/Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" style="font-size: 1.1em; color: #999">Junit单元测试</a> <a href="/tags/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/" style="font-size: 1.1em; color: #999">Lambda表达式</a> <a href="/tags/List%E6%8E%A5%E5%8F%A3/" style="font-size: 1.1em; color: #999">List接口</a> <a href="/tags/Lua/" style="font-size: 1.1em; color: #999">Lua</a> <a href="/tags/Map%E9%9B%86%E5%90%88/" style="font-size: 1.1em; color: #999">Map集合</a> <a href="/tags/MongoDB/" style="font-size: 1.1em; color: #999">MongoDB</a> <a href="/tags/MyBatis/" style="font-size: 1.5em; color: #99a9bf">MyBatis</a> <a href="/tags/MySQL%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0/" style="font-size: 1.1em; color: #999">MySQL常用函数</a> <a href="/tags/Mybatis-Plus/" style="font-size: 1.1em; color: #999">Mybatis-Plus</a> <a href="/tags/Mysql%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" style="font-size: 1.1em; color: #999">Mysql体系结构</a> <a href="/tags/Nacos/" style="font-size: 1.1em; color: #999">Nacos</a> <a href="/tags/OpenResty/" style="font-size: 1.1em; color: #999">OpenResty</a> <a href="/tags/RabbitMQ/" style="font-size: 1.37em; color: #99a4b2">RabbitMQ</a> <a href="/tags/Rancher/" style="font-size: 1.1em; color: #999">Rancher</a> <a href="/tags/Ribbon/" style="font-size: 1.1em; color: #999">Ribbon</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
-    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/08/"><span class="card-archive-list-date">八月 2022</span><span class="card-archive-list-count">9</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/07/"><span class="card-archive-list-date">七月 2022</span><span class="card-archive-list-count">10</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">六月 2022</span><span class="card-archive-list-count">20</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">五月 2022</span><span class="card-archive-list-count">29</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">四月 2022</span><span class="card-archive-list-count">40</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">三月 2022</span><span class="card-archive-list-count">12</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">一月 2022</span><span class="card-archive-list-count">40</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">十二月 2021</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">177</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2022-08-15T08:49:31.016Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
+    <i class="fas fa-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/08/"><span class="card-archive-list-date">八月 2022</span><span class="card-archive-list-count">9</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/07/"><span class="card-archive-list-date">七月 2022</span><span class="card-archive-list-count">10</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/06/"><span class="card-archive-list-date">六月 2022</span><span class="card-archive-list-count">20</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/05/"><span class="card-archive-list-date">五月 2022</span><span class="card-archive-list-count">29</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/04/"><span class="card-archive-list-date">四月 2022</span><span class="card-archive-list-count">40</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/03/"><span class="card-archive-list-date">三月 2022</span><span class="card-archive-list-count">12</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/01/"><span class="card-archive-list-date">一月 2022</span><span class="card-archive-list-count">40</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/12/"><span class="card-archive-list-date">十二月 2021</span><span class="card-archive-list-count">3</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">177</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2022-08-16T03:38:05.321Z"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 高明辉</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
   if (true) { 
     window.typed = new Typed("#subtitle", {
       strings: ["欢迎来到高明辉仔的博客~","所有的不平凡都来自平凡，加油~"],
